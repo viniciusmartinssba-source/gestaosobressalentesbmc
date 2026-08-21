@@ -219,6 +219,20 @@ function Dashboard() {
         <div className="flex-1 overflow-y-auto p-6 md:p-8">
           {activeTab === "overview" && (
             <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2">
+              <div className="bg-sky-50 border border-sky-100 rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6">
+                <div className="bg-sky-600 p-4 rounded-2xl text-white shadow-lg shadow-sky-100">
+                  <BarChart3 size={32} />
+                </div>
+                <div className="flex-1 text-center md:text-left">
+                  <h3 className="text-xl font-bold text-sky-900">Insights da IA</h3>
+                  <p className="text-sky-700/80 text-sm">
+                    Análise preditiva: O Aerogerador <strong>NH-05</strong> apresentou um aumento de 30% na troca de filtros. Recomenda-se inspeção preventiva no sistema de arrefecimento.
+                  </p>
+                </div>
+                <button className="px-6 py-2.5 bg-white text-sky-700 border border-sky-200 rounded-xl text-sm font-bold hover:bg-sky-100 transition-colors shadow-sm">
+                  Ver Detalhes
+                </button>
+              </div>
               {/* Stats Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {stats.map((stat, i) => (
