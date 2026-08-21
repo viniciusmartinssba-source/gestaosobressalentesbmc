@@ -612,16 +612,42 @@ function Dashboard() {
                     <div className="flex flex-col gap-2">
                       <div className="flex gap-2">
                         <div className="relative flex-1">
-                        <Input 
-                          type="text" 
-                          value={sapInput}
-                          onChange={(e) => setSapInput(e.target.value)}
-                          placeholder="Ex: 1001"
-                          className={cn(
-                            "h-12 rounded-xl bg-slate-50 pr-10",
-                            foundPeca && "border-emerald-500 ring-emerald-500"
+                        <div className="relative">
+                          <Input 
+                            type="text" 
+                            value={sapInput}
+                            onChange={(e) => setSapInput(e.target.value)}
+                            placeholder="Buscar SAP ou Nome..."
+                            className={cn(
+                              "h-12 rounded-xl bg-slate-50 pr-10",
+                              foundPeca && "border-emerald-500 ring-emerald-500"
+                            )}
+                          />
+                          {sapInput && !foundPeca && (
+                            <div className="absolute left-0 right-0 top-full mt-1 z-50 bg-card border border-border rounded-xl shadow-lg max-h-48 overflow-y-auto overflow-x-hidden">
+                              {data.catalogo
+                                .filter(p => 
+                                  p.sap.toLowerCase().includes(sapInput.toLowerCase()) || 
+                                  p.descricao.toLowerCase().includes(sapInput.toLowerCase())
+                                )
+                                .slice(0, 5)
+                                .map(p => (
+                                  <button
+                                    key={p.sap}
+                                    className="w-full text-left p-3 hover:bg-accent/50 transition-colors border-b border-border/50 last:border-0"
+                                    onClick={() => {
+                                      setSapInput(p.sap);
+                                      setFoundPeca(p);
+                                    }}
+                                  >
+                                    <div className="font-mono text-xs font-bold text-primary">{p.sap}</div>
+                                    <div className="text-sm truncate">{p.descricao}</div>
+                                  </button>
+                                ))
+                              }
+                            </div>
                           )}
-                        />
+                        </div>
                         {foundPeca ? (
                           <CheckCircle2 className="absolute right-3 top-3 text-emerald-500" size={20} />
                         ) : (
