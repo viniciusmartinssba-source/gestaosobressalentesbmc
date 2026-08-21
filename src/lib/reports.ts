@@ -22,7 +22,7 @@ export const exportToPDF = (data: Movimentacao[]) => {
   const primaryColor = [3, 105, 161];
   
   doc.setFontSize(18);
-  doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
+  doc.setTextColor(primaryColor[0]!, primaryColor[1]!, primaryColor[2]!);
   doc.text("Relatório de Movimentação de Peças", 14, 22);
   
   doc.setFontSize(11);
