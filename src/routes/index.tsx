@@ -81,7 +81,7 @@ function Dashboard() {
       data: format(new Date(), "dd/MM/yyyy HH:mm"),
       tecnico: "Bruno Terras", // Simulated user
       parque: selectedParque.nome,
-      aero: selectedAero.toString(),
+      aero: selectedAero?.toString() || "0",
       sap: foundPeca.sap,
       peca: foundPeca.descricao,
       quantidade,
