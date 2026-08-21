@@ -37,6 +37,9 @@ const COLORS = ['#0ea5e9', '#6366f1', '#8b5cf6', '#ec4899'];
 function Dashboard() {
   const [activeTab, setActiveTab] = useState("overview");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const [sapInput, setSapInput] = useState("");
+  const [foundPeca, setFoundPeca] = useState<{sap: string, descricao: string} | null>(null);
 
   const stats = [
     { title: "Total de Saídas", value: "1,284", icon: Package, change: "+12%" },
