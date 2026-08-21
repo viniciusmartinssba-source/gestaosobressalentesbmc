@@ -42,6 +42,7 @@ import confetti from "canvas-confetti";
 
 export const Route = createFileRoute("/")({
   component: Dashboard,
+  loader: async () => getInitialData(),
 });
 
 const COLORS = ['#0ea5e9', '#6366f1', '#8b5cf6', '#ec4899'];
