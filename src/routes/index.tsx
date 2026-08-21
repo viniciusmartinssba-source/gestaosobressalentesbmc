@@ -194,72 +194,67 @@ function Dashboard() {
     setIsScannerOpen(false);
   };
   return (
-    <div className="flex h-screen bg-slate-50 font-sans text-slate-900">
+    <div className="flex h-screen bg-slate-50 font-sans text-slate-900 overflow-hidden">
       {/* Sidebar Desktop */}
-      <aside className={cn(
-        "fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200 transition-transform duration-300 md:relative md:translate-x-0",
-        !isSidebarOpen && "-translate-x-full"
-      )}>
-        <div className="flex flex-col h-full">
-          <div className="p-6 flex items-center gap-3 border-b border-slate-100">
-            <div className="bg-sky-600 p-2 rounded-lg text-white">
-              <Wind size={24} />
-            </div>
-            <h1 className="font-bold text-lg leading-tight">Gestão de<br/>Sobressalentes</h1>
+      <aside className="hidden md:flex flex-col w-64 bg-white border-r border-slate-200">
+        <div className="p-6 flex items-center gap-3 border-b border-slate-100">
+          <div className="bg-sky-600 p-2 rounded-lg text-white">
+            <Wind size={24} />
           </div>
+          <h1 className="font-bold text-lg leading-tight">Gestão de<br/>Sobressalentes</h1>
+        </div>
 
-          <nav className="flex-1 p-4 space-y-1">
-            <button 
-              onClick={() => setActiveTab("overview")}
-              className={cn(
-                "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
-                activeTab === "overview" ? "bg-sky-50 text-sky-700 font-medium" : "text-slate-500 hover:bg-slate-50"
-              )}
-            >
-              <LayoutDashboard size={20} /> Dashboard
-            </button>
-            <button 
-              onClick={() => setActiveTab("register")}
-              className={cn(
-                "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
-                activeTab === "register" ? "bg-sky-50 text-sky-700 font-medium" : "text-slate-500 hover:bg-slate-50"
-              )}
-            >
-              <PlusCircle size={20} /> Registrar Saída
-            </button>
-            <button 
-              onClick={() => setActiveTab("history")}
-              className={cn(
-                "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
-                activeTab === "history" ? "bg-sky-50 text-sky-700 font-medium" : "text-slate-500 hover:bg-slate-50"
-              )}
-            >
-              <HistoryIcon size={20} /> Histórico
-            </button>
-            <button 
-              className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50"
-            >
-              <Search size={20} /> Catálogo
-            </button>
-          </nav>
+        <nav className="flex-1 p-4 space-y-1">
+          <button 
+            onClick={() => setActiveTab("overview")}
+            className={cn(
+              "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
+              activeTab === "overview" ? "bg-sky-50 text-sky-700 font-medium" : "text-slate-500 hover:bg-slate-50"
+            )}
+          >
+            <LayoutDashboard size={20} /> Dashboard
+          </button>
+          <button 
+            onClick={() => setActiveTab("register")}
+            className={cn(
+              "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
+              activeTab === "register" ? "bg-sky-50 text-sky-700 font-medium" : "text-slate-500 hover:bg-slate-50"
+            )}
+          >
+            <PlusCircle size={20} /> Registrar Saída
+          </button>
+          <button 
+            onClick={() => setActiveTab("history")}
+            className={cn(
+              "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
+              activeTab === "history" ? "bg-sky-50 text-sky-700 font-medium" : "text-slate-500 hover:bg-slate-50"
+            )}
+          >
+            <HistoryIcon size={20} /> Histórico
+          </button>
+          <button 
+            className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50"
+          >
+            <Search size={20} /> Catálogo
+          </button>
+        </nav>
 
-          <div className="p-4 border-t border-slate-100">
-            <div className="flex items-center gap-3 px-4 py-3 mb-2">
-              <div className="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center font-bold text-sky-700">
-                {user.nome.split(' ').map(n => n[0]).join('')}
-              </div>
-              <div className="flex-1 overflow-hidden">
-                <p className="text-sm font-medium truncate">{user.nome}</p>
-                <p className="text-xs text-slate-400">{user.matricula}</p>
-              </div>
+        <div className="p-4 border-t border-slate-100">
+          <div className="flex items-center gap-3 px-4 py-3 mb-2">
+            <div className="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center font-bold text-sky-700 shrink-0">
+              {user.nome.split(' ').map(n => n[0]).join('')}
             </div>
-            <button 
-              onClick={handleLogout}
-              className="flex items-center gap-3 w-full px-4 py-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-            >
-              <LogOut size={18} /> Sair
-            </button>
+            <div className="flex-1 overflow-hidden">
+              <p className="text-sm font-medium truncate">{user.nome}</p>
+              <p className="text-xs text-slate-400">{user.matricula}</p>
+            </div>
           </div>
+          <button 
+            onClick={handleLogout}
+            className="flex items-center gap-3 w-full px-4 py-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+          >
+            <LogOut size={18} /> Sair
+          </button>
         </div>
       </aside>
 
