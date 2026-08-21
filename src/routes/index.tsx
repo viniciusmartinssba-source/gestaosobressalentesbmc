@@ -621,19 +621,20 @@ function Dashboard() {
                 </div>
               </div>
               
-              <Card className="border-none shadow-sm shadow-slate-200 overflow-hidden">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-slate-50/50 hover:bg-slate-50/50">
-                      <TableHead className="font-bold">Data</TableHead>
-                      <TableHead className="font-bold">Técnico</TableHead>
-                      <TableHead className="font-bold">Local</TableHead>
-                      <TableHead className="font-bold">Peça</TableHead>
-                      <TableHead className="font-bold">Qtd</TableHead>
-                      <TableHead className="font-bold text-right">WO</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
+              <Card className="border-none shadow-sm shadow-slate-200">
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-slate-50/50 hover:bg-slate-50/50">
+                        <TableHead className="font-bold whitespace-nowrap">Data</TableHead>
+                        <TableHead className="font-bold whitespace-nowrap">Técnico</TableHead>
+                        <TableHead className="font-bold whitespace-nowrap">Local</TableHead>
+                        <TableHead className="font-bold whitespace-nowrap">Peça</TableHead>
+                        <TableHead className="font-bold whitespace-nowrap">Qtd</TableHead>
+                        <TableHead className="font-bold text-right whitespace-nowrap">WO</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
                     {history.map((item, i) => (
                       <TableRow key={i} className="group">
                         <TableCell className="text-slate-500 text-xs">{item.data}</TableCell>
