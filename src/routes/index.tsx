@@ -344,7 +344,8 @@ function Dashboard() {
                   <div className="bg-primary p-2 rounded-lg text-primary-foreground">
                     <Wind size={24} />
                   </div>
-                  <SheetTitle className="font-bold text-lg leading-tight">Gestão de<br/>Sobressalentes</SheetTitle>
+                  <SheetTitle className="font-bold text-xs leading-tight">Gestão de Controle de Retiradas de Sobressalentes do Almoxarifado</SheetTitle>
+
                 </SheetHeader>
                 <div className="flex flex-col h-[calc(100vh-85px)]">
                   <nav className="flex-1 p-4 space-y-1">
