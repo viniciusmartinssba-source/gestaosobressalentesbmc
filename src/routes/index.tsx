@@ -390,10 +390,10 @@ function Dashboard() {
                 <div className="flex-1 text-center md:text-left z-10">
                   <h3 className="text-xl font-bold text-foreground">Insights Inteligentes</h3>
                   <p className="text-muted-foreground text-sm max-w-2xl leading-relaxed">
-                    Estoque em campo não precisa ter...
+                    Retirar esse: Estoque em campo não precisa ter...
 
-                    - Quantidade de peças retiradas por dia;
-                    - Quantidade de peças retiradas no mês;
+                    Inserir esse: Quantidade de peças retiradas por dia;
+                    Inserir esse: Quantidade de peças retiradas no mês
                   </p>
                 </div>
                 <Button variant="secondary" className="w-full md:w-auto rounded-xl px-6 font-semibold shadow-sm hover:scale-105 transition-transform cursor-pointer">
