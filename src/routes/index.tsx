@@ -466,8 +466,8 @@ function Dashboard() {
           )}
 
           {activeTab === "register" && (
-            <div className="max-w-2xl mx-auto space-y-6 animate-in zoom-in-95 duration-200">
-              <Card className="border-none shadow-md shadow-slate-200 overflow-hidden">
+            <div className="max-w-2xl mx-auto space-y-4 md:space-y-6 animate-in zoom-in-95 duration-200 px-0 sm:px-4">
+              <Card className="border-none shadow-md shadow-slate-200 overflow-hidden rounded-none sm:rounded-2xl">
                 <CardHeader className="bg-sky-700 text-white">
                   <CardTitle>Nova Movimentação</CardTitle>
                   <CardDescription className="text-sky-100">Preencha os campos abaixo para registrar a retirada da peça.</CardDescription>
