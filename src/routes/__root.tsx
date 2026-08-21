@@ -10,7 +10,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 import { AuthProvider } from "../lib/auth";
 import { Toaster } from "../components/ui/sonner";
-import { bootstrapTechnicians } from "../lib/setup.functions";
+
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
