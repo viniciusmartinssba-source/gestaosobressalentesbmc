@@ -23,8 +23,8 @@ export const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
           </button>
         </div>
         
-        <div className="p-4">
-          <div className="relative aspect-square overflow-hidden rounded-2xl bg-slate-100">
+        <div className="flex-1 p-4 flex flex-col justify-center">
+          <div className="relative aspect-square md:aspect-auto md:h-64 overflow-hidden rounded-2xl bg-slate-100">
             <QrReader
               onResult={(result, error) => {
                 if (result) {
