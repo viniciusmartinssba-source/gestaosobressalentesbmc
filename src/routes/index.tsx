@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   LayoutDashboard, 
   Package, 
-  History, 
+  History as HistoryIcon, 
   LogOut, 
   Search, 
   PlusCircle, 
@@ -11,7 +11,12 @@ import {
   AlertTriangle,
   Menu,
   X,
-  Wind
+  Wind,
+  Camera,
+  FileDown,
+  CheckCircle2,
+  BarChart3,
+  Users
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -25,8 +30,15 @@ import {
   ResponsiveContainer,
   PieChart,
   Pie,
-  Cell
+  Cell,
+  LineChart,
+  Line,
+  Legend
 } from "recharts";
+import { getInitialData } from "@/lib/data.functions";
+import { BarcodeScanner } from "@/components/scanner/BarcodeScanner";
+import { exportToPDF, exportToXLSX } from "@/lib/reports";
+import confetti from "canvas-confetti";
 
 export const Route = createFileRoute("/")({
   component: Dashboard,
