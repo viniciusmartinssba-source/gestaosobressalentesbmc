@@ -63,7 +63,7 @@ function LoginPage() {
             <Wind size={32} />
           </div>
           <div className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-slate-900">Gestão de Sobressalentes</CardTitle>
+            <CardTitle className="text-2xl font-bold text-foreground">Gestão de Sobressalentes</CardTitle>
             <CardDescription>Acesse o painel operacional para registro de peças</CardDescription>
           </div>
         </CardHeader>
