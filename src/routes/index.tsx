@@ -57,9 +57,9 @@ function Dashboard() {
   const [foundPeca, setFoundPeca] = useState<{sap: string, descricao: string} | null>(null);
   
   // Form state
-  const [selectedParque, setSelectedParque] = useState(data.parques[0]);
-  const [selectedAero, setSelectedAero] = useState(data.parques[0].aeros[0]);
-  const [selectedEstoque, setSelectedEstoque] = useState(data.estoques[0]);
+  const [selectedParque, setSelectedParque] = useState<any>(data.parques[0]);
+  const [selectedAero, setSelectedAero] = useState<number>(data.parques[0]!.aeros[0]!);
+  const [selectedEstoque, setSelectedEstoque] = useState<string>(data.estoques[0]!);
   const [quantidade, setQuantidade] = useState(1);
   const [wo, setWo] = useState("");
   
