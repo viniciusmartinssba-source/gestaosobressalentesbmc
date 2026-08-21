@@ -2,18 +2,21 @@ import { createServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 
 export const getInitialData = createServerFn({ method: "GET" }).handler(async () => {
-  const [parquesRes, pecasRes] = await Promise.all([
+  const [parquesRes, pecasRes, profilesRes] = await Promise.all([
     supabase.from('parques').select('*').order('nome'),
-    supabase.from('pecas').select('*').order('descricao')
+    supabase.from('pecas').select('*').order('descricao'),
+    supabase.from('profiles').select('*').order('nome')
   ]);
 
   if (parquesRes.error) throw parquesRes.error;
   if (pecasRes.error) throw pecasRes.error;
+  if (profilesRes.error) throw profilesRes.error;
 
   return {
     parques: parquesRes.data || [],
     estoques: ["1670", "1673"],
     catalogo: pecasRes.data || [],
+    tecnicos: profilesRes.data || [],
   };
 });
 
