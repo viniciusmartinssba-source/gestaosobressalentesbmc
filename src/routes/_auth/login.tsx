@@ -64,7 +64,15 @@ function LoginPage() {
           </div>
           <div className="space-y-1">
             <CardTitle className="text-2xl font-bold text-foreground">Gestão de Sobressalentes</CardTitle>
-            <CardDescription>Acesse o painel operacional para registro de peças</CardDescription>
+            <CardDescription>
+              Acesse o painel operacional para registro de peças.
+              <br />
+              <span className="text-[10px] mt-2 block opacity-70">
+                valide a senha e usuário de todos...
+                <br />
+                Por exemplo: Usuário: u39920 / Senha: U39920
+              </span>
+            </CardDescription>
           </div>
         </CardHeader>
         <CardContent>
