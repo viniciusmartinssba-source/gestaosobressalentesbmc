@@ -455,8 +455,8 @@ function Dashboard() {
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length] || "#0ea5e9"} />
                           ))}
                         </Pie>
-                        <Tooltip contentStyle={{fontSize: '12px', borderRadius: '8px'}} />
-                        <Legend wrapperStyle={{fontSize: '12px'}} />
+                        <Tooltip contentStyle={{fontSize: '12px', borderRadius: '8px', backgroundColor: 'var(--card)', color: 'var(--card-foreground)', border: 'none'}} />
+                        <Legend wrapperStyle={{fontSize: '12px', color: 'var(--foreground)'}} />
                       </PieChart>
                     </ResponsiveContainer>
                   </CardContent>
@@ -467,10 +467,10 @@ function Dashboard() {
 
           {activeTab === "register" && (
             <div className="max-w-2xl mx-auto space-y-4 md:space-y-6 animate-in zoom-in-95 duration-200 px-0 sm:px-4">
-              <Card className="border-none shadow-md shadow-slate-200 overflow-hidden rounded-none sm:rounded-2xl">
-                <CardHeader className="bg-sky-700 text-white">
+              <Card className="border-none shadow-md shadow-border overflow-hidden rounded-none sm:rounded-2xl bg-card text-card-foreground">
+                <CardHeader className="bg-primary text-primary-foreground">
                   <CardTitle>Nova Movimentação</CardTitle>
-                  <CardDescription className="text-sky-100">Preencha os campos abaixo para registrar a retirada da peça.</CardDescription>
+                  <CardDescription className="text-primary-foreground/80">Preencha os campos abaixo para registrar a retirada da peça.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6 pt-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
