@@ -369,41 +369,44 @@ function Dashboard() {
         {/* Content Area */}
         <div className="flex-1 overflow-y-auto p-4 md:p-8">
           {activeTab === "overview" && (
-            <div className="space-y-6 md:space-y-8 animate-in fade-in slide-in-from-bottom-2">
-              <div className="bg-accent border border-border rounded-2xl p-4 md:p-6 flex flex-col md:flex-row items-center gap-4 md:gap-6">
-                <div className="bg-primary p-3 md:p-4 rounded-2xl text-primary-foreground shadow-lg shadow-primary/20 shrink-0">
-                  <BarChart3 size={28} className="md:w-8 md:h-8" />
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="bg-card border border-border rounded-3xl p-6 shadow-sm flex flex-col md:flex-row items-center gap-6 relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-50" />
+                <div className="bg-primary/10 p-4 rounded-2xl text-primary shadow-inner shrink-0 transition-transform group-hover:scale-110 duration-500">
+                  <BarChart3 size={32} />
                 </div>
-                <div className="flex-1 text-center md:text-left">
-                  <h3 className="text-lg md:text-xl font-bold text-foreground">Insights da IA</h3>
-                  <p className="text-muted-foreground text-xs md:text-sm">
+                <div className="flex-1 text-center md:text-left z-10">
+                  <h3 className="text-xl font-bold text-foreground">Insights Inteligentes</h3>
+                  <p className="text-muted-foreground text-sm max-w-2xl leading-relaxed">
                     {history.length > 0 ? (
                       `Análise baseada em ${history.length} registros: O parque ${chartData.sort((a,b) => b.value - a.value)[0]?.name} possui o maior volume de retiradas. Verifique a periodicidade de manutenção preventiva.`
                     ) : (
-                      "Nenhum dado de movimentação disponível para análise de IA no momento."
+                      "Nenhum dado de movimentação disponível para análise no momento."
                     )}
                   </p>
                 </div>
-                <Button variant="secondary" className="w-full md:w-auto">
+                <Button variant="secondary" className="w-full md:w-auto rounded-xl px-6 font-semibold shadow-sm hover:scale-105 transition-transform cursor-pointer">
                   Ver Detalhes
                 </Button>
               </div>
+              
               {/* Stats Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {stats.map((stat, i) => (
-                  <Card key={i} className="border-none shadow-sm shadow-border overflow-hidden bg-card text-card-foreground">
-                    <CardContent className="p-5 md:p-6">
+                  <Card key={i} className="rounded-3xl border-border bg-card/50 backdrop-blur-sm shadow-none hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 group">
+                    <CardContent className="p-6">
                       <div className="flex justify-between items-start">
                         <div>
-                          <p className="text-xs md:text-sm font-medium text-muted-foreground mb-1">{stat.title}</p>
-                          <h3 className={cn("text-xl md:text-2xl font-bold", stat.color || "text-foreground")}>{stat.value}</h3>
+                          <p className="text-sm font-medium text-muted-foreground mb-1">{stat.title}</p>
+                          <h3 className={cn("text-3xl font-extrabold tracking-tight transition-colors", stat.color || "text-foreground")}>{stat.value}</h3>
                         </div>
-                        <div className="bg-accent p-2 md:p-2.5 rounded-xl">
-                          <stat.icon className="text-primary" size={20} />
+                        <div className="bg-accent/50 p-3 rounded-2xl text-primary transition-transform group-hover:rotate-12">
+                          <stat.icon size={24} />
                         </div>
                       </div>
-                      <div className="mt-3 md:mt-4 flex items-center gap-1.5 text-[10px] md:text-xs font-semibold text-emerald-500 bg-emerald-500/10 w-fit px-2 py-1 rounded-full">
-                        {stat.change} <span className="text-muted-foreground font-normal">vs mês anterior</span>
+                      <div className="mt-4 flex items-center gap-2 text-xs font-bold text-emerald-600 bg-emerald-500/10 w-fit px-3 py-1 rounded-full">
+                        <TrendingUp size={12} />
+                        {stat.change} <span className="text-emerald-700/70 font-medium">vs mês anterior</span>
                       </div>
                     </CardContent>
                   </Card>
@@ -411,66 +414,64 @@ function Dashboard() {
               </div>
 
               {/* Charts Section */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-                <Card className="border-none shadow-sm shadow-border bg-card text-card-foreground">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-base md:text-lg">Distribuição por Parque</CardTitle>
-                    <CardDescription className="text-xs md:text-sm">Volume de retiradas por unidade eólica</CardDescription>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card className="rounded-3xl border-border shadow-none p-6 bg-card/50 backdrop-blur-sm">
+                  <CardHeader className="p-0 pb-6">
+                    <CardTitle className="text-lg font-bold">Distribuição por Parque</CardTitle>
+                    <CardDescription>Volume de retiradas por unidade</CardDescription>
                   </CardHeader>
-                  <CardContent className="h-[300px] md:h-80 px-2 md:px-6">
+                  <CardContent className="h-[300px] p-0">
                     <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={chartData}>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
+                      <BarChart data={chartData} margin={{ top: 20, right: 20, left: 0, bottom: 0 }}>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" opacity={0.4} />
                         <XAxis 
                           dataKey="name" 
                           axisLine={false} 
                           tickLine={false} 
-                          tick={{fill: 'var(--muted-foreground)', fontSize: 10}} 
+                          tick={{fill: 'var(--muted-foreground)', fontSize: 12}} 
                           dy={10} 
                         />
                         <YAxis 
                           axisLine={false} 
                           tickLine={false} 
-                          tick={{fill: 'var(--muted-foreground)', fontSize: 10}} 
+                          tick={{fill: 'var(--muted-foreground)', fontSize: 12}} 
                         />
                         <Tooltip 
-                          cursor={{fill: 'var(--accent)'}}
-                          contentStyle={{borderRadius: '12px', border: 'none', backgroundColor: 'var(--card)', color: 'var(--card-foreground)', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', fontSize: '12px'}}
+                          cursor={{fill: 'var(--accent)', opacity: 0.2}}
+                          contentStyle={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
                         />
-                        <Bar dataKey="value" fill="var(--primary)" radius={[6, 6, 0, 0]} />
+                        <Bar dataKey="value" fill="var(--primary)" radius={[6, 6, 0, 0]} barSize={40} />
                       </BarChart>
                     </ResponsiveContainer>
                   </CardContent>
                 </Card>
- 
-                <Card className="border-none shadow-sm shadow-border bg-card text-card-foreground">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-base md:text-lg">Status do Inventário</CardTitle>
-                    <CardDescription className="text-xs md:text-sm">Peças mais retiradas nos últimos 30 dias</CardDescription>
+
+                <Card className="rounded-3xl border-border shadow-none p-6 bg-card/50 backdrop-blur-sm">
+                  <CardHeader className="p-0 pb-6">
+                    <CardTitle className="text-lg font-bold">Status do Inventário</CardTitle>
+                    <CardDescription>Peças mais retiradas nos últimos 30 dias</CardDescription>
                   </CardHeader>
-                  <CardContent className="flex items-center justify-center h-[300px] md:h-80 px-2 md:px-6">
+                  <CardContent className="h-[300px] p-0 flex items-center justify-center">
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
                         <Pie
-                          data={[
-                            { name: 'Rolamento', value: 400 },
-                            { name: 'Sensor', value: 300 },
-                            { name: 'Filtros', value: 300 },
-                            { name: 'Placas', value: 200 },
-                          ]}
+                          data={pieData}
                           cx="50%"
-                          cy="50%"
-                          innerRadius={window.innerWidth < 768 ? 50 : 60}
-                          outerRadius={window.innerWidth < 768 ? 70 : 80}
+                          cy="40%"
+                          innerRadius={60}
+                          outerRadius={90}
                           paddingAngle={5}
                           dataKey="value"
+                          stroke="none"
                         >
-                          {pieData.map((_entry, index) => (
+                          {pieData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length] || "#0ea5e9"} />
                           ))}
                         </Pie>
-                        <Tooltip contentStyle={{fontSize: '12px', borderRadius: '8px', backgroundColor: 'var(--card)', color: 'var(--card-foreground)', border: 'none'}} />
-                        <Legend wrapperStyle={{fontSize: '12px', color: 'var(--foreground)'}} />
+                        <Tooltip 
+                          contentStyle={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                        />
+                        <Legend verticalAlign="bottom" height={36}/>
                       </PieChart>
                     </ResponsiveContainer>
                   </CardContent>
