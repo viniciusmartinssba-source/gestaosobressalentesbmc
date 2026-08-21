@@ -186,12 +186,16 @@ function Dashboard() {
     const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
     
     const countToday = history.filter(h => {
-      const hDate = new Date(h.data.split(', ')[0].split('/').reverse().join('-'));
+      const parts = h.data.split(', ')[0]?.split('/');
+      if (!parts || parts.length < 3) return false;
+      const hDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
       return hDate.getTime() >= today.getTime();
     }).length;
     
     const countMonth = history.filter(h => {
-      const hDate = new Date(h.data.split(', ')[0].split('/').reverse().join('-'));
+      const parts = h.data.split(', ')[0]?.split('/');
+      if (!parts || parts.length < 3) return false;
+      const hDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
       return hDate.getTime() >= startOfMonth.getTime();
     }).length;
 
