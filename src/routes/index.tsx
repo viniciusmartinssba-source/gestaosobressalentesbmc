@@ -106,7 +106,7 @@ function Dashboard() {
                 activeTab === "history" ? "bg-sky-50 text-sky-700 font-medium" : "text-slate-500 hover:bg-slate-50"
               )}
             >
-              <History size={20} /> Histórico
+              <HistoryIcon size={20} /> Histórico
             </button>
             <button 
               className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50"
