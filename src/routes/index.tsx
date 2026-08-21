@@ -48,25 +48,84 @@ export const Route = createFileRoute("/")({
 const COLORS = ['#0ea5e9', '#6366f1', '#8b5cf6', '#ec4899'];
 
 function Dashboard() {
+  const data = Route.useLoaderData();
   const [activeTab, setActiveTab] = useState("overview");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [sapInput, setSapInput] = useState("");
   const [foundPeca, setFoundPeca] = useState<{sap: string, descricao: string} | null>(null);
+  
+  // Form state
+  const [selectedParque, setSelectedParque] = useState(data.parques[0]);
+  const [selectedAero, setSelectedAero] = useState(data.parques[0].aeros[0]);
+  const [selectedEstoque, setSelectedEstoque] = useState(data.estoques[0]);
+  const [quantidade, setQuantidade] = useState(1);
+  const [wo, setWo] = useState("");
+  
+  // History state (mock)
+  const [history, setHistory] = useState([
+    { data: "21/08/2026 09:45", tecnico: "Bruno Terras", parque: "Macaúbas", aero: "04", sap: "1001", peca: "Rolamento Principal", quantidade: 1, wo: "WO-8872", estoque: "1670" },
+    { data: "20/08/2026 14:20", tecnico: "Leonardo Martins", parque: "Seabra", aero: "02", sap: "1005", peca: "Filtro de Óleo", quantidade: 2, wo: "WO-9912", estoque: "1673" },
+  ]);
+
+  useEffect(() => {
+    const peca = data.catalogo.find(p => p.sap === sapInput);
+    setFoundPeca(peca || null);
+  }, [sapInput, data.catalogo]);
+
+  const handleRegister = () => {
+    if (!foundPeca) return;
+    
+    const newEntry = {
+      data: format(new Date(), "dd/MM/yyyy HH:mm"),
+      tecnico: "Bruno Terras", // Simulated user
+      parque: selectedParque.nome,
+      aero: selectedAero.toString(),
+      sap: foundPeca.sap,
+      peca: foundPeca.descricao,
+      quantidade,
+      wo,
+      estoque: selectedEstoque
+    };
+    
+    setHistory([newEntry, ...history]);
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: ['#0ea5e9', '#6366f1']
+    });
+    
+    // Reset form
+    setSapInput("");
+    setQuantidade(1);
+    setWo("");
+    setActiveTab("history");
+  };
 
   const stats = [
-    { title: "Total de Saídas", value: "1,284", icon: Package, change: "+12%" },
+    { title: "Total de Saídas", value: history.length.toString(), icon: Package, change: "+12%" },
     { title: "Peças Críticas", value: "14", icon: AlertTriangle, change: "-2", color: "text-red-500" },
     { title: "Uso de WO", value: "85%", icon: TrendingUp, change: "+5%" },
   ];
 
-  const chartData = [
-    { name: "Macaúbas", value: 450 },
-    { name: "Novo Horizonte", value: 380 },
-    { name: "Seabra", value: 454 },
+  const chartData = data.parques.map(p => ({
+    name: p.nome,
+    value: history.filter(h => h.parque === p.nome).length + Math.floor(Math.random() * 10) // Adding random for visual effect
+  }));
+
+  const pieData = [
+    { name: 'Mecânico', value: 400 },
+    { name: 'Elétrico', value: 300 },
+    { name: 'Sensores', value: 200 },
+    { name: 'Outros', value: 100 },
   ];
 
-  return (
+  const handleScan = (sap: string) => {
+    setSapInput(sap);
+    setIsScannerOpen(false);
+  };
+
     <div className="flex h-screen bg-slate-50 font-sans text-slate-900">
       {/* Sidebar Desktop */}
       <aside className={cn(
