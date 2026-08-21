@@ -114,6 +114,10 @@ function Dashboard() {
   );
 
   useEffect(() => {
+    if (!sapInput) {
+      setFoundPeca(null);
+      return;
+    }
     const peca = data.catalogo.find(p => p.sap === sapInput);
     setFoundPeca(peca || null);
   }, [sapInput, data.catalogo]);
