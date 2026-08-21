@@ -637,13 +637,14 @@ function Dashboard() {
                         <Camera size={24} className="text-slate-600" />
                       </Button>
                     </div>
-                    {foundPeca && (
-                      <div className="bg-emerald-50 p-3 rounded-xl border border-emerald-100 animate-in fade-in slide-in-from-top-1">
-                        <p className="text-sm text-emerald-700 font-medium">
-                          {foundPeca.descricao}
-                        </p>
-                      </div>
-                    )}
+                      {foundPeca && (
+                        <div className="bg-emerald-50 p-3 rounded-xl border border-emerald-100 animate-in fade-in slide-in-from-top-1">
+                          <p className="text-sm text-emerald-700 font-medium">
+                            {foundPeca.descricao}
+                          </p>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
