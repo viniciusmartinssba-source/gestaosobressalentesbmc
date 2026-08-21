@@ -177,7 +177,7 @@ function Dashboard() {
     toast.info("Você saiu do sistema.");
   };
 
-  if (!isAuthenticated || !user) return null;
+  
 
   const stats = [
     { title: "Total de Saídas", value: history.length.toString(), icon: Package, change: "+12%" },
@@ -201,6 +201,9 @@ function Dashboard() {
     setSapInput(sap);
     setIsScannerOpen(false);
   };
+
+  if (!isAuthenticated || !user) return null;
+
   return (
     <div className="flex h-screen bg-background font-sans text-foreground overflow-hidden">
       {/* Sidebar Desktop */}
