@@ -207,64 +207,75 @@ function Dashboard() {
   return (
     <div className="flex h-screen bg-background font-sans text-foreground overflow-hidden">
       {/* Sidebar Desktop */}
-      <aside className="hidden md:flex flex-col w-64 bg-white border-r border-slate-200">
-        <div className="p-6 flex items-center gap-3 border-b border-slate-100">
-          <div className="bg-primary p-2 rounded-lg text-primary-foreground">
+      <aside className="hidden md:flex flex-col w-64 bg-sidebar border-r border-sidebar-border transition-all duration-300 ease-in-out">
+        <div className="p-6 flex items-center gap-3 border-b border-sidebar-border/50">
+          <div className="bg-primary p-2.5 rounded-xl text-primary-foreground shadow-lg shadow-primary/20 animate-in zoom-in duration-500">
             <Wind size={24} />
           </div>
-          <h1 className="font-bold text-lg leading-tight">Gestão de<br/>Sobressalentes</h1>
+          <h1 className="font-bold text-lg leading-tight tracking-tight text-sidebar-foreground">Gestão de<br/>Sobressalentes</h1>
         </div>
 
-        <nav className="flex-1 p-4 space-y-1">
+        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
           <button 
             onClick={() => setActiveTab("overview")}
             className={cn(
-              "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
-              activeTab === "overview" ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20" : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50"
+              "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all duration-200 group cursor-pointer",
+              activeTab === "overview" 
+                ? "bg-primary text-primary-foreground font-bold shadow-md shadow-primary/20 scale-[1.02]" 
+                : "text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground hover:scale-[1.01]"
             )}
           >
-            <LayoutDashboard size={20} /> Dashboard
+            <LayoutDashboard size={20} className={cn("transition-transform group-hover:scale-110", activeTab === "overview" && "scale-110")} /> 
+            <span className="text-sm">Dashboard</span>
           </button>
           <button 
             onClick={() => setActiveTab("register")}
             className={cn(
-              "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
-              activeTab === "register" ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20" : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50"
+              "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all duration-200 group cursor-pointer",
+              activeTab === "register" 
+                ? "bg-primary text-primary-foreground font-bold shadow-md shadow-primary/20 scale-[1.02]" 
+                : "text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground hover:scale-[1.01]"
             )}
           >
-            <PlusCircle size={20} /> Registrar Saída
+            <PlusCircle size={20} className={cn("transition-transform group-hover:scale-110", activeTab === "register" && "scale-110")} /> 
+            <span className="text-sm">Registrar Saída</span>
           </button>
           <button 
             onClick={() => setActiveTab("history")}
             className={cn(
-              "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
-              activeTab === "history" ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20" : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50"
+              "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all duration-200 group cursor-pointer",
+              activeTab === "history" 
+                ? "bg-primary text-primary-foreground font-bold shadow-md shadow-primary/20 scale-[1.02]" 
+                : "text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground hover:scale-[1.01]"
             )}
           >
-            <HistoryIcon size={20} /> Histórico
+            <HistoryIcon size={20} className={cn("transition-transform group-hover:scale-110", activeTab === "history" && "scale-110")} /> 
+            <span className="text-sm">Histórico</span>
           </button>
           <button 
-            className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sidebar-foreground/70 hover:bg-sidebar-accent/50"
+            className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground transition-all duration-200 group cursor-pointer"
           >
-            <Search size={20} /> Catálogo
+            <Search size={20} className="transition-transform group-hover:scale-110" /> 
+            <span className="text-sm">Catálogo</span>
           </button>
         </nav>
 
-        <div className="p-4 border-t border-sidebar-border">
-          <div className="flex items-center gap-3 px-4 py-3 mb-2">
-            <div className="w-10 h-10 rounded-full bg-sidebar-accent flex items-center justify-center font-bold text-sidebar-foreground shrink-0">
+        <div className="p-4 border-t border-sidebar-border/50 bg-sidebar-accent/10">
+          <div className="flex items-center gap-3 px-3 py-2.5 mb-2 rounded-xl border border-transparent hover:border-sidebar-border transition-colors group">
+            <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center font-bold text-primary shrink-0 transition-transform group-hover:scale-105">
               {user.nome.split(' ').map(n => n[0]).join('')}
             </div>
             <div className="flex-1 overflow-hidden">
-              <p className="text-sm font-medium truncate">{user.nome}</p>
-              <p className="text-xs text-sidebar-foreground/50">{user.matricula}</p>
+              <p className="text-sm font-bold truncate text-sidebar-foreground">{user.nome}</p>
+              <p className="text-[10px] text-sidebar-foreground/50 font-medium uppercase tracking-wider">{user.matricula}</p>
             </div>
           </div>
           <button 
             onClick={handleLogout}
-            className="flex items-center gap-3 w-full px-4 py-2 text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
+            className="flex items-center gap-3 w-full px-4 py-2.5 text-destructive/80 hover:text-destructive hover:bg-destructive/10 rounded-xl transition-all duration-200 text-sm font-medium group cursor-pointer"
           >
-            <LogOut size={18} /> Sair
+            <LogOut size={18} className="transition-transform group-hover:-translate-x-1" /> 
+            Sair do Sistema
           </button>
         </div>
       </aside>
