@@ -219,15 +219,18 @@ function Dashboard() {
 
           <div className="p-4 border-t border-slate-100">
             <div className="flex items-center gap-3 px-4 py-3 mb-2">
-              <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-600">
-                BT
+              <div className="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center font-bold text-sky-700">
+                {user.nome.split(' ').map(n => n[0]).join('')}
               </div>
               <div className="flex-1 overflow-hidden">
-                <p className="text-sm font-medium truncate">Bruno Terras</p>
-                <p className="text-xs text-slate-400">U57097</p>
+                <p className="text-sm font-medium truncate">{user.nome}</p>
+                <p className="text-xs text-slate-400">{user.matricula}</p>
               </div>
             </div>
-            <button className="flex items-center gap-3 w-full px-4 py-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+            <button 
+              onClick={handleLogout}
+              className="flex items-center gap-3 w-full px-4 py-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+            >
               <LogOut size={18} /> Sair
             </button>
           </div>
@@ -364,63 +367,71 @@ function Dashboard() {
                 <CardContent className="space-y-6 pt-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label className="text-sm font-semibold text-slate-700">Parque Eólico</label>
-                      <select 
-                        value={selectedParque.id}
-                        onChange={(e) => {
-                          const p = data.parques.find(p => p.id === e.target.value);
-                          if (p) {
-                            setSelectedParque(p);
-                            setSelectedAero(p.aeros[0]!);
-                          }
+                      <Label>Parque Eólico</Label>
+                      <Select 
+                        value={selectedParqueId}
+                        onValueChange={(val) => {
+                          setSelectedParqueId(val);
+                          const p = data.parques.find(p => p.id === val);
+                          if (p) setSelectedAero(p.aeros[0]!.toString());
                         }}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky-500 outline-none appearance-none transition-all"
                       >
-                        {data.parques.map(p => (
-                          <option key={p.id} value={p.id}>{p.nome}</option>
-                        ))}
-                      </select>
+                        <SelectTrigger className="h-12 rounded-xl bg-slate-50">
+                          <SelectValue placeholder="Selecione o parque" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {data.parques.map(p => (
+                            <SelectItem key={p.id} value={p.id}>{p.nome}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-sm font-semibold text-slate-700">Aerogerador</label>
-                      <select 
+                      <Label>Aerogerador</Label>
+                      <Select 
                         value={selectedAero}
-                        onChange={(e) => setSelectedAero(Number(e.target.value))}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky-500 outline-none appearance-none transition-all"
+                        onValueChange={setSelectedAero}
                       >
-                        {selectedParque.aeros.map((a: number) => (
-                          <option key={a} value={a}>Aero {a.toString().padStart(2, '0')}</option>
-                        ))}
-                      </select>
+                        <SelectTrigger className="h-12 rounded-xl bg-slate-50">
+                          <SelectValue placeholder="Selecione o aero" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {selectedParque.aeros.map((a: number) => (
+                            <SelectItem key={a} value={a.toString()}>Aero {a.toString().padStart(2, '0')}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-semibold text-slate-700">Peça (Código SAP)</label>
+                    <Label>Peça (Código SAP)</Label>
                     <div className="flex gap-2">
                       <div className="relative flex-1">
-                        <input 
+                        <Input 
                           type="text" 
                           value={sapInput}
                           onChange={(e) => setSapInput(e.target.value)}
                           placeholder="Ex: 1001"
                           className={cn(
-                            "w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky-500 outline-none transition-all",
-                            foundPeca && "border-emerald-500 ring-1 ring-emerald-500"
+                            "h-12 rounded-xl bg-slate-50 pr-10",
+                            foundPeca && "border-emerald-500 ring-emerald-500"
                           )}
                         />
                         {foundPeca ? (
-                          <CheckCircle2 className="absolute right-4 top-3.5 text-emerald-500" size={18} />
+                          <CheckCircle2 className="absolute right-3 top-3 text-emerald-500" size={20} />
                         ) : (
-                          <Search className="absolute right-4 top-3.5 text-slate-400" size={18} />
+                          <Search className="absolute right-3 top-3 text-slate-400" size={20} />
                         )}
                       </div>
-                      <button 
+                      <Button 
+                        variant="secondary"
+                        size="icon"
                         onClick={() => setIsScannerOpen(true)}
-                        className="bg-slate-100 p-3 rounded-xl hover:bg-slate-200 transition-colors"
+                        className="h-12 w-12 rounded-xl"
                       >
                         <Camera size={24} className="text-slate-600" />
-                      </button>
+                      </Button>
                     </div>
                     {foundPeca && (
                       <div className="bg-emerald-50 p-3 rounded-xl border border-emerald-100 animate-in fade-in slide-in-from-top-1">
