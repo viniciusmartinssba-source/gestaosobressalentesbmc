@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   LayoutDashboard, 
   Package, 
-  History, 
+  History as HistoryIcon, 
   LogOut, 
   Search, 
   PlusCircle, 
@@ -11,7 +11,12 @@ import {
   AlertTriangle,
   Menu,
   X,
-  Wind
+  Wind,
+  Camera,
+  FileDown,
+  CheckCircle2,
+  BarChart3,
+  Users
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -25,31 +30,102 @@ import {
   ResponsiveContainer,
   PieChart,
   Pie,
-  Cell
+  Cell,
+  LineChart,
+  Line,
+  Legend
 } from "recharts";
+import { getInitialData } from "@/lib/data.functions";
+import { BarcodeScanner } from "@/components/scanner/BarcodeScanner";
+import { exportToPDF, exportToXLSX } from "@/lib/reports";
+import confetti from "canvas-confetti";
+import { format } from "date-fns";
 
 export const Route = createFileRoute("/")({
   component: Dashboard,
+  loader: async () => getInitialData(),
 });
 
 const COLORS = ['#0ea5e9', '#6366f1', '#8b5cf6', '#ec4899'];
 
 function Dashboard() {
+  const data = Route.useLoaderData();
   const [activeTab, setActiveTab] = useState("overview");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const [sapInput, setSapInput] = useState("");
+  const [foundPeca, setFoundPeca] = useState<{sap: string, descricao: string} | null>(null);
+  
+  // Form state
+  const [selectedParque, setSelectedParque] = useState<any>(data.parques[0]);
+  const [selectedAero, setSelectedAero] = useState<number>(data.parques[0]!.aeros[0]!);
+  const [selectedEstoque, setSelectedEstoque] = useState<string>(data.estoques[0]!);
+  const [quantidade, setQuantidade] = useState(1);
+  const [wo, setWo] = useState("");
+  
+  // History state (mock)
+  const [history, setHistory] = useState([
+    { data: "21/08/2026 09:45", tecnico: "Bruno Terras", parque: "Macaúbas", aero: "04", sap: "1001", peca: "Rolamento Principal", quantidade: 1, wo: "WO-8872", estoque: "1670" },
+    { data: "20/08/2026 14:20", tecnico: "Leonardo Martins", parque: "Seabra", aero: "02", sap: "1005", peca: "Filtro de Óleo", quantidade: 2, wo: "WO-9912", estoque: "1673" },
+  ]);
+
+  useEffect(() => {
+    const peca = data.catalogo.find(p => p.sap === sapInput);
+    setFoundPeca(peca || null);
+  }, [sapInput, data.catalogo]);
+
+  const handleRegister = () => {
+    if (!foundPeca) return;
+    
+    const newEntry = {
+      data: format(new Date(), "dd/MM/yyyy HH:mm"),
+      tecnico: "Bruno Terras", // Simulated user
+      parque: selectedParque.nome,
+      aero: selectedAero?.toString() || "0",
+      sap: foundPeca.sap,
+      peca: foundPeca.descricao,
+      quantidade,
+      wo,
+      estoque: selectedEstoque
+    };
+    
+    setHistory([newEntry, ...history]);
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: ['#0ea5e9', '#6366f1']
+    });
+    
+    // Reset form
+    setSapInput("");
+    setQuantidade(1);
+    setWo("");
+    setActiveTab("history");
+  };
 
   const stats = [
-    { title: "Total de Saídas", value: "1,284", icon: Package, change: "+12%" },
+    { title: "Total de Saídas", value: history.length.toString(), icon: Package, change: "+12%" },
     { title: "Peças Críticas", value: "14", icon: AlertTriangle, change: "-2", color: "text-red-500" },
     { title: "Uso de WO", value: "85%", icon: TrendingUp, change: "+5%" },
   ];
 
-  const chartData = [
-    { name: "Macaúbas", value: 450 },
-    { name: "Novo Horizonte", value: 380 },
-    { name: "Seabra", value: 454 },
+  const chartData = data.parques.map(p => ({
+    name: p.nome,
+    value: history.filter(h => h.parque === p.nome).length + Math.floor(Math.random() * 10) // Adding random for visual effect
+  }));
+
+  const pieData = [
+    { name: 'Mecânico', value: 400 },
+    { name: 'Elétrico', value: 300 },
+    { name: 'Sensores', value: 200 },
+    { name: 'Outros', value: 100 },
   ];
 
+  const handleScan = (sap: string) => {
+    setSapInput(sap);
+    setIsScannerOpen(false);
+  };
   return (
     <div className="flex h-screen bg-slate-50 font-sans text-slate-900">
       {/* Sidebar Desktop */}
@@ -91,7 +167,7 @@ function Dashboard() {
                 activeTab === "history" ? "bg-sky-50 text-sky-700 font-medium" : "text-slate-500 hover:bg-slate-50"
               )}
             >
-              <History size={20} /> Histórico
+              <HistoryIcon size={20} /> Histórico
             </button>
             <button 
               className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50"
@@ -143,6 +219,20 @@ function Dashboard() {
         <div className="flex-1 overflow-y-auto p-6 md:p-8">
           {activeTab === "overview" && (
             <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2">
+              <div className="bg-sky-50 border border-sky-100 rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6">
+                <div className="bg-sky-600 p-4 rounded-2xl text-white shadow-lg shadow-sky-100">
+                  <BarChart3 size={32} />
+                </div>
+                <div className="flex-1 text-center md:text-left">
+                  <h3 className="text-xl font-bold text-sky-900">Insights da IA</h3>
+                  <p className="text-sky-700/80 text-sm">
+                    Análise preditiva: O Aerogerador <strong>NH-05</strong> apresentou um aumento de 30% na troca de filtros. Recomenda-se inspeção preventiva no sistema de arrefecimento.
+                  </p>
+                </div>
+                <button className="px-6 py-2.5 bg-white text-sky-700 border border-sky-200 rounded-xl text-sm font-bold hover:bg-sky-100 transition-colors shadow-sm">
+                  Ver Detalhes
+                </button>
+              </div>
               {/* Stats Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {stats.map((stat, i) => (
@@ -225,40 +315,102 @@ function Dashboard() {
 
           {activeTab === "register" && (
             <div className="max-w-2xl mx-auto space-y-6 animate-in zoom-in-95 duration-200">
-              <Card className="border-none shadow-md shadow-slate-200">
-                <CardHeader>
+              <Card className="border-none shadow-md shadow-slate-200 overflow-hidden">
+                <CardHeader className="bg-sky-700 text-white">
                   <CardTitle>Nova Movimentação</CardTitle>
-                  <CardDescription>Preencha os campos abaixo para registrar a retirada da peça.</CardDescription>
+                  <CardDescription className="text-sky-100">Preencha os campos abaixo para registrar a retirada da peça.</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
+                <CardContent className="space-y-6 pt-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <label className="text-sm font-semibold text-slate-700">Parque Eólico</label>
-                      <select className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky-500 outline-none appearance-none transition-all">
-                        <option>Macaúbas</option>
-                        <option>Novo Horizonte</option>
-                        <option>Seabra</option>
+                      <select 
+                        value={selectedParque.id}
+                        onChange={(e) => {
+                          const p = data.parques.find(p => p.id === e.target.value);
+                          if (p) {
+                            setSelectedParque(p);
+                            setSelectedAero(p.aeros[0]!);
+                          }
+                        }}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky-500 outline-none appearance-none transition-all"
+                      >
+                        {data.parques.map(p => (
+                          <option key={p.id} value={p.id}>{p.nome}</option>
+                        ))}
                       </select>
                     </div>
                     <div className="space-y-2">
                       <label className="text-sm font-semibold text-slate-700">Aerogerador</label>
-                      <select className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky-500 outline-none appearance-none transition-all">
-                        <option>Aero 01</option>
-                        <option>Aero 02</option>
-                        <option>Aero 03</option>
+                      <select 
+                        value={selectedAero}
+                        onChange={(e) => setSelectedAero(Number(e.target.value))}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky-500 outline-none appearance-none transition-all"
+                      >
+                        {selectedParque.aeros.map((a: number) => (
+                          <option key={a} value={a}>Aero {a.toString().padStart(2, '0')}</option>
+                        ))}
                       </select>
                     </div>
                   </div>
 
                   <div className="space-y-2">
                     <label className="text-sm font-semibold text-slate-700">Peça (Código SAP)</label>
-                    <div className="relative">
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <input 
+                          type="text" 
+                          value={sapInput}
+                          onChange={(e) => setSapInput(e.target.value)}
+                          placeholder="Ex: 1001"
+                          className={cn(
+                            "w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky-500 outline-none transition-all",
+                            foundPeca && "border-emerald-500 ring-1 ring-emerald-500"
+                          )}
+                        />
+                        {foundPeca ? (
+                          <CheckCircle2 className="absolute right-4 top-3.5 text-emerald-500" size={18} />
+                        ) : (
+                          <Search className="absolute right-4 top-3.5 text-slate-400" size={18} />
+                        )}
+                      </div>
+                      <button 
+                        onClick={() => setIsScannerOpen(true)}
+                        className="bg-slate-100 p-3 rounded-xl hover:bg-slate-200 transition-colors"
+                      >
+                        <Camera size={24} className="text-slate-600" />
+                      </button>
+                    </div>
+                    {foundPeca && (
+                      <div className="bg-emerald-50 p-3 rounded-xl border border-emerald-100 animate-in fade-in slide-in-from-top-1">
+                        <p className="text-sm text-emerald-700 font-medium">
+                          {foundPeca.descricao}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold text-slate-700">Quantidade</label>
                       <input 
-                        type="text" 
-                        placeholder="Ex: 1001"
+                        type="number" 
+                        value={quantidade}
+                        onChange={(e) => setQuantidade(Number(e.target.value))}
                         className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky-500 outline-none transition-all"
                       />
-                      <Search className="absolute right-4 top-3.5 text-slate-400" size={18} />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold text-slate-700">Estoque (Opcional)</label>
+                      <select 
+                        value={selectedEstoque}
+                        onChange={(e) => setSelectedEstoque(e.target.value)}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky-500 outline-none transition-all"
+                      >
+                        {data.estoques.map(e => (
+                          <option key={e} value={e}>Estoque {e}</option>
+                        ))}
+                      </select>
                     </div>
                   </div>
 
@@ -266,12 +418,21 @@ function Dashboard() {
                     <label className="text-sm font-semibold text-slate-700">Work Order (Opcional)</label>
                     <input 
                       type="text" 
+                      value={wo}
+                      onChange={(e) => setWo(e.target.value)}
                       placeholder="Número da WO"
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky-500 outline-none transition-all"
                     />
                   </div>
 
-                  <button className="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-sky-100 transition-all flex items-center justify-center gap-2">
+                  <button 
+                    onClick={handleRegister}
+                    disabled={!foundPeca}
+                    className={cn(
+                      "w-full font-bold py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2",
+                      foundPeca ? "bg-sky-600 hover:bg-sky-700 text-white shadow-sky-100" : "bg-slate-200 text-slate-400 cursor-not-allowed shadow-none"
+                    )}
+                  >
                     <PlusCircle size={20} /> Confirmar Retirada
                   </button>
                 </CardContent>
@@ -281,7 +442,25 @@ function Dashboard() {
 
           {activeTab === "history" && (
             <div className="space-y-6 animate-in fade-in duration-300">
-              <Card className="border-none shadow-sm shadow-slate-200">
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-bold text-slate-800">Registros Recentes</h3>
+                <div className="flex gap-2">
+                  <button 
+                    onClick={() => exportToXLSX(history)}
+                    className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-medium transition-colors"
+                  >
+                    <FileDown size={18} /> Excel
+                  </button>
+                  <button 
+                    onClick={() => exportToPDF(history)}
+                    className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-medium transition-colors"
+                  >
+                    <FileDown size={18} /> PDF
+                  </button>
+                </div>
+              </div>
+              
+              <Card className="border-none shadow-sm shadow-slate-200 overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse">
                     <thead>
@@ -290,20 +469,29 @@ function Dashboard() {
                         <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Técnico</th>
                         <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Local</th>
                         <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Peça</th>
+                        <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Qtd</th>
                         <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase">WO</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50">
-                      {[1, 2, 3, 4, 5].map((_, i) => (
+                      {history.map((item, i) => (
                         <tr key={i} className="hover:bg-slate-50/50 transition-colors">
-                          <td className="px-6 py-4 text-sm text-slate-600">21/08/2026 09:45</td>
-                          <td className="px-6 py-4 text-sm font-medium text-slate-900">Bruno Terras</td>
-                          <td className="px-6 py-4 text-sm text-slate-600">Macaúbas - Aero 04</td>
-                          <td className="px-6 py-4 text-sm text-slate-600">SAP 1001 - Rolamento</td>
+                          <td className="px-6 py-4 text-sm text-slate-600">{item.data}</td>
+                          <td className="px-6 py-4 text-sm font-medium text-slate-900">{item.tecnico}</td>
+                          <td className="px-6 py-4 text-sm text-slate-600">{item.parque} - {item.aero}</td>
+                          <td className="px-6 py-4 text-sm text-slate-600">
+                            <span className="font-mono text-[10px] bg-slate-100 px-1 rounded mr-2">SAP {item.sap}</span>
+                            {item.peca}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-slate-600">{item.quantidade}</td>
                           <td className="px-6 py-4">
-                            <span className="bg-sky-100 text-sky-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tighter">
-                              WO-8872
-                            </span>
+                            {item.wo ? (
+                              <span className="bg-sky-100 text-sky-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tighter">
+                                {item.wo}
+                              </span>
+                            ) : (
+                              <span className="text-slate-300 text-xs">-</span>
+                            )}
                           </td>
                         </tr>
                       ))}
@@ -315,6 +503,13 @@ function Dashboard() {
           )}
         </div>
       </main>
+
+      {isScannerOpen && (
+        <BarcodeScanner 
+          onScan={handleScan}
+          onClose={() => setIsScannerOpen(false)}
+        />
+      )}
 
       {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
