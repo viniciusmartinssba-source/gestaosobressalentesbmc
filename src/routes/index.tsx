@@ -375,20 +375,20 @@ function Dashboard() {
                 </Button>
               </div>
               {/* Stats Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                 {stats.map((stat, i) => (
                   <Card key={i} className="border-none shadow-sm shadow-slate-200 overflow-hidden">
-                    <CardContent className="p-6">
+                    <CardContent className="p-5 md:p-6">
                       <div className="flex justify-between items-start">
                         <div>
-                          <p className="text-sm font-medium text-slate-500 mb-1">{stat.title}</p>
-                          <h3 className={cn("text-2xl font-bold", stat.color || "text-slate-900")}>{stat.value}</h3>
+                          <p className="text-xs md:text-sm font-medium text-slate-500 mb-1">{stat.title}</p>
+                          <h3 className={cn("text-xl md:text-2xl font-bold", stat.color || "text-slate-900")}>{stat.value}</h3>
                         </div>
-                        <div className="bg-slate-50 p-2.5 rounded-xl">
-                          <stat.icon className="text-sky-600" size={24} />
+                        <div className="bg-slate-50 p-2 md:p-2.5 rounded-xl">
+                          <stat.icon className="text-sky-600" size={20} />
                         </div>
                       </div>
-                      <div className="mt-4 flex items-center gap-1.5 text-xs font-semibold text-emerald-600 bg-emerald-50 w-fit px-2 py-1 rounded-full">
+                      <div className="mt-3 md:mt-4 flex items-center gap-1.5 text-[10px] md:text-xs font-semibold text-emerald-600 bg-emerald-50 w-fit px-2 py-1 rounded-full">
                         {stat.change} <span className="text-slate-400 font-normal">vs mês anterior</span>
                       </div>
                     </CardContent>
