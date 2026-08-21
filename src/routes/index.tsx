@@ -356,13 +356,13 @@ function Dashboard() {
         <div className="flex-1 overflow-y-auto p-4 md:p-8">
           {activeTab === "overview" && (
             <div className="space-y-6 md:space-y-8 animate-in fade-in slide-in-from-bottom-2">
-              <div className="bg-sky-50 border border-sky-100 rounded-2xl p-4 md:p-6 flex flex-col md:flex-row items-center gap-4 md:gap-6">
-                <div className="bg-sky-600 p-3 md:p-4 rounded-2xl text-white shadow-lg shadow-sky-100 shrink-0">
+              <div className="bg-accent border border-border rounded-2xl p-4 md:p-6 flex flex-col md:flex-row items-center gap-4 md:gap-6">
+                <div className="bg-primary p-3 md:p-4 rounded-2xl text-primary-foreground shadow-lg shadow-primary/20 shrink-0">
                   <BarChart3 size={28} className="md:w-8 md:h-8" />
                 </div>
                 <div className="flex-1 text-center md:text-left">
-                  <h3 className="text-lg md:text-xl font-bold text-sky-900">Insights da IA</h3>
-                  <p className="text-sky-700/80 text-xs md:text-sm">
+                  <h3 className="text-lg md:text-xl font-bold text-foreground">Insights da IA</h3>
+                  <p className="text-muted-foreground text-xs md:text-sm">
                     {history.length > 0 ? (
                       `Análise baseada em ${history.length} registros: O parque ${chartData.sort((a,b) => b.value - a.value)[0]?.name} possui o maior volume de retiradas. Verifique a periodicidade de manutenção preventiva.`
                     ) : (
