@@ -601,20 +601,20 @@ function Dashboard() {
 
           {activeTab === "history" && (
             <div className="space-y-6 animate-in fade-in duration-300">
-              <div className="flex justify-between items-center">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <h3 className="text-lg font-bold text-slate-800">Registros Recentes</h3>
-                <div className="flex gap-2">
+                <div className="flex gap-2 w-full sm:w-auto">
                   <Button 
                     variant="outline"
                     onClick={() => exportToXLSX(history)}
-                    className="rounded-xl border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                    className="flex-1 sm:flex-none rounded-xl border-emerald-200 text-emerald-700 hover:bg-emerald-50"
                   >
                     <FileDown size={18} /> Excel
                   </Button>
                   <Button 
                     variant="outline"
                     onClick={() => exportToPDF(history)}
-                    className="rounded-xl border-red-200 text-red-700 hover:bg-red-50"
+                    className="flex-1 sm:flex-none rounded-xl border-red-200 text-red-700 hover:bg-red-50"
                   >
                     <FileDown size={18} /> PDF
                   </Button>
