@@ -353,7 +353,7 @@ function Dashboard() {
         </header>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-y-auto p-6 md:p-8">
+        <div className="flex-1 overflow-y-auto p-4 md:p-8">
           {activeTab === "overview" && (
             <div className="space-y-6 md:space-y-8 animate-in fade-in slide-in-from-bottom-2">
               <div className="bg-sky-50 border border-sky-100 rounded-2xl p-4 md:p-6 flex flex-col md:flex-row items-center gap-4 md:gap-6">
