@@ -301,40 +301,102 @@ function Dashboard() {
 
           {activeTab === "register" && (
             <div className="max-w-2xl mx-auto space-y-6 animate-in zoom-in-95 duration-200">
-              <Card className="border-none shadow-md shadow-slate-200">
-                <CardHeader>
+              <Card className="border-none shadow-md shadow-slate-200 overflow-hidden">
+                <CardHeader className="bg-sky-700 text-white">
                   <CardTitle>Nova Movimentação</CardTitle>
-                  <CardDescription>Preencha os campos abaixo para registrar a retirada da peça.</CardDescription>
+                  <CardDescription className="text-sky-100">Preencha os campos abaixo para registrar a retirada da peça.</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
+                <CardContent className="space-y-6 pt-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <label className="text-sm font-semibold text-slate-700">Parque Eólico</label>
-                      <select className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky-500 outline-none appearance-none transition-all">
-                        <option>Macaúbas</option>
-                        <option>Novo Horizonte</option>
-                        <option>Seabra</option>
+                      <select 
+                        value={selectedParque.id}
+                        onChange={(e) => {
+                          const p = data.parques.find(p => p.id === e.target.value);
+                          if (p) {
+                            setSelectedParque(p);
+                            setSelectedAero(p.aeros[0]!);
+                          }
+                        }}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky-500 outline-none appearance-none transition-all"
+                      >
+                        {data.parques.map(p => (
+                          <option key={p.id} value={p.id}>{p.nome}</option>
+                        ))}
                       </select>
                     </div>
                     <div className="space-y-2">
                       <label className="text-sm font-semibold text-slate-700">Aerogerador</label>
-                      <select className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky-500 outline-none appearance-none transition-all">
-                        <option>Aero 01</option>
-                        <option>Aero 02</option>
-                        <option>Aero 03</option>
+                      <select 
+                        value={selectedAero}
+                        onChange={(e) => setSelectedAero(Number(e.target.value))}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky-500 outline-none appearance-none transition-all"
+                      >
+                        {selectedParque.aeros.map(a => (
+                          <option key={a} value={a}>Aero {a.toString().padStart(2, '0')}</option>
+                        ))}
                       </select>
                     </div>
                   </div>
 
                   <div className="space-y-2">
                     <label className="text-sm font-semibold text-slate-700">Peça (Código SAP)</label>
-                    <div className="relative">
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <input 
+                          type="text" 
+                          value={sapInput}
+                          onChange={(e) => setSapInput(e.target.value)}
+                          placeholder="Ex: 1001"
+                          className={cn(
+                            "w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky-500 outline-none transition-all",
+                            foundPeca && "border-emerald-500 ring-1 ring-emerald-500"
+                          )}
+                        />
+                        {foundPeca ? (
+                          <CheckCircle2 className="absolute right-4 top-3.5 text-emerald-500" size={18} />
+                        ) : (
+                          <Search className="absolute right-4 top-3.5 text-slate-400" size={18} />
+                        )}
+                      </div>
+                      <button 
+                        onClick={() => setIsScannerOpen(true)}
+                        className="bg-slate-100 p-3 rounded-xl hover:bg-slate-200 transition-colors"
+                      >
+                        <Camera size={24} className="text-slate-600" />
+                      </button>
+                    </div>
+                    {foundPeca && (
+                      <div className="bg-emerald-50 p-3 rounded-xl border border-emerald-100 animate-in fade-in slide-in-from-top-1">
+                        <p className="text-sm text-emerald-700 font-medium">
+                          {foundPeca.descricao}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold text-slate-700">Quantidade</label>
                       <input 
-                        type="text" 
-                        placeholder="Ex: 1001"
+                        type="number" 
+                        value={quantidade}
+                        onChange={(e) => setQuantidade(Number(e.target.value))}
                         className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky-500 outline-none transition-all"
                       />
-                      <Search className="absolute right-4 top-3.5 text-slate-400" size={18} />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-semibold text-slate-700">Estoque (Opcional)</label>
+                      <select 
+                        value={selectedEstoque}
+                        onChange={(e) => setSelectedEstoque(e.target.value)}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky-500 outline-none transition-all"
+                      >
+                        {data.estoques.map(e => (
+                          <option key={e} value={e}>Estoque {e}</option>
+                        ))}
+                      </select>
                     </div>
                   </div>
 
@@ -342,12 +404,21 @@ function Dashboard() {
                     <label className="text-sm font-semibold text-slate-700">Work Order (Opcional)</label>
                     <input 
                       type="text" 
+                      value={wo}
+                      onChange={(e) => setWo(e.target.value)}
                       placeholder="Número da WO"
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky-500 outline-none transition-all"
                     />
                   </div>
 
-                  <button className="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-sky-100 transition-all flex items-center justify-center gap-2">
+                  <button 
+                    onClick={handleRegister}
+                    disabled={!foundPeca}
+                    className={cn(
+                      "w-full font-bold py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2",
+                      foundPeca ? "bg-sky-600 hover:bg-sky-700 text-white shadow-sky-100" : "bg-slate-200 text-slate-400 cursor-not-allowed shadow-none"
+                    )}
+                  >
                     <PlusCircle size={20} /> Confirmar Retirada
                   </button>
                 </CardContent>
@@ -357,7 +428,25 @@ function Dashboard() {
 
           {activeTab === "history" && (
             <div className="space-y-6 animate-in fade-in duration-300">
-              <Card className="border-none shadow-sm shadow-slate-200">
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-bold text-slate-800">Registros Recentes</h3>
+                <div className="flex gap-2">
+                  <button 
+                    onClick={() => exportToXLSX(history)}
+                    className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-medium transition-colors"
+                  >
+                    <FileDown size={18} /> Excel
+                  </button>
+                  <button 
+                    onClick={() => exportToPDF(history)}
+                    className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-medium transition-colors"
+                  >
+                    <FileDown size={18} /> PDF
+                  </button>
+                </div>
+              </div>
+              
+              <Card className="border-none shadow-sm shadow-slate-200 overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse">
                     <thead>
@@ -366,20 +455,29 @@ function Dashboard() {
                         <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Técnico</th>
                         <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Local</th>
                         <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Peça</th>
+                        <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Qtd</th>
                         <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase">WO</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50">
-                      {[1, 2, 3, 4, 5].map((_, i) => (
+                      {history.map((item, i) => (
                         <tr key={i} className="hover:bg-slate-50/50 transition-colors">
-                          <td className="px-6 py-4 text-sm text-slate-600">21/08/2026 09:45</td>
-                          <td className="px-6 py-4 text-sm font-medium text-slate-900">Bruno Terras</td>
-                          <td className="px-6 py-4 text-sm text-slate-600">Macaúbas - Aero 04</td>
-                          <td className="px-6 py-4 text-sm text-slate-600">SAP 1001 - Rolamento</td>
+                          <td className="px-6 py-4 text-sm text-slate-600">{item.data}</td>
+                          <td className="px-6 py-4 text-sm font-medium text-slate-900">{item.tecnico}</td>
+                          <td className="px-6 py-4 text-sm text-slate-600">{item.parque} - {item.aero}</td>
+                          <td className="px-6 py-4 text-sm text-slate-600">
+                            <span className="font-mono text-[10px] bg-slate-100 px-1 rounded mr-2">SAP {item.sap}</span>
+                            {item.peca}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-slate-600">{item.quantidade}</td>
                           <td className="px-6 py-4">
-                            <span className="bg-sky-100 text-sky-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tighter">
-                              WO-8872
-                            </span>
+                            {item.wo ? (
+                              <span className="bg-sky-100 text-sky-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tighter">
+                                {item.wo}
+                              </span>
+                            ) : (
+                              <span className="text-slate-300 text-xs">-</span>
+                            )}
                           </td>
                         </tr>
                       ))}
@@ -391,6 +489,13 @@ function Dashboard() {
           )}
         </div>
       </main>
+
+      {isScannerOpen && (
+        <BarcodeScanner 
+          onScan={handleScan}
+          onClose={() => setIsScannerOpen(false)}
+        />
+      )}
 
       {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
