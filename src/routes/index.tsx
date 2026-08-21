@@ -90,6 +90,9 @@ function Dashboard() {
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [sapInput, setSapInput] = useState("");
   const [foundPeca, setFoundPeca] = useState<{sap: string, descricao: string} | null>(null);
+  const [catalogSearch, setCatalogSearch] = useState("");
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [importText, setImportText] = useState("");
   
   // Form state
   const [selectedParqueId, setSelectedParqueId] = useState<string>(data.parques[0]?.id || "");
@@ -111,6 +114,10 @@ function Dashboard() {
   );
 
   useEffect(() => {
+    if (!sapInput) {
+      setFoundPeca(null);
+      return;
+    }
     const peca = data.catalogo.find(p => p.sap === sapInput);
     setFoundPeca(peca || null);
   }, [sapInput, data.catalogo]);
@@ -287,9 +294,15 @@ function Dashboard() {
             <span className="text-sm">Histórico</span>
           </button>
           <button 
-            className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground transition-all duration-200 group cursor-pointer"
+            onClick={() => setActiveTab("catalog")}
+            className={cn(
+              "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all duration-200 group cursor-pointer",
+              activeTab === "catalog" 
+                ? "bg-primary text-primary-foreground font-bold shadow-md shadow-primary/20 scale-[1.02]" 
+                : "text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground hover:scale-[1.01]"
+            )}
           >
-            <Search size={20} className="transition-transform group-hover:scale-110" /> 
+            <Search size={20} className={cn("transition-transform group-hover:scale-110", activeTab === "catalog" && "scale-110")} /> 
             <span className="text-sm">Catálogo</span>
           </button>
         </nav>
@@ -361,6 +374,15 @@ function Dashboard() {
                     >
                       <HistoryIcon size={20} /> Histórico
                     </button>
+                    <button 
+                      onClick={() => { setActiveTab("catalog"); setIsSidebarOpen(false); }}
+                      className={cn(
+                        "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
+                        activeTab === "catalog" ? "bg-accent text-accent-foreground font-medium" : "text-muted-foreground hover:bg-accent/50"
+                      )}
+                    >
+                      <Search size={20} /> Catálogo
+                    </button>
                   </nav>
                   <div className="p-4 border-t border-border">
                     <div className="flex items-center gap-3 px-4 py-3 mb-2">
@@ -387,6 +409,7 @@ function Dashboard() {
               {activeTab === "overview" && "Dashboard"}
               {activeTab === "register" && "Registro"}
               {activeTab === "history" && "Histórico"}
+              {activeTab === "catalog" && "Catálogo"}
             </h2>
           </div>
           <div className="text-sm font-medium text-slate-500 flex items-center gap-2">
@@ -410,10 +433,11 @@ function Dashboard() {
                   <BarChart3 size={32} />
                 </div>
                 <div className="flex-1 text-center md:text-left z-10">
-                  <h3 className="text-xl font-bold text-foreground">Insights Estratégicos</h3>
-                  <p className="text-muted-foreground text-sm max-w-2xl leading-relaxed">
-                    Análise em tempo real baseada no histórico de movimentações para otimização da gestão de sobressalentes e manutenção preventiva.
-                  </p>
+                  <h3 className="text-xl font-bold text-foreground mb-1">Insights Estratégicos</h3>
+                  <div className="text-muted-foreground text-sm max-w-2xl leading-relaxed space-y-1">
+                    <p>O painel CRM exibe as métricas em tempo real de retiradas por técnico, parque e peça.</p>
+                    <p className="font-medium text-primary/80 italic">Dica: Utilize a busca no catálogo para localizar materiais rapidamente pelo código SAP ou descrição.</p>
+                  </div>
                 </div>
                 <Button variant="secondary" className="w-full md:w-auto rounded-xl px-6 font-semibold shadow-sm hover:scale-105 transition-transform cursor-pointer">
                   Análise Completa
@@ -586,18 +610,45 @@ function Dashboard() {
 
                   <div className="space-y-2">
                     <Label>Peça (Código SAP)</Label>
-                    <div className="flex gap-2">
-                      <div className="relative flex-1">
-                        <Input 
-                          type="text" 
-                          value={sapInput}
-                          onChange={(e) => setSapInput(e.target.value)}
-                          placeholder="Ex: 1001"
-                          className={cn(
-                            "h-12 rounded-xl bg-slate-50 pr-10",
-                            foundPeca && "border-emerald-500 ring-emerald-500"
+                    <div className="flex flex-col gap-2">
+                      <div className="flex gap-2">
+                        <div className="relative flex-1">
+                        <div className="relative">
+                          <Input 
+                            type="text" 
+                            value={sapInput}
+                            onChange={(e) => setSapInput(e.target.value)}
+                            placeholder="Buscar SAP ou Nome..."
+                            className={cn(
+                              "h-12 rounded-xl bg-slate-50 pr-10",
+                              foundPeca && "border-emerald-500 ring-emerald-500"
+                            )}
+                          />
+                          {sapInput && !foundPeca && (
+                            <div className="absolute left-0 right-0 top-full mt-1 z-50 bg-card border border-border rounded-xl shadow-lg max-h-48 overflow-y-auto overflow-x-hidden">
+                              {data.catalogo
+                                .filter(p => 
+                                  p.sap.toLowerCase().includes(sapInput.toLowerCase()) || 
+                                  p.descricao.toLowerCase().includes(sapInput.toLowerCase())
+                                )
+                                .slice(0, 5)
+                                .map(p => (
+                                  <button
+                                    key={p.sap}
+                                    className="w-full text-left p-3 hover:bg-accent/50 transition-colors border-b border-border/50 last:border-0"
+                                    onClick={() => {
+                                      setSapInput(p.sap);
+                                      setFoundPeca(p);
+                                    }}
+                                  >
+                                    <div className="font-mono text-xs font-bold text-primary">{p.sap}</div>
+                                    <div className="text-sm truncate">{p.descricao}</div>
+                                  </button>
+                                ))
+                              }
+                            </div>
                           )}
-                        />
+                        </div>
                         {foundPeca ? (
                           <CheckCircle2 className="absolute right-3 top-3 text-emerald-500" size={20} />
                         ) : (
@@ -613,13 +664,14 @@ function Dashboard() {
                         <Camera size={24} className="text-slate-600" />
                       </Button>
                     </div>
-                    {foundPeca && (
-                      <div className="bg-emerald-50 p-3 rounded-xl border border-emerald-100 animate-in fade-in slide-in-from-top-1">
-                        <p className="text-sm text-emerald-700 font-medium">
-                          {foundPeca.descricao}
-                        </p>
-                      </div>
-                    )}
+                      {foundPeca && (
+                        <div className="bg-emerald-50 p-3 rounded-xl border border-emerald-100 animate-in fade-in slide-in-from-top-1">
+                          <p className="text-sm text-emerald-700 font-medium">
+                            {foundPeca.descricao}
+                          </p>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -735,6 +787,121 @@ function Dashboard() {
                   </TableBody>
                   </Table>
                 </div>
+              </Card>
+            </div>
+          )}
+
+          {activeTab === "catalog" && (
+            <div className="space-y-6 animate-in fade-in duration-300">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div className="flex-1 w-full sm:max-w-md">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+                    <Input 
+                      placeholder="Buscar por SAP ou Nome da Peça..." 
+                      className="pl-10 h-11 rounded-xl bg-card border-border"
+                      value={catalogSearch}
+                      onChange={(e) => setCatalogSearch(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-2 w-full sm:w-auto">
+                  <Button 
+                    variant="outline"
+                    className="flex-1 sm:flex-none rounded-xl"
+                    onClick={() => setIsImportModalOpen(true)}
+                  >
+                    <PlusCircle size={18} /> Importar Planilha
+                  </Button>
+                </div>
+              </div>
+
+              <Card className="border-none shadow-sm shadow-border bg-card text-card-foreground">
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-muted/30 hover:bg-muted/30">
+                        <TableHead className="font-bold w-32">Código SAP</TableHead>
+                        <TableHead className="font-bold">Descrição do Material</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {data.catalogo
+                        .filter(p => 
+                          p.sap.toLowerCase().includes(catalogSearch.toLowerCase()) || 
+                          p.descricao.toLowerCase().includes(catalogSearch.toLowerCase())
+                        )
+                        .map((peca, i) => (
+                          <TableRow key={peca.sap} className="group">
+                            <TableCell className="font-mono font-bold text-primary">{peca.sap}</TableCell>
+                            <TableCell className="font-medium">{peca.descricao}</TableCell>
+                          </TableRow>
+                        ))
+                      }
+                      {data.catalogo.length === 0 && (
+                        <TableRow>
+                          <TableCell colSpan={2} className="h-32 text-center text-muted-foreground">
+                            Nenhum material cadastrado.
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </Card>
+            </div>
+          )}
+
+          {/* Import Modal */}
+          {isImportModalOpen && (
+            <div className="fixed inset-0 z-[110] bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in duration-200">
+              <Card className="w-full max-w-2xl rounded-3xl overflow-hidden border-none shadow-2xl">
+                <CardHeader className="bg-primary text-primary-foreground p-6">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <CardTitle className="text-2xl">Importar Materiais</CardTitle>
+                      <CardDescription className="text-primary-foreground/80 mt-1">Cole os dados das abas da planilha abaixo.</CardDescription>
+                    </div>
+                    <Button variant="ghost" size="icon" onClick={() => setIsImportModalOpen(false)} className="text-primary-foreground hover:bg-white/10 rounded-full">
+                      <X size={24} />
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-6 space-y-4">
+                  <div className="space-y-2">
+                    <Label className="text-sm font-semibold">Conteúdo da Planilha (Copiado/Colado)</Label>
+                    <textarea 
+                      className="w-full h-64 p-4 rounded-2xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-primary focus:outline-none font-mono text-xs resize-none"
+                      placeholder="Exemplo:&#10;1001;Placa Eletrônica&#10;1002;Fusível 10A..."
+                      value={importText}
+                      onChange={(e) => setImportText(e.target.value)}
+                    />
+                    <p className="text-[10px] text-muted-foreground">O sistema aceita formatos separados por ponto e vírgula (;), vírgula (,) ou tabulação.</p>
+                  </div>
+                  
+                  <div className="flex gap-3 pt-2">
+                    <Button variant="outline" className="flex-1 rounded-xl h-12" onClick={() => setIsImportModalOpen(false)}>Cancelar</Button>
+                    <Button 
+                      className="flex-[2] rounded-xl h-12 font-bold" 
+                      onClick={async () => {
+                        try {
+                          const { importMaterials } = await import("@/lib/admin.functions");
+                          const result = await importMaterials({ data: { csvData: importText } });
+                          toast.success(`${result.importedCount} materiais importados com sucesso!`);
+                          setIsImportModalOpen(false);
+                          setImportText("");
+                          // Refresh page to load new data
+                          window.location.reload();
+                        } catch (err: any) {
+                          toast.error(err.message || "Erro na importação.");
+                        }
+                      }}
+                      disabled={!importText.trim()}
+                    >
+                      Processar e Salvar no Banco
+                    </Button>
+                  </div>
+                </CardContent>
               </Card>
             </div>
           )}
