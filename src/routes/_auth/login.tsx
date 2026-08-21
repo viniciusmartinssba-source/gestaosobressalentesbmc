@@ -40,7 +40,7 @@ function LoginPage() {
         const { error } = await login(tecnico.email, senha);
         
         if (error) {
-          toast.error("Credenciais inválidas. Verifique sua matrícula e senha.");
+          toast.error(`Credenciais inválidas: ${error.message}`);
         } else {
           toast.success(`Bem-vindo, ${tecnico.nome}!`);
           navigate({ to: "/" });
