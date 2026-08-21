@@ -420,16 +420,16 @@ function Dashboard() {
                           tick={{fill: 'var(--muted-foreground)', fontSize: 10}} 
                         />
                         <Tooltip 
-                          cursor={{fill: '#f8fafc'}}
-                          contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', fontSize: '12px'}}
+                          cursor={{fill: 'var(--accent)'}}
+                          contentStyle={{borderRadius: '12px', border: 'none', backgroundColor: 'var(--card)', color: 'var(--card-foreground)', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', fontSize: '12px'}}
                         />
-                        <Bar dataKey="value" fill="#0284c7" radius={[6, 6, 0, 0]} />
+                        <Bar dataKey="value" fill="var(--primary)" radius={[6, 6, 0, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   </CardContent>
                 </Card>
  
-                <Card className="border-none shadow-sm shadow-slate-200">
+                <Card className="border-none shadow-sm shadow-border bg-card text-card-foreground">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-base md:text-lg">Status do Inventário</CardTitle>
                     <CardDescription className="text-xs md:text-sm">Peças mais retiradas nos últimos 30 dias</CardDescription>
