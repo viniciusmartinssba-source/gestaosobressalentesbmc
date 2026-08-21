@@ -1,5 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useState, useEffect, useMemo } from "react";
 import { 
   LayoutDashboard, 
   Package, 
@@ -31,8 +31,6 @@ import {
   PieChart,
   Pie,
   Cell,
-  LineChart,
-  Line,
   Legend
 } from "recharts";
 import { getInitialData } from "@/lib/data.functions";
@@ -40,6 +38,27 @@ import { BarcodeScanner } from "@/components/scanner/BarcodeScanner";
 import { exportToPDF, exportToXLSX } from "@/lib/reports";
 import confetti from "canvas-confetti";
 import { format } from "date-fns";
+import { useAuth } from "@/lib/auth";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/")({
   component: Dashboard,
