@@ -73,8 +73,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       email,
       password: matricula,
     });
-    console.log('Login attempt:', { email, error });
-
     return { error };
   };
 
