@@ -10,7 +10,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 import { AuthProvider } from "../lib/auth";
 import { Toaster } from "../components/ui/sonner";
-import { bootstrapTechnicians } from "../lib/setup.functions";
+
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -119,10 +119,7 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
-  useEffect(() => {
-    // Bootstrap technicians and passwords
-    bootstrapTechnicians().catch(console.error);
-  }, []);
+
 
   return (
     <QueryClientProvider client={queryClient}>
