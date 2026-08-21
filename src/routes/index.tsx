@@ -290,9 +290,15 @@ function Dashboard() {
             <span className="text-sm">Histórico</span>
           </button>
           <button 
-            className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground transition-all duration-200 group cursor-pointer"
+            onClick={() => setActiveTab("catalog")}
+            className={cn(
+              "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all duration-200 group cursor-pointer",
+              activeTab === "catalog" 
+                ? "bg-primary text-primary-foreground font-bold shadow-md shadow-primary/20 scale-[1.02]" 
+                : "text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground hover:scale-[1.01]"
+            )}
           >
-            <Search size={20} className="transition-transform group-hover:scale-110" /> 
+            <Search size={20} className={cn("transition-transform group-hover:scale-110", activeTab === "catalog" && "scale-110")} /> 
             <span className="text-sm">Catálogo</span>
           </button>
         </nav>
@@ -364,6 +370,15 @@ function Dashboard() {
                     >
                       <HistoryIcon size={20} /> Histórico
                     </button>
+                    <button 
+                      onClick={() => { setActiveTab("catalog"); setIsSidebarOpen(false); }}
+                      className={cn(
+                        "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
+                        activeTab === "catalog" ? "bg-accent text-accent-foreground font-medium" : "text-muted-foreground hover:bg-accent/50"
+                      )}
+                    >
+                      <Search size={20} /> Catálogo
+                    </button>
                   </nav>
                   <div className="p-4 border-t border-border">
                     <div className="flex items-center gap-3 px-4 py-3 mb-2">
@@ -390,6 +405,7 @@ function Dashboard() {
               {activeTab === "overview" && "Dashboard"}
               {activeTab === "register" && "Registro"}
               {activeTab === "history" && "Histórico"}
+              {activeTab === "catalog" && "Catálogo"}
             </h2>
           </div>
           <div className="text-sm font-medium text-slate-500 flex items-center gap-2">
