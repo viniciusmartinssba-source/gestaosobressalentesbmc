@@ -1,13 +1,13 @@
 import { createFileRoute, useNavigate, redirect } from "@tanstack/react-router";
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/lib/auth";
 import { getInitialData } from "@/lib/data.functions";
 import { toast } from "sonner";
-import { Wind } from "lucide-react";
+import { Wind, User, Lock, ShieldCheck } from "lucide-react";
 
 export const Route = createFileRoute("/_auth/login")({
   beforeLoad: ({ context }) => {
