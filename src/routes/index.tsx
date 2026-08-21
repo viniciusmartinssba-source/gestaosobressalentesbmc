@@ -397,7 +397,7 @@ function Dashboard() {
               </div>
 
               {/* Charts Section */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
                 <Card className="border-none shadow-sm shadow-slate-200">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-base md:text-lg">Distribuição por Parque</CardTitle>
