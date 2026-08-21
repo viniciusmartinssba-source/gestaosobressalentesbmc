@@ -853,7 +853,7 @@ function Dashboard() {
                       onClick={async () => {
                         try {
                           const { importMaterials } = await import("@/lib/admin.functions");
-                          const result = await importMaterials({ csvData: importText });
+                          const result = await importMaterials({ data: { csvData: importText } });
                           toast.success(`${result.importedCount} materiais importados com sucesso!`);
                           setIsImportModalOpen(false);
                           setImportText("");
