@@ -2,10 +2,12 @@ import { createServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 
 export const getInitialData = createServerFn({ method: "GET" }).handler(async () => {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  
   const [parquesRes, pecasRes, profilesRes] = await Promise.all([
-    supabase.from('parques').select('*').order('nome'),
-    supabase.from('pecas').select('*').order('descricao'),
-    supabase.from('profiles').select('*').order('nome')
+    supabaseAdmin.from('parques').select('*').order('nome'),
+    supabaseAdmin.from('pecas').select('*').order('descricao'),
+    supabaseAdmin.from('profiles').select('*').order('nome')
   ]);
 
   if (parquesRes.error) throw parquesRes.error;
