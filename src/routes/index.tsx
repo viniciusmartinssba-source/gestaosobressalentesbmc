@@ -206,7 +206,7 @@ function Dashboard() {
       {/* Sidebar Desktop */}
       <aside className="hidden md:flex flex-col w-64 bg-white border-r border-slate-200">
         <div className="p-6 flex items-center gap-3 border-b border-slate-100">
-          <div className="bg-sky-600 p-2 rounded-lg text-white">
+          <div className="bg-primary p-2 rounded-lg text-primary-foreground">
             <Wind size={24} />
           </div>
           <h1 className="font-bold text-lg leading-tight">Gestão de<br/>Sobressalentes</h1>
@@ -217,7 +217,7 @@ function Dashboard() {
             onClick={() => setActiveTab("overview")}
             className={cn(
               "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
-              activeTab === "overview" ? "bg-sky-50 text-sky-700 font-medium" : "text-slate-500 hover:bg-slate-50"
+              activeTab === "overview" ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20" : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50"
             )}
           >
             <LayoutDashboard size={20} /> Dashboard
@@ -226,7 +226,7 @@ function Dashboard() {
             onClick={() => setActiveTab("register")}
             className={cn(
               "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
-              activeTab === "register" ? "bg-sky-50 text-sky-700 font-medium" : "text-slate-500 hover:bg-slate-50"
+              activeTab === "register" ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20" : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50"
             )}
           >
             <PlusCircle size={20} /> Registrar Saída
@@ -235,31 +235,31 @@ function Dashboard() {
             onClick={() => setActiveTab("history")}
             className={cn(
               "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
-              activeTab === "history" ? "bg-sky-50 text-sky-700 font-medium" : "text-slate-500 hover:bg-slate-50"
+              activeTab === "history" ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20" : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50"
             )}
           >
             <HistoryIcon size={20} /> Histórico
           </button>
           <button 
-            className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50"
+            className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sidebar-foreground/70 hover:bg-sidebar-accent/50"
           >
             <Search size={20} /> Catálogo
           </button>
         </nav>
 
-        <div className="p-4 border-t border-slate-100">
+        <div className="p-4 border-t border-sidebar-border">
           <div className="flex items-center gap-3 px-4 py-3 mb-2">
-            <div className="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center font-bold text-sky-700 shrink-0">
+            <div className="w-10 h-10 rounded-full bg-sidebar-accent flex items-center justify-center font-bold text-sidebar-foreground shrink-0">
               {user.nome.split(' ').map(n => n[0]).join('')}
             </div>
             <div className="flex-1 overflow-hidden">
               <p className="text-sm font-medium truncate">{user.nome}</p>
-              <p className="text-xs text-slate-400">{user.matricula}</p>
+              <p className="text-xs text-sidebar-foreground/50">{user.matricula}</p>
             </div>
           </div>
           <button 
             onClick={handleLogout}
-            className="flex items-center gap-3 w-full px-4 py-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+            className="flex items-center gap-3 w-full px-4 py-2 text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
           >
             <LogOut size={18} /> Sair
           </button>
@@ -279,7 +279,7 @@ function Dashboard() {
               </SheetTrigger>
               <SheetContent side="left" className="p-0 w-72">
                 <SheetHeader className="p-6 flex-row items-center gap-3 border-b border-slate-100 text-left">
-                  <div className="bg-sky-600 p-2 rounded-lg text-white">
+                  <div className="bg-primary p-2 rounded-lg text-primary-foreground">
                     <Wind size={24} />
                   </div>
                   <SheetTitle className="font-bold text-lg leading-tight">Gestão de<br/>Sobressalentes</SheetTitle>
@@ -290,7 +290,7 @@ function Dashboard() {
                       onClick={() => { setActiveTab("overview"); setIsSidebarOpen(false); }}
                       className={cn(
                         "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
-                        activeTab === "overview" ? "bg-sky-50 text-sky-700 font-medium" : "text-slate-500 hover:bg-slate-50"
+                        activeTab === "overview" ? "bg-accent text-accent-foreground font-medium" : "text-muted-foreground hover:bg-accent/50"
                       )}
                     >
                       <LayoutDashboard size={20} /> Dashboard
@@ -299,7 +299,7 @@ function Dashboard() {
                       onClick={() => { setActiveTab("register"); setIsSidebarOpen(false); }}
                       className={cn(
                         "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
-                        activeTab === "register" ? "bg-sky-50 text-sky-700 font-medium" : "text-slate-500 hover:bg-slate-50"
+                        activeTab === "register" ? "bg-accent text-accent-foreground font-medium" : "text-muted-foreground hover:bg-accent/50"
                       )}
                     >
                       <PlusCircle size={20} /> Registrar Saída
@@ -308,25 +308,25 @@ function Dashboard() {
                       onClick={() => { setActiveTab("history"); setIsSidebarOpen(false); }}
                       className={cn(
                         "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
-                        activeTab === "history" ? "bg-sky-50 text-sky-700 font-medium" : "text-slate-500 hover:bg-slate-50"
+                        activeTab === "history" ? "bg-accent text-accent-foreground font-medium" : "text-muted-foreground hover:bg-accent/50"
                       )}
                     >
                       <HistoryIcon size={20} /> Histórico
                     </button>
                   </nav>
-                  <div className="p-4 border-t border-slate-100">
+                  <div className="p-4 border-t border-border">
                     <div className="flex items-center gap-3 px-4 py-3 mb-2">
-                      <div className="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center font-bold text-sky-700 shrink-0">
+                      <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center font-bold text-accent-foreground shrink-0">
                         {user.nome.split(' ').map(n => n[0]).join('')}
                       </div>
                       <div className="flex-1 overflow-hidden">
                         <p className="text-sm font-medium truncate">{user.nome}</p>
-                        <p className="text-xs text-slate-400">{user.matricula}</p>
+                        <p className="text-xs text-muted-foreground">{user.matricula}</p>
                       </div>
                     </div>
                     <button 
                       onClick={handleLogout}
-                      className="flex items-center gap-3 w-full px-4 py-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                      className="flex items-center gap-3 w-full px-4 py-2 text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
                     >
                       <LogOut size={18} /> Sair
                     </button>
@@ -335,7 +335,7 @@ function Dashboard() {
               </SheetContent>
             </Sheet>
             
-            <h2 className="text-sm md:text-lg font-semibold uppercase tracking-wider text-slate-500 truncate max-w-[200px] md:max-w-none">
+            <h2 className="text-sm md:text-lg font-semibold uppercase tracking-wider text-muted-foreground truncate max-w-[200px] md:max-w-none">
               {activeTab === "overview" && "Dashboard"}
               {activeTab === "register" && "Registro"}
               {activeTab === "history" && "Histórico"}
@@ -356,13 +356,13 @@ function Dashboard() {
         <div className="flex-1 overflow-y-auto p-4 md:p-8">
           {activeTab === "overview" && (
             <div className="space-y-6 md:space-y-8 animate-in fade-in slide-in-from-bottom-2">
-              <div className="bg-sky-50 border border-sky-100 rounded-2xl p-4 md:p-6 flex flex-col md:flex-row items-center gap-4 md:gap-6">
-                <div className="bg-sky-600 p-3 md:p-4 rounded-2xl text-white shadow-lg shadow-sky-100 shrink-0">
+              <div className="bg-accent border border-border rounded-2xl p-4 md:p-6 flex flex-col md:flex-row items-center gap-4 md:gap-6">
+                <div className="bg-primary p-3 md:p-4 rounded-2xl text-primary-foreground shadow-lg shadow-primary/20 shrink-0">
                   <BarChart3 size={28} className="md:w-8 md:h-8" />
                 </div>
                 <div className="flex-1 text-center md:text-left">
-                  <h3 className="text-lg md:text-xl font-bold text-sky-900">Insights da IA</h3>
-                  <p className="text-sky-700/80 text-xs md:text-sm">
+                  <h3 className="text-lg md:text-xl font-bold text-foreground">Insights da IA</h3>
+                  <p className="text-muted-foreground text-xs md:text-sm">
                     {history.length > 0 ? (
                       `Análise baseada em ${history.length} registros: O parque ${chartData.sort((a,b) => b.value - a.value)[0]?.name} possui o maior volume de retiradas. Verifique a periodicidade de manutenção preventiva.`
                     ) : (
@@ -370,26 +370,26 @@ function Dashboard() {
                     )}
                   </p>
                 </div>
-                <Button variant="secondary" className="w-full md:w-auto bg-white hover:bg-sky-100 border-sky-200">
+                <Button variant="secondary" className="w-full md:w-auto">
                   Ver Detalhes
                 </Button>
               </div>
               {/* Stats Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                 {stats.map((stat, i) => (
-                  <Card key={i} className="border-none shadow-sm shadow-slate-200 overflow-hidden">
+                  <Card key={i} className="border-none shadow-sm shadow-border overflow-hidden bg-card text-card-foreground">
                     <CardContent className="p-5 md:p-6">
                       <div className="flex justify-between items-start">
                         <div>
-                          <p className="text-xs md:text-sm font-medium text-slate-500 mb-1">{stat.title}</p>
-                          <h3 className={cn("text-xl md:text-2xl font-bold", stat.color || "text-slate-900")}>{stat.value}</h3>
+                          <p className="text-xs md:text-sm font-medium text-muted-foreground mb-1">{stat.title}</p>
+                          <h3 className={cn("text-xl md:text-2xl font-bold", stat.color || "text-foreground")}>{stat.value}</h3>
                         </div>
-                        <div className="bg-slate-50 p-2 md:p-2.5 rounded-xl">
-                          <stat.icon className="text-sky-600" size={20} />
+                        <div className="bg-accent p-2 md:p-2.5 rounded-xl">
+                          <stat.icon className="text-primary" size={20} />
                         </div>
                       </div>
-                      <div className="mt-3 md:mt-4 flex items-center gap-1.5 text-[10px] md:text-xs font-semibold text-emerald-600 bg-emerald-50 w-fit px-2 py-1 rounded-full">
-                        {stat.change} <span className="text-slate-400 font-normal">vs mês anterior</span>
+                      <div className="mt-3 md:mt-4 flex items-center gap-1.5 text-[10px] md:text-xs font-semibold text-emerald-500 bg-emerald-500/10 w-fit px-2 py-1 rounded-full">
+                        {stat.change} <span className="text-muted-foreground font-normal">vs mês anterior</span>
                       </div>
                     </CardContent>
                   </Card>
@@ -398,7 +398,7 @@ function Dashboard() {
 
               {/* Charts Section */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-                <Card className="border-none shadow-sm shadow-slate-200">
+                <Card className="border-none shadow-sm shadow-border bg-card text-card-foreground">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-base md:text-lg">Distribuição por Parque</CardTitle>
                     <CardDescription className="text-xs md:text-sm">Volume de retiradas por unidade eólica</CardDescription>
@@ -406,30 +406,30 @@ function Dashboard() {
                   <CardContent className="h-[300px] md:h-80 px-2 md:px-6">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={chartData}>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
                         <XAxis 
                           dataKey="name" 
                           axisLine={false} 
                           tickLine={false} 
-                          tick={{fill: '#94a3b8', fontSize: 10}} 
+                          tick={{fill: 'var(--muted-foreground)', fontSize: 10}} 
                           dy={10} 
                         />
                         <YAxis 
                           axisLine={false} 
                           tickLine={false} 
-                          tick={{fill: '#94a3b8', fontSize: 10}} 
+                          tick={{fill: 'var(--muted-foreground)', fontSize: 10}} 
                         />
                         <Tooltip 
-                          cursor={{fill: '#f8fafc'}}
-                          contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', fontSize: '12px'}}
+                          cursor={{fill: 'var(--accent)'}}
+                          contentStyle={{borderRadius: '12px', border: 'none', backgroundColor: 'var(--card)', color: 'var(--card-foreground)', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', fontSize: '12px'}}
                         />
-                        <Bar dataKey="value" fill="#0284c7" radius={[6, 6, 0, 0]} />
+                        <Bar dataKey="value" fill="var(--primary)" radius={[6, 6, 0, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   </CardContent>
                 </Card>
  
-                <Card className="border-none shadow-sm shadow-slate-200">
+                <Card className="border-none shadow-sm shadow-border bg-card text-card-foreground">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-base md:text-lg">Status do Inventário</CardTitle>
                     <CardDescription className="text-xs md:text-sm">Peças mais retiradas nos últimos 30 dias</CardDescription>
@@ -455,8 +455,8 @@ function Dashboard() {
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length] || "#0ea5e9"} />
                           ))}
                         </Pie>
-                        <Tooltip contentStyle={{fontSize: '12px', borderRadius: '8px'}} />
-                        <Legend wrapperStyle={{fontSize: '12px'}} />
+                        <Tooltip contentStyle={{fontSize: '12px', borderRadius: '8px', backgroundColor: 'var(--card)', color: 'var(--card-foreground)', border: 'none'}} />
+                        <Legend wrapperStyle={{fontSize: '12px', color: 'var(--foreground)'}} />
                       </PieChart>
                     </ResponsiveContainer>
                   </CardContent>
@@ -467,10 +467,10 @@ function Dashboard() {
 
           {activeTab === "register" && (
             <div className="max-w-2xl mx-auto space-y-4 md:space-y-6 animate-in zoom-in-95 duration-200 px-0 sm:px-4">
-              <Card className="border-none shadow-md shadow-slate-200 overflow-hidden rounded-none sm:rounded-2xl">
-                <CardHeader className="bg-sky-700 text-white">
+              <Card className="border-none shadow-md shadow-border overflow-hidden rounded-none sm:rounded-2xl bg-card text-card-foreground">
+                <CardHeader className="bg-primary text-primary-foreground">
                   <CardTitle>Nova Movimentação</CardTitle>
-                  <CardDescription className="text-sky-100">Preencha os campos abaixo para registrar a retirada da peça.</CardDescription>
+                  <CardDescription className="text-primary-foreground/80">Preencha os campos abaixo para registrar a retirada da peça.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6 pt-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -557,14 +557,14 @@ function Dashboard() {
                         type="number" 
                         value={quantidade}
                         onChange={(e) => setQuantidade(Number(e.target.value))}
-                        className="h-12 rounded-xl bg-slate-50"
+                        className="h-12 rounded-xl bg-background"
                         min={1}
                       />
                     </div>
                     <div className="space-y-2">
                       <Label>Estoque (Opcional)</Label>
                       <Select value={selectedEstoque} onValueChange={setSelectedEstoque}>
-                        <SelectTrigger className="h-12 rounded-xl bg-slate-50">
+                        <SelectTrigger className="h-12 rounded-xl bg-background">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -583,14 +583,14 @@ function Dashboard() {
                       value={wo}
                       onChange={(e) => setWo(e.target.value)}
                       placeholder="Número da WO"
-                      className="h-12 rounded-xl bg-slate-50"
+                      className="h-12 rounded-xl bg-background"
                     />
                   </div>
 
                   <Button 
                     onClick={handleRegister}
                     disabled={!foundPeca}
-                    className="w-full h-14 rounded-xl font-bold text-lg shadow-lg shadow-sky-100 transition-all"
+                    className="w-full h-14 rounded-xl font-bold text-lg shadow-lg shadow-primary/20 transition-all bg-primary text-primary-foreground hover:bg-primary/90"
                   >
                     <PlusCircle size={20} /> Confirmar Retirada
                   </Button>
@@ -602,30 +602,30 @@ function Dashboard() {
           {activeTab === "history" && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <h3 className="text-lg font-bold text-slate-800">Registros Recentes</h3>
+                <h3 className="text-lg font-bold text-foreground">Registros Recentes</h3>
                 <div className="flex gap-2 w-full sm:w-auto">
                   <Button 
                     variant="outline"
                     onClick={() => exportToXLSX(history)}
-                    className="flex-1 sm:flex-none rounded-xl border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                    className="flex-1 sm:flex-none rounded-xl border-emerald-500/20 text-emerald-500 hover:bg-emerald-500/10"
                   >
                     <FileDown size={18} /> Excel
                   </Button>
                   <Button 
                     variant="outline"
                     onClick={() => exportToPDF(history)}
-                    className="flex-1 sm:flex-none rounded-xl border-red-200 text-red-700 hover:bg-red-50"
+                    className="flex-1 sm:flex-none rounded-xl border-destructive/20 text-destructive hover:bg-destructive/10"
                   >
                     <FileDown size={18} /> PDF
                   </Button>
                 </div>
               </div>
               
-              <Card className="border-none shadow-sm shadow-slate-200">
+              <Card className="border-none shadow-sm shadow-border bg-card text-card-foreground">
                 <div className="overflow-x-auto">
                   <Table>
                     <TableHeader>
-                      <TableRow className="bg-slate-50/50 hover:bg-slate-50/50">
+                      <TableRow className="bg-muted/30 hover:bg-muted/30">
                         <TableHead className="font-bold whitespace-nowrap">Data</TableHead>
                         <TableHead className="font-bold whitespace-nowrap">Técnico</TableHead>
                         <TableHead className="font-bold whitespace-nowrap">Local</TableHead>
@@ -637,13 +637,13 @@ function Dashboard() {
                     <TableBody>
                     {history.map((item, i) => (
                       <TableRow key={i} className="group">
-                        <TableCell className="text-slate-500 text-xs">{item.data}</TableCell>
+                        <TableCell className="text-muted-foreground text-xs">{item.data}</TableCell>
                         <TableCell className="font-medium">{item.tecnico}</TableCell>
-                        <TableCell className="text-slate-600">{item.parque} - {item.aero}</TableCell>
+                        <TableCell className="text-muted-foreground">{item.parque} - {item.aero}</TableCell>
                         <TableCell>
                           <div className="flex flex-col">
                             <span className="font-medium">{item.peca}</span>
-                            <span className="text-[10px] text-slate-400 font-mono">SAP {item.sap}</span>
+                            <span className="text-[10px] text-muted-foreground font-mono">SAP {item.sap}</span>
                           </div>
                         </TableCell>
                         <TableCell>
@@ -651,11 +651,11 @@ function Dashboard() {
                         </TableCell>
                         <TableCell className="text-right">
                           {item.wo ? (
-                            <Badge className="bg-sky-100 text-sky-700 hover:bg-sky-200 border-none rounded-lg">
+                            <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-none rounded-lg">
                               {item.wo}
                             </Badge>
                           ) : (
-                            <span className="text-slate-300 text-xs">-</span>
+                            <span className="text-muted/30 text-xs">-</span>
                           )}
                         </TableCell>
                       </TableRow>

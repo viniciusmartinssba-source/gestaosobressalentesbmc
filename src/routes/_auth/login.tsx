@@ -56,14 +56,14 @@ function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4 font-sans sm:p-6 lg:p-8">
+    <div className="flex min-h-screen items-center justify-center bg-background p-4 font-sans sm:p-6 lg:p-8">
       <Card className="w-full max-w-sm sm:max-w-md border-none shadow-2xl shadow-slate-200">
         <CardHeader className="space-y-4 text-center pb-8">
-          <div className="mx-auto bg-sky-600 p-3 rounded-2xl text-white w-fit shadow-lg shadow-sky-100">
+          <div className="mx-auto bg-primary p-3 rounded-2xl text-primary-foreground w-fit shadow-lg shadow-primary/20">
             <Wind size={32} />
           </div>
           <div className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-slate-900">Gestão de Sobressalentes</CardTitle>
+            <CardTitle className="text-2xl font-bold text-foreground">Gestão de Sobressalentes</CardTitle>
             <CardDescription>Acesse o painel operacional para registro de peças</CardDescription>
           </div>
         </CardHeader>
@@ -95,12 +95,12 @@ function LoginPage() {
             </div>
             <Button 
               type="submit" 
-              className="w-full h-12 rounded-xl bg-sky-600 hover:bg-sky-700 font-bold text-lg shadow-lg shadow-sky-100 transition-all"
+              className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90 font-bold text-lg shadow-lg shadow-primary/20 transition-all text-primary-foreground"
               disabled={isLoading}
             >
               {isLoading ? "Autenticando..." : "Entrar no Sistema"}
             </Button>
-            <p className="text-center text-xs text-slate-400">
+            <p className="text-center text-xs text-muted-foreground">
               Caso tenha esquecido sua senha, entre em contato com o suporte de TI.
             </p>
           </form>

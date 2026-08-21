@@ -22,26 +22,39 @@ export const bootstrapTechnicians = createServerFn({ method: "POST" }).handler(a
   const results = [];
 
   for (const tech of technicians) {
-    // Create user in auth.users
-    // We use matricula as the password for this demo
-    const { data, error } = await supabaseAdmin.auth.admin.createUser({
-      email: tech.email,
-      password: tech.matricula,
-      email_confirm: true,
-      user_metadata: {
-        nome: tech.nome,
-        matricula: tech.matricula
-      }
-    });
+    // Check if user already exists
+    const { data: existingUsers, error: listError } = await supabaseAdmin.auth.admin.listUsers();
+    const existingUser = existingUsers?.users.find(u => u.email === tech.email);
 
-    if (error) {
-      if (error.message.includes("already exists")) {
-        results.push({ email: tech.email, status: "exists" });
+    if (existingUser) {
+      // Update password to be the matricula
+      const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
+        existingUser.id,
+        { password: tech.matricula }
+      );
+      
+      if (updateError) {
+        results.push({ email: tech.email, status: "error", message: updateError.message });
       } else {
-        results.push({ email: tech.email, status: "error", message: error.message });
+        results.push({ email: tech.email, status: "updated_password" });
       }
     } else {
-      results.push({ email: tech.email, status: "created" });
+      // Create user with matricula as password
+      const { error: createError } = await supabaseAdmin.auth.admin.createUser({
+        email: tech.email,
+        password: tech.matricula,
+        email_confirm: true,
+        user_metadata: {
+          nome: tech.nome,
+          matricula: tech.matricula
+        }
+      });
+
+      if (createError) {
+        results.push({ email: tech.email, status: "error", message: createError.message });
+      } else {
+        results.push({ email: tech.email, status: "created" });
+      }
     }
   }
 
