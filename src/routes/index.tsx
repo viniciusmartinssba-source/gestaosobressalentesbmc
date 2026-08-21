@@ -757,6 +757,121 @@ function Dashboard() {
               </Card>
             </div>
           )}
+
+          {activeTab === "catalog" && (
+            <div className="space-y-6 animate-in fade-in duration-300">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div className="flex-1 w-full sm:max-w-md">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+                    <Input 
+                      placeholder="Buscar por SAP ou Nome da Peça..." 
+                      className="pl-10 h-11 rounded-xl bg-card border-border"
+                      value={catalogSearch}
+                      onChange={(e) => setCatalogSearch(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-2 w-full sm:w-auto">
+                  <Button 
+                    variant="outline"
+                    className="flex-1 sm:flex-none rounded-xl"
+                    onClick={() => setIsImportModalOpen(true)}
+                  >
+                    <PlusCircle size={18} /> Importar Planilha
+                  </Button>
+                </div>
+              </div>
+
+              <Card className="border-none shadow-sm shadow-border bg-card text-card-foreground">
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-muted/30 hover:bg-muted/30">
+                        <TableHead className="font-bold w-32">Código SAP</TableHead>
+                        <TableHead className="font-bold">Descrição do Material</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {data.catalogo
+                        .filter(p => 
+                          p.sap.toLowerCase().includes(catalogSearch.toLowerCase()) || 
+                          p.descricao.toLowerCase().includes(catalogSearch.toLowerCase())
+                        )
+                        .map((peca, i) => (
+                          <TableRow key={peca.sap} className="group">
+                            <TableCell className="font-mono font-bold text-primary">{peca.sap}</TableCell>
+                            <TableCell className="font-medium">{peca.descricao}</TableCell>
+                          </TableRow>
+                        ))
+                      }
+                      {data.catalogo.length === 0 && (
+                        <TableRow>
+                          <TableCell colSpan={2} className="h-32 text-center text-muted-foreground">
+                            Nenhum material cadastrado.
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </Card>
+            </div>
+          )}
+
+          {/* Import Modal */}
+          {isImportModalOpen && (
+            <div className="fixed inset-0 z-[110] bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in duration-200">
+              <Card className="w-full max-w-2xl rounded-3xl overflow-hidden border-none shadow-2xl">
+                <CardHeader className="bg-primary text-primary-foreground p-6">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <CardTitle className="text-2xl">Importar Materiais</CardTitle>
+                      <CardDescription className="text-primary-foreground/80 mt-1">Cole os dados das abas da planilha abaixo.</CardDescription>
+                    </div>
+                    <Button variant="ghost" size="icon" onClick={() => setIsImportModalOpen(false)} className="text-primary-foreground hover:bg-white/10 rounded-full">
+                      <X size={24} />
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-6 space-y-4">
+                  <div className="space-y-2">
+                    <Label className="text-sm font-semibold">Conteúdo da Planilha (Copiado/Colado)</Label>
+                    <textarea 
+                      className="w-full h-64 p-4 rounded-2xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-primary focus:outline-none font-mono text-xs resize-none"
+                      placeholder="Exemplo:&#10;1001;Placa Eletrônica&#10;1002;Fusível 10A..."
+                      value={importText}
+                      onChange={(e) => setImportText(e.target.value)}
+                    />
+                    <p className="text-[10px] text-muted-foreground">O sistema aceita formatos separados por ponto e vírgula (;), vírgula (,) ou tabulação.</p>
+                  </div>
+                  
+                  <div className="flex gap-3 pt-2">
+                    <Button variant="outline" className="flex-1 rounded-xl h-12" onClick={() => setIsImportModalOpen(false)}>Cancelar</Button>
+                    <Button 
+                      className="flex-[2] rounded-xl h-12 font-bold" 
+                      onClick={async () => {
+                        try {
+                          const { importMaterials } = await import("@/lib/admin.functions");
+                          const result = await importMaterials({ csvData: importText });
+                          toast.success(`${result.importedCount} materiais importados com sucesso!`);
+                          setIsImportModalOpen(false);
+                          setImportText("");
+                          // Refresh page to load new data
+                          window.location.reload();
+                        } catch (err: any) {
+                          toast.error(err.message || "Erro na importação.");
+                        }
+                      }}
+                      disabled={!importText.trim()}
+                    >
+                      Processar e Salvar no Banco
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
         </div>
       </main>
 
