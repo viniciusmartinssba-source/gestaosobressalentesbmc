@@ -269,22 +269,86 @@ function Dashboard() {
       {/* Main Content */}
       <main className="flex-1 flex flex-col overflow-hidden relative">
         {/* Header */}
-        <header className="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-6 shrink-0">
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="md:hidden p-2 hover:bg-slate-100 rounded-lg"
-            >
-              {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-            <h2 className="text-lg font-semibold uppercase tracking-wider text-slate-500">
-              {activeTab === "overview" && "Dashboard Operacional"}
-              {activeTab === "register" && "Registro de Movimentação"}
-              {activeTab === "history" && "Histórico de Lançamentos"}
+        <header className="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-4 md:px-6 shrink-0">
+          <div className="flex items-center gap-3">
+            <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden">
+                  <Menu size={24} />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="p-0 w-72">
+                <SheetHeader className="p-6 flex-row items-center gap-3 border-b border-slate-100 text-left">
+                  <div className="bg-sky-600 p-2 rounded-lg text-white">
+                    <Wind size={24} />
+                  </div>
+                  <SheetTitle className="font-bold text-lg leading-tight">Gestão de<br/>Sobressalentes</SheetTitle>
+                </SheetHeader>
+                <div className="flex flex-col h-[calc(100vh-85px)]">
+                  <nav className="flex-1 p-4 space-y-1">
+                    <button 
+                      onClick={() => { setActiveTab("overview"); setIsSidebarOpen(false); }}
+                      className={cn(
+                        "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
+                        activeTab === "overview" ? "bg-sky-50 text-sky-700 font-medium" : "text-slate-500 hover:bg-slate-50"
+                      )}
+                    >
+                      <LayoutDashboard size={20} /> Dashboard
+                    </button>
+                    <button 
+                      onClick={() => { setActiveTab("register"); setIsSidebarOpen(false); }}
+                      className={cn(
+                        "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
+                        activeTab === "register" ? "bg-sky-50 text-sky-700 font-medium" : "text-slate-500 hover:bg-slate-50"
+                      )}
+                    >
+                      <PlusCircle size={20} /> Registrar Saída
+                    </button>
+                    <button 
+                      onClick={() => { setActiveTab("history"); setIsSidebarOpen(false); }}
+                      className={cn(
+                        "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
+                        activeTab === "history" ? "bg-sky-50 text-sky-700 font-medium" : "text-slate-500 hover:bg-slate-50"
+                      )}
+                    >
+                      <HistoryIcon size={20} /> Histórico
+                    </button>
+                  </nav>
+                  <div className="p-4 border-t border-slate-100">
+                    <div className="flex items-center gap-3 px-4 py-3 mb-2">
+                      <div className="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center font-bold text-sky-700 shrink-0">
+                        {user.nome.split(' ').map(n => n[0]).join('')}
+                      </div>
+                      <div className="flex-1 overflow-hidden">
+                        <p className="text-sm font-medium truncate">{user.nome}</p>
+                        <p className="text-xs text-slate-400">{user.matricula}</p>
+                      </div>
+                    </div>
+                    <button 
+                      onClick={handleLogout}
+                      className="flex items-center gap-3 w-full px-4 py-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                    >
+                      <LogOut size={18} /> Sair
+                    </button>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
+            
+            <h2 className="text-sm md:text-lg font-semibold uppercase tracking-wider text-slate-500 truncate max-w-[200px] md:max-w-none">
+              {activeTab === "overview" && "Dashboard"}
+              {activeTab === "register" && "Registro"}
+              {activeTab === "history" && "Histórico"}
             </h2>
           </div>
-          <div className="text-sm font-medium text-slate-500 hidden sm:block">
-            {new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })}
+          <div className="text-sm font-medium text-slate-500 flex items-center gap-2">
+            <Calendar size={16} className="hidden sm:block" />
+            <span className="hidden sm:block">
+              {new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })}
+            </span>
+            <span className="sm:hidden">
+              {new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: '2-digit' })}
+            </span>
           </div>
         </header>
 
