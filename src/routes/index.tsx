@@ -326,7 +326,7 @@ function Dashboard() {
                           cursor={{fill: '#f8fafc'}}
                           contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)'}}
                         />
-                        <Bar dataKey="value" fill="var(--color-sky-600)" radius={[6, 6, 0, 0]} />
+                        <Bar dataKey="value" fill="#0284c7" radius={[6, 6, 0, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   </CardContent>
@@ -355,7 +355,7 @@ function Dashboard() {
                           dataKey="value"
                         >
                           {pieData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length] || COLORS[0]} />
                           ))}
                         </Pie>
                         <Tooltip />
