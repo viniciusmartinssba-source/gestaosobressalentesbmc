@@ -100,7 +100,7 @@ function LoginPage() {
             >
               {isLoading ? "Autenticando..." : "Entrar no Sistema"}
             </Button>
-            <p className="text-center text-xs text-slate-400">
+            <p className="text-center text-xs text-muted-foreground">
               Caso tenha esquecido sua senha, entre em contato com o suporte de TI.
             </p>
           </form>
