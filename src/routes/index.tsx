@@ -90,6 +90,9 @@ function Dashboard() {
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [sapInput, setSapInput] = useState("");
   const [foundPeca, setFoundPeca] = useState<{sap: string, descricao: string} | null>(null);
+  const [catalogSearch, setCatalogSearch] = useState("");
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [importText, setImportText] = useState("");
   
   // Form state
   const [selectedParqueId, setSelectedParqueId] = useState<string>(data.parques[0]?.id || "");
