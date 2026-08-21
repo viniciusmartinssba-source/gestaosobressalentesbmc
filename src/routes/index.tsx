@@ -180,9 +180,9 @@ function Dashboard() {
   
 
   const stats = [
-    { title: "Total de Saídas", value: history.length.toString(), icon: Package, change: "+12%" },
-    { title: "Peças Críticas", value: "14", icon: AlertTriangle, change: "-2", color: "text-red-500" },
-    { title: "Uso de WO", value: "85%", icon: TrendingUp, change: "+5%" },
+    { title: "Total Geral de Saídas", value: history.length.toString(), icon: Package, change: "+12%" },
+    { title: "Peças Críticas (IA)", value: "14", icon: AlertTriangle, change: "-2", color: "text-red-500" },
+    { title: "Estoque em Campo", value: "85%", icon: TrendingUp, change: "+5%" },
   ];
 
   const chartData = useMemo(() => data.parques.map(p => ({
@@ -190,11 +190,23 @@ function Dashboard() {
     value: history.filter(h => h.parque === p.nome).length
   })), [data.parques, history]);
 
+  const aeroChartData = useMemo(() => {
+    const aeroCounts: Record<string, number> = {};
+    history.forEach(h => {
+      const key = `Aero ${h.aero}`;
+      aeroCounts[key] = (aeroCounts[key] || 0) + 1;
+    });
+    return Object.entries(aeroCounts)
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 5);
+  }, [history]);
+
   const pieData = useMemo(() => [
-    { name: 'Mecânico', value: 400 },
-    { name: 'Elétrico', value: 300 },
-    { name: 'Sensores', value: 200 },
-    { name: 'Outros', value: 100 },
+    { name: 'Em Uso', value: 400 },
+    { name: 'Crítico', value: 300 },
+    { name: 'Reserva', value: 200 },
+    { name: 'Manutenção', value: 100 },
   ], []);
 
   const handleScan = (sap: string) => {
