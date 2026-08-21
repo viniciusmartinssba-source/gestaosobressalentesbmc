@@ -661,7 +661,8 @@ function Dashboard() {
                       </TableRow>
                     ))}
                   </TableBody>
-                </Table>
+                  </Table>
+                </div>
               </Card>
             </div>
           )}
