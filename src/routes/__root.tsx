@@ -119,10 +119,7 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
-  useEffect(() => {
-    // Bootstrap technicians and passwords
-    bootstrapTechnicians().catch(console.error);
-  }, []);
+
 
   return (
     <QueryClientProvider client={queryClient}>
