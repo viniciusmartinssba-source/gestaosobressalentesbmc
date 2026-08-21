@@ -279,7 +279,7 @@ function Dashboard() {
               </SheetTrigger>
               <SheetContent side="left" className="p-0 w-72">
                 <SheetHeader className="p-6 flex-row items-center gap-3 border-b border-slate-100 text-left">
-                  <div className="bg-sky-600 p-2 rounded-lg text-white">
+                  <div className="bg-primary p-2 rounded-lg text-primary-foreground">
                     <Wind size={24} />
                   </div>
                   <SheetTitle className="font-bold text-lg leading-tight">Gestão de<br/>Sobressalentes</SheetTitle>
