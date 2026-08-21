@@ -446,8 +446,8 @@ function Dashboard() {
                           ]}
                           cx="50%"
                           cy="50%"
-                          innerRadius={60}
-                          outerRadius={80}
+                          innerRadius={window.innerWidth < 768 ? 50 : 60}
+                          outerRadius={window.innerWidth < 768 ? 70 : 80}
                           paddingAngle={5}
                           dataKey="value"
                         >
@@ -455,8 +455,8 @@ function Dashboard() {
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length] || "#0ea5e9"} />
                           ))}
                         </Pie>
-                        <Tooltip />
-                        <Legend />
+                        <Tooltip contentStyle={{fontSize: '12px', borderRadius: '8px'}} />
+                        <Legend wrapperStyle={{fontSize: '12px'}} />
                       </PieChart>
                     </ResponsiveContainer>
                   </CardContent>
