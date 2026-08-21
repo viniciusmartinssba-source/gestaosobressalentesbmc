@@ -179,11 +179,33 @@ function Dashboard() {
 
   
 
-  const stats = [
-    { title: "Total Geral de Saídas", value: history.length.toString(), icon: Package, change: "+12%" },
-    { title: "Peças Críticas (IA)", value: "14", icon: AlertTriangle, change: "-2", color: "text-red-500" },
-    { title: "Estoque em Campo", value: "85%", icon: TrendingUp, change: "+5%" },
-  ];
+  const stats = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    
+    const countToday = history.filter(h => {
+      const parts = h.data.split(', ')[0]?.split('/');
+      if (!parts || parts.length < 3) return false;
+      const hDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+      return hDate.getTime() >= today.getTime();
+    }).length;
+    
+    const countMonth = history.filter(h => {
+      const parts = h.data.split(', ')[0]?.split('/');
+      if (!parts || parts.length < 3) return false;
+      const hDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+      return hDate.getTime() >= startOfMonth.getTime();
+    }).length;
+
+    return [
+      { title: "Total Geral de Saídas", value: history.length.toString(), icon: Package, change: "+12%" },
+      { title: "Retiradas Hoje", value: countToday.toString(), icon: Calendar, change: "Atualizado" },
+      { title: "Retiradas no Mês", value: countMonth.toString(), icon: TrendingUp, change: "+5%" },
+      { title: "Peças Críticas (IA)", value: "14", icon: AlertTriangle, change: "-2", color: "text-red-500" },
+    ];
+  }, [history]);
 
   const chartData = useMemo(() => data.parques.map(p => ({
     name: p.nome,
@@ -390,10 +412,12 @@ function Dashboard() {
                 <div className="flex-1 text-center md:text-left z-10">
                   <h3 className="text-xl font-bold text-foreground">Insights Inteligentes</h3>
                   <p className="text-muted-foreground text-sm max-w-2xl leading-relaxed">
-                    Estoque em campo não precisa ter...
+                    Na verdade eu preciso que o painel já me mostre essas métricas abaixo:
 
-                    - Quantidade de peças retiradas por dia;
-                    - Quantidade de peças retiradas no mês;
+                    Retirar esse: Estoque em campo não precisa ter...
+
+                    Inserir esse: Quantidade de peças retiradas por dia;
+                    Inserir esse: Quantidade de peças retiradas no mês
                   </p>
                 </div>
                 <Button variant="secondary" className="w-full md:w-auto rounded-xl px-6 font-semibold shadow-sm hover:scale-105 transition-transform cursor-pointer">
