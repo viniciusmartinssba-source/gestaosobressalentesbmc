@@ -16,7 +16,8 @@ import {
   FileDown,
   CheckCircle2,
   BarChart3,
-  Users
+  Users,
+  Calendar
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -59,6 +60,13 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 export const Route = createFileRoute("/")({
   component: Dashboard,
@@ -194,108 +202,167 @@ function Dashboard() {
     setIsScannerOpen(false);
   };
   return (
-    <div className="flex h-screen bg-slate-50 font-sans text-slate-900">
+    <div className="flex h-screen bg-slate-50 font-sans text-slate-900 overflow-hidden">
       {/* Sidebar Desktop */}
-      <aside className={cn(
-        "fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200 transition-transform duration-300 md:relative md:translate-x-0",
-        !isSidebarOpen && "-translate-x-full"
-      )}>
-        <div className="flex flex-col h-full">
-          <div className="p-6 flex items-center gap-3 border-b border-slate-100">
-            <div className="bg-sky-600 p-2 rounded-lg text-white">
-              <Wind size={24} />
-            </div>
-            <h1 className="font-bold text-lg leading-tight">Gestão de<br/>Sobressalentes</h1>
+      <aside className="hidden md:flex flex-col w-64 bg-white border-r border-slate-200">
+        <div className="p-6 flex items-center gap-3 border-b border-slate-100">
+          <div className="bg-sky-600 p-2 rounded-lg text-white">
+            <Wind size={24} />
           </div>
+          <h1 className="font-bold text-lg leading-tight">Gestão de<br/>Sobressalentes</h1>
+        </div>
 
-          <nav className="flex-1 p-4 space-y-1">
-            <button 
-              onClick={() => setActiveTab("overview")}
-              className={cn(
-                "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
-                activeTab === "overview" ? "bg-sky-50 text-sky-700 font-medium" : "text-slate-500 hover:bg-slate-50"
-              )}
-            >
-              <LayoutDashboard size={20} /> Dashboard
-            </button>
-            <button 
-              onClick={() => setActiveTab("register")}
-              className={cn(
-                "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
-                activeTab === "register" ? "bg-sky-50 text-sky-700 font-medium" : "text-slate-500 hover:bg-slate-50"
-              )}
-            >
-              <PlusCircle size={20} /> Registrar Saída
-            </button>
-            <button 
-              onClick={() => setActiveTab("history")}
-              className={cn(
-                "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
-                activeTab === "history" ? "bg-sky-50 text-sky-700 font-medium" : "text-slate-500 hover:bg-slate-50"
-              )}
-            >
-              <HistoryIcon size={20} /> Histórico
-            </button>
-            <button 
-              className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50"
-            >
-              <Search size={20} /> Catálogo
-            </button>
-          </nav>
+        <nav className="flex-1 p-4 space-y-1">
+          <button 
+            onClick={() => setActiveTab("overview")}
+            className={cn(
+              "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
+              activeTab === "overview" ? "bg-sky-50 text-sky-700 font-medium" : "text-slate-500 hover:bg-slate-50"
+            )}
+          >
+            <LayoutDashboard size={20} /> Dashboard
+          </button>
+          <button 
+            onClick={() => setActiveTab("register")}
+            className={cn(
+              "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
+              activeTab === "register" ? "bg-sky-50 text-sky-700 font-medium" : "text-slate-500 hover:bg-slate-50"
+            )}
+          >
+            <PlusCircle size={20} /> Registrar Saída
+          </button>
+          <button 
+            onClick={() => setActiveTab("history")}
+            className={cn(
+              "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
+              activeTab === "history" ? "bg-sky-50 text-sky-700 font-medium" : "text-slate-500 hover:bg-slate-50"
+            )}
+          >
+            <HistoryIcon size={20} /> Histórico
+          </button>
+          <button 
+            className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50"
+          >
+            <Search size={20} /> Catálogo
+          </button>
+        </nav>
 
-          <div className="p-4 border-t border-slate-100">
-            <div className="flex items-center gap-3 px-4 py-3 mb-2">
-              <div className="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center font-bold text-sky-700">
-                {user.nome.split(' ').map(n => n[0]).join('')}
-              </div>
-              <div className="flex-1 overflow-hidden">
-                <p className="text-sm font-medium truncate">{user.nome}</p>
-                <p className="text-xs text-slate-400">{user.matricula}</p>
-              </div>
+        <div className="p-4 border-t border-slate-100">
+          <div className="flex items-center gap-3 px-4 py-3 mb-2">
+            <div className="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center font-bold text-sky-700 shrink-0">
+              {user.nome.split(' ').map(n => n[0]).join('')}
             </div>
-            <button 
-              onClick={handleLogout}
-              className="flex items-center gap-3 w-full px-4 py-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-            >
-              <LogOut size={18} /> Sair
-            </button>
+            <div className="flex-1 overflow-hidden">
+              <p className="text-sm font-medium truncate">{user.nome}</p>
+              <p className="text-xs text-slate-400">{user.matricula}</p>
+            </div>
           </div>
+          <button 
+            onClick={handleLogout}
+            className="flex items-center gap-3 w-full px-4 py-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+          >
+            <LogOut size={18} /> Sair
+          </button>
         </div>
       </aside>
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col overflow-hidden relative">
         {/* Header */}
-        <header className="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-6 shrink-0">
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="md:hidden p-2 hover:bg-slate-100 rounded-lg"
-            >
-              {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-            <h2 className="text-lg font-semibold uppercase tracking-wider text-slate-500">
-              {activeTab === "overview" && "Dashboard Operacional"}
-              {activeTab === "register" && "Registro de Movimentação"}
-              {activeTab === "history" && "Histórico de Lançamentos"}
+        <header className="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-4 md:px-6 shrink-0">
+          <div className="flex items-center gap-3">
+            <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden">
+                  <Menu size={24} />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="p-0 w-72">
+                <SheetHeader className="p-6 flex-row items-center gap-3 border-b border-slate-100 text-left">
+                  <div className="bg-sky-600 p-2 rounded-lg text-white">
+                    <Wind size={24} />
+                  </div>
+                  <SheetTitle className="font-bold text-lg leading-tight">Gestão de<br/>Sobressalentes</SheetTitle>
+                </SheetHeader>
+                <div className="flex flex-col h-[calc(100vh-85px)]">
+                  <nav className="flex-1 p-4 space-y-1">
+                    <button 
+                      onClick={() => { setActiveTab("overview"); setIsSidebarOpen(false); }}
+                      className={cn(
+                        "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
+                        activeTab === "overview" ? "bg-sky-50 text-sky-700 font-medium" : "text-slate-500 hover:bg-slate-50"
+                      )}
+                    >
+                      <LayoutDashboard size={20} /> Dashboard
+                    </button>
+                    <button 
+                      onClick={() => { setActiveTab("register"); setIsSidebarOpen(false); }}
+                      className={cn(
+                        "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
+                        activeTab === "register" ? "bg-sky-50 text-sky-700 font-medium" : "text-slate-500 hover:bg-slate-50"
+                      )}
+                    >
+                      <PlusCircle size={20} /> Registrar Saída
+                    </button>
+                    <button 
+                      onClick={() => { setActiveTab("history"); setIsSidebarOpen(false); }}
+                      className={cn(
+                        "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
+                        activeTab === "history" ? "bg-sky-50 text-sky-700 font-medium" : "text-slate-500 hover:bg-slate-50"
+                      )}
+                    >
+                      <HistoryIcon size={20} /> Histórico
+                    </button>
+                  </nav>
+                  <div className="p-4 border-t border-slate-100">
+                    <div className="flex items-center gap-3 px-4 py-3 mb-2">
+                      <div className="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center font-bold text-sky-700 shrink-0">
+                        {user.nome.split(' ').map(n => n[0]).join('')}
+                      </div>
+                      <div className="flex-1 overflow-hidden">
+                        <p className="text-sm font-medium truncate">{user.nome}</p>
+                        <p className="text-xs text-slate-400">{user.matricula}</p>
+                      </div>
+                    </div>
+                    <button 
+                      onClick={handleLogout}
+                      className="flex items-center gap-3 w-full px-4 py-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                    >
+                      <LogOut size={18} /> Sair
+                    </button>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
+            
+            <h2 className="text-sm md:text-lg font-semibold uppercase tracking-wider text-slate-500 truncate max-w-[200px] md:max-w-none">
+              {activeTab === "overview" && "Dashboard"}
+              {activeTab === "register" && "Registro"}
+              {activeTab === "history" && "Histórico"}
             </h2>
           </div>
-          <div className="text-sm font-medium text-slate-500 hidden sm:block">
-            {new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })}
+          <div className="text-sm font-medium text-slate-500 flex items-center gap-2">
+            <Calendar size={16} className="hidden sm:block" />
+            <span className="hidden sm:block">
+              {new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })}
+            </span>
+            <span className="sm:hidden">
+              {new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: '2-digit' })}
+            </span>
           </div>
         </header>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-y-auto p-6 md:p-8">
+        <div className="flex-1 overflow-y-auto p-4 md:p-8">
           {activeTab === "overview" && (
-            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2">
-              <div className="bg-sky-50 border border-sky-100 rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6">
-                <div className="bg-sky-600 p-4 rounded-2xl text-white shadow-lg shadow-sky-100">
-                  <BarChart3 size={32} />
+            <div className="space-y-6 md:space-y-8 animate-in fade-in slide-in-from-bottom-2">
+              <div className="bg-sky-50 border border-sky-100 rounded-2xl p-4 md:p-6 flex flex-col md:flex-row items-center gap-4 md:gap-6">
+                <div className="bg-sky-600 p-3 md:p-4 rounded-2xl text-white shadow-lg shadow-sky-100 shrink-0">
+                  <BarChart3 size={28} className="md:w-8 md:h-8" />
                 </div>
                 <div className="flex-1 text-center md:text-left">
-                  <h3 className="text-xl font-bold text-sky-900">Insights da IA</h3>
-                  <p className="text-sky-700/80 text-sm">
+                  <h3 className="text-lg md:text-xl font-bold text-sky-900">Insights da IA</h3>
+                  <p className="text-sky-700/80 text-xs md:text-sm">
                     {history.length > 0 ? (
                       `Análise baseada em ${history.length} registros: O parque ${chartData.sort((a,b) => b.value - a.value)[0]?.name} possui o maior volume de retiradas. Verifique a periodicidade de manutenção preventiva.`
                     ) : (
@@ -303,25 +370,25 @@ function Dashboard() {
                     )}
                   </p>
                 </div>
-                <Button variant="secondary" className="bg-white hover:bg-sky-100 border-sky-200">
+                <Button variant="secondary" className="w-full md:w-auto bg-white hover:bg-sky-100 border-sky-200">
                   Ver Detalhes
                 </Button>
               </div>
               {/* Stats Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                 {stats.map((stat, i) => (
                   <Card key={i} className="border-none shadow-sm shadow-slate-200 overflow-hidden">
-                    <CardContent className="p-6">
+                    <CardContent className="p-5 md:p-6">
                       <div className="flex justify-between items-start">
                         <div>
-                          <p className="text-sm font-medium text-slate-500 mb-1">{stat.title}</p>
-                          <h3 className={cn("text-2xl font-bold", stat.color || "text-slate-900")}>{stat.value}</h3>
+                          <p className="text-xs md:text-sm font-medium text-slate-500 mb-1">{stat.title}</p>
+                          <h3 className={cn("text-xl md:text-2xl font-bold", stat.color || "text-slate-900")}>{stat.value}</h3>
                         </div>
-                        <div className="bg-slate-50 p-2.5 rounded-xl">
-                          <stat.icon className="text-sky-600" size={24} />
+                        <div className="bg-slate-50 p-2 md:p-2.5 rounded-xl">
+                          <stat.icon className="text-sky-600" size={20} />
                         </div>
                       </div>
-                      <div className="mt-4 flex items-center gap-1.5 text-xs font-semibold text-emerald-600 bg-emerald-50 w-fit px-2 py-1 rounded-full">
+                      <div className="mt-3 md:mt-4 flex items-center gap-1.5 text-[10px] md:text-xs font-semibold text-emerald-600 bg-emerald-50 w-fit px-2 py-1 rounded-full">
                         {stat.change} <span className="text-slate-400 font-normal">vs mês anterior</span>
                       </div>
                     </CardContent>
@@ -330,13 +397,13 @@ function Dashboard() {
               </div>
 
               {/* Charts Section */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
                 <Card className="border-none shadow-sm shadow-slate-200">
-                  <CardHeader>
-                    <CardTitle className="text-lg">Distribuição por Parque</CardTitle>
-                    <CardDescription>Volume de retiradas por unidade eólica</CardDescription>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base md:text-lg">Distribuição por Parque</CardTitle>
+                    <CardDescription className="text-xs md:text-sm">Volume de retiradas por unidade eólica</CardDescription>
                   </CardHeader>
-                  <CardContent className="h-80">
+                  <CardContent className="h-[300px] md:h-80 px-2 md:px-6">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={chartData}>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
@@ -344,30 +411,30 @@ function Dashboard() {
                           dataKey="name" 
                           axisLine={false} 
                           tickLine={false} 
-                          tick={{fill: '#94a3b8', fontSize: 12}} 
+                          tick={{fill: '#94a3b8', fontSize: 10}} 
                           dy={10} 
                         />
                         <YAxis 
                           axisLine={false} 
                           tickLine={false} 
-                          tick={{fill: '#94a3b8', fontSize: 12}} 
+                          tick={{fill: '#94a3b8', fontSize: 10}} 
                         />
                         <Tooltip 
                           cursor={{fill: '#f8fafc'}}
-                          contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)'}}
+                          contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', fontSize: '12px'}}
                         />
                         <Bar dataKey="value" fill="#0284c7" radius={[6, 6, 0, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   </CardContent>
                 </Card>
-
+ 
                 <Card className="border-none shadow-sm shadow-slate-200">
-                  <CardHeader>
-                    <CardTitle className="text-lg">Status do Inventário</CardTitle>
-                    <CardDescription>Peças mais retiradas nos últimos 30 dias</CardDescription>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base md:text-lg">Status do Inventário</CardTitle>
+                    <CardDescription className="text-xs md:text-sm">Peças mais retiradas nos últimos 30 dias</CardDescription>
                   </CardHeader>
-                  <CardContent className="flex items-center justify-center h-80">
+                  <CardContent className="flex items-center justify-center h-[300px] md:h-80 px-2 md:px-6">
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
                         <Pie
@@ -379,8 +446,8 @@ function Dashboard() {
                           ]}
                           cx="50%"
                           cy="50%"
-                          innerRadius={60}
-                          outerRadius={80}
+                          innerRadius={window.innerWidth < 768 ? 50 : 60}
+                          outerRadius={window.innerWidth < 768 ? 70 : 80}
                           paddingAngle={5}
                           dataKey="value"
                         >
@@ -388,8 +455,8 @@ function Dashboard() {
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length] || "#0ea5e9"} />
                           ))}
                         </Pie>
-                        <Tooltip />
-                        <Legend />
+                        <Tooltip contentStyle={{fontSize: '12px', borderRadius: '8px'}} />
+                        <Legend wrapperStyle={{fontSize: '12px'}} />
                       </PieChart>
                     </ResponsiveContainer>
                   </CardContent>
@@ -399,8 +466,8 @@ function Dashboard() {
           )}
 
           {activeTab === "register" && (
-            <div className="max-w-2xl mx-auto space-y-6 animate-in zoom-in-95 duration-200">
-              <Card className="border-none shadow-md shadow-slate-200 overflow-hidden">
+            <div className="max-w-2xl mx-auto space-y-4 md:space-y-6 animate-in zoom-in-95 duration-200 px-0 sm:px-4">
+              <Card className="border-none shadow-md shadow-slate-200 overflow-hidden rounded-none sm:rounded-2xl">
                 <CardHeader className="bg-sky-700 text-white">
                   <CardTitle>Nova Movimentação</CardTitle>
                   <CardDescription className="text-sky-100">Preencha os campos abaixo para registrar a retirada da peça.</CardDescription>
@@ -534,39 +601,40 @@ function Dashboard() {
 
           {activeTab === "history" && (
             <div className="space-y-6 animate-in fade-in duration-300">
-              <div className="flex justify-between items-center">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <h3 className="text-lg font-bold text-slate-800">Registros Recentes</h3>
-                <div className="flex gap-2">
+                <div className="flex gap-2 w-full sm:w-auto">
                   <Button 
                     variant="outline"
                     onClick={() => exportToXLSX(history)}
-                    className="rounded-xl border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                    className="flex-1 sm:flex-none rounded-xl border-emerald-200 text-emerald-700 hover:bg-emerald-50"
                   >
                     <FileDown size={18} /> Excel
                   </Button>
                   <Button 
                     variant="outline"
                     onClick={() => exportToPDF(history)}
-                    className="rounded-xl border-red-200 text-red-700 hover:bg-red-50"
+                    className="flex-1 sm:flex-none rounded-xl border-red-200 text-red-700 hover:bg-red-50"
                   >
                     <FileDown size={18} /> PDF
                   </Button>
                 </div>
               </div>
               
-              <Card className="border-none shadow-sm shadow-slate-200 overflow-hidden">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-slate-50/50 hover:bg-slate-50/50">
-                      <TableHead className="font-bold">Data</TableHead>
-                      <TableHead className="font-bold">Técnico</TableHead>
-                      <TableHead className="font-bold">Local</TableHead>
-                      <TableHead className="font-bold">Peça</TableHead>
-                      <TableHead className="font-bold">Qtd</TableHead>
-                      <TableHead className="font-bold text-right">WO</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
+              <Card className="border-none shadow-sm shadow-slate-200">
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-slate-50/50 hover:bg-slate-50/50">
+                        <TableHead className="font-bold whitespace-nowrap">Data</TableHead>
+                        <TableHead className="font-bold whitespace-nowrap">Técnico</TableHead>
+                        <TableHead className="font-bold whitespace-nowrap">Local</TableHead>
+                        <TableHead className="font-bold whitespace-nowrap">Peça</TableHead>
+                        <TableHead className="font-bold whitespace-nowrap">Qtd</TableHead>
+                        <TableHead className="font-bold text-right whitespace-nowrap">WO</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
                     {history.map((item, i) => (
                       <TableRow key={i} className="group">
                         <TableCell className="text-slate-500 text-xs">{item.data}</TableCell>
@@ -593,7 +661,8 @@ function Dashboard() {
                       </TableRow>
                     ))}
                   </TableBody>
-                </Table>
+                  </Table>
+                </div>
               </Card>
             </div>
           )}
@@ -604,14 +673,6 @@ function Dashboard() {
         <BarcodeScanner 
           onScan={handleScan}
           onClose={() => setIsScannerOpen(false)}
-        />
-      )}
-
-      {/* Mobile Sidebar Overlay */}
-      {isSidebarOpen && (
-        <div 
-          onClick={() => setIsSidebarOpen(false)}
-          className="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-40 md:hidden"
         />
       )}
     </div>
