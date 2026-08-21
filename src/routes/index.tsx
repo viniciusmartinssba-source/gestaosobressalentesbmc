@@ -69,6 +69,8 @@ const COLORS = ['#0ea5e9', '#6366f1', '#8b5cf6', '#ec4899'];
 
 function Dashboard() {
   const data = Route.useLoaderData();
+  const { user, logout, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("overview");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
@@ -76,12 +78,24 @@ function Dashboard() {
   const [foundPeca, setFoundPeca] = useState<{sap: string, descricao: string} | null>(null);
   
   // Form state
-  const [selectedParque, setSelectedParque] = useState<any>(data.parques[0]);
-  const [selectedAero, setSelectedAero] = useState<number>(data.parques[0]!.aeros[0]!);
+  const [selectedParqueId, setSelectedParqueId] = useState<string>(data.parques[0]!.id);
+  const [selectedAero, setSelectedAero] = useState<string>(data.parques[0]!.aeros[0]!.toString());
   const [selectedEstoque, setSelectedEstoque] = useState<string>(data.estoques[0]!);
   const [quantidade, setQuantidade] = useState(1);
   const [wo, setWo] = useState("");
   
+  // Auth protection
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate({ to: "/login" });
+    }
+  }, [isAuthenticated, navigate]);
+
+  const selectedParque = useMemo(() => 
+    data.parques.find(p => p.id === selectedParqueId) || data.parques[0]!,
+    [data.parques, selectedParqueId]
+  );
+
   // History state (mock)
   const [history, setHistory] = useState([
     { data: "21/08/2026 09:45", tecnico: "Bruno Terras", parque: "Macaúbas", aero: "04", sap: "1001", peca: "Rolamento Principal", quantidade: 1, wo: "WO-8872", estoque: "1670" },
@@ -94,13 +108,13 @@ function Dashboard() {
   }, [sapInput, data.catalogo]);
 
   const handleRegister = () => {
-    if (!foundPeca) return;
+    if (!foundPeca || !user) return;
     
     const newEntry = {
       data: format(new Date(), "dd/MM/yyyy HH:mm"),
-      tecnico: "Bruno Terras", // Simulated user
+      tecnico: user.nome,
       parque: selectedParque.nome,
-      aero: selectedAero?.toString() || "0",
+      aero: selectedAero.padStart(2, '0'),
       sap: foundPeca.sap,
       peca: foundPeca.descricao,
       quantidade,
@@ -109,6 +123,7 @@ function Dashboard() {
     };
     
     setHistory([newEntry, ...history]);
+    toast.success("Movimentação registrada com sucesso!");
     confetti({
       particleCount: 100,
       spread: 70,
@@ -122,6 +137,13 @@ function Dashboard() {
     setWo("");
     setActiveTab("history");
   };
+
+  const handleLogout = () => {
+    logout();
+    toast.info("Você saiu do sistema.");
+  };
+
+  if (!isAuthenticated || !user) return null;
 
   const stats = [
     { title: "Total de Saídas", value: history.length.toString(), icon: Package, change: "+12%" },
