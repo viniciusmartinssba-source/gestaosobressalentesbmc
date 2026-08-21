@@ -296,12 +296,16 @@ function Dashboard() {
                 <div className="flex-1 text-center md:text-left">
                   <h3 className="text-xl font-bold text-sky-900">Insights da IA</h3>
                   <p className="text-sky-700/80 text-sm">
-                    Análise preditiva: O Aerogerador <strong>NH-05</strong> apresentou um aumento de 30% na troca de filtros. Recomenda-se inspeção preventiva no sistema de arrefecimento.
+                    {history.length > 0 ? (
+                      `Análise baseada em ${history.length} registros: O parque ${chartData.sort((a,b) => b.value - a.value)[0]?.name} possui o maior volume de retiradas. Verifique a periodicidade de manutenção preventiva.`
+                    ) : (
+                      "Nenhum dado de movimentação disponível para análise de IA no momento."
+                    )}
                   </p>
                 </div>
-                <button className="px-6 py-2.5 bg-white text-sky-700 border border-sky-200 rounded-xl text-sm font-bold hover:bg-sky-100 transition-colors shadow-sm">
+                <Button variant="secondary" className="bg-white hover:bg-sky-100 border-sky-200">
                   Ver Detalhes
-                </button>
+                </Button>
               </div>
               {/* Stats Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
