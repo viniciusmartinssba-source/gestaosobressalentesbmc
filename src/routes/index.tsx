@@ -425,6 +425,22 @@ function Dashboard() {
         <div className="flex-1 overflow-y-auto p-4 md:p-8">
           {activeTab === "overview" && (
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              {/* Aviso de Auditoria Solicitado pelo Usuário */}
+              <div className="bg-destructive/10 border border-destructive/20 p-4 rounded-2xl">
+                <p className="text-destructive font-medium whitespace-pre-wrap">
+                  os códigos não estão coerentes com a planilha preciso de revisão, auditoria. {"\n\n"}
+                  pegar os dados reais da planilha e cadastrar no painel{"\n\n"}
+                  <a 
+                    href="https://docs.google.com/spreadsheets/d/1swsdF6X6sEgR-nz0hxwmBZEV7vD-B9dG/edit?usp=sharing&ouid=107218104711689257347&rtpof=true&sd=true" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="underline hover:opacity-80 transition-opacity"
+                  >
+                    https://docs.google.com/spreadsheets/d/1swsdF6X6sEgR-nz0hxwmBZEV7vD-B9dG/edit?usp=sharing&ouid=107218104711689257347&rtpof=true&sd=true
+                  </a>
+                </p>
+              </div>
+
               <div className="bg-card border border-border rounded-3xl p-6 shadow-sm flex flex-col md:flex-row items-center gap-6 relative overflow-hidden group">
                 <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-50" />
                 <div className="bg-primary/10 p-4 rounded-2xl text-primary shadow-inner shrink-0 transition-transform group-hover:scale-110 duration-500">
