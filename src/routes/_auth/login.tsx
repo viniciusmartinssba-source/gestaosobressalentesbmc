@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/lib/auth";
 import { getInitialData } from "@/lib/data.functions";
-import { resetUserPasswords } from "@/lib/admin.functions";
 import { toast } from "sonner";
 import { Wind } from "lucide-react";
 
@@ -112,21 +111,6 @@ function LoginPage() {
             <p className="text-center text-xs text-muted-foreground">
               Caso tenha esquecido sua senha, entre em contato com o suporte de TI.
             </p>
-            {process.env['NODE_ENV'] === 'development' && (
-              <Button 
-                type="button" 
-                variant="outline" 
-                size="sm" 
-                className="w-full text-[10px] opacity-20 hover:opacity-100"
-                onClick={async () => {
-                  const res = await resetUserPasswords();
-                  console.log("Reset results:", res);
-                  toast.success("Senhas resetadas (ver console)");
-                }}
-              >
-                Debug: Resetar Senhas (Matrícula)
-              </Button>
-            )}
           </form>
         </CardContent>
       </Card>
