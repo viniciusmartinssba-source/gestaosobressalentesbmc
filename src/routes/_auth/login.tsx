@@ -69,9 +69,10 @@ function LoginPage() {
             <Wind size={32} />
           </div>
           <div>
-            <CardTitle className="text-3xl font-extrabold tracking-tight">Gestão de Sobressalentes</CardTitle>
+            <CardTitle className="text-3xl font-extrabold tracking-tight text-balance">Gestão de Controle de Retiradas de Sobressalentes do Almoxarifado</CardTitle>
             <CardDescription className="text-muted-foreground mt-2 font-medium">
               Acesse o painel operacional para registro de peças
+
             </CardDescription>
             <div className="mt-4 p-3 rounded-xl bg-primary/5 border border-primary/10 text-[11px] text-primary/70 font-semibold uppercase tracking-widest flex items-center justify-center gap-2">
               <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
