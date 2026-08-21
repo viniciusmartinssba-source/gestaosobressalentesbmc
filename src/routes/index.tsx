@@ -211,7 +211,7 @@ function Dashboard() {
                           dataKey="value"
                         >
                           {chartData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length] || "#0ea5e9"} />
                           ))}
                         </Pie>
                         <Tooltip />
