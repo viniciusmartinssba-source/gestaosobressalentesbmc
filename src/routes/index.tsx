@@ -251,7 +251,6 @@ function Dashboard() {
       <aside className="hidden md:flex flex-col w-64 bg-sidebar border-r border-sidebar-border transition-all duration-300 ease-in-out">
         <div className="p-6 flex items-center gap-3 border-b border-sidebar-border/50">
           <div className="bg-primary p-2.5 rounded-xl text-primary-foreground shadow-lg shadow-primary/20 animate-in zoom-in duration-500">
-            <Wind size={24} />
           </div>
           <h1 className="font-bold text-lg leading-tight tracking-tight text-sidebar-foreground">Gestão de<br/>Sobressalentes</h1>
         </div>
@@ -341,7 +340,6 @@ function Dashboard() {
               <SheetContent side="left" className="p-0 w-72">
                 <SheetHeader className="p-6 flex-row items-center gap-3 border-b border-slate-100 text-left">
                   <div className="bg-primary p-2 rounded-lg text-primary-foreground">
-                    <Wind size={24} />
                   </div>
                   <SheetTitle className="font-bold text-lg leading-tight">Gestão de<br/>Sobressalentes</SheetTitle>
                 </SheetHeader>
