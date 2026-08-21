@@ -33,11 +33,10 @@ import {
   Cell,
   Legend
 } from "recharts";
-import { getInitialData } from "@/lib/data.functions";
+import { getInitialData, getHistory } from "@/lib/data.functions";
 import { BarcodeScanner } from "@/components/scanner/BarcodeScanner";
 import { exportToPDF, exportToXLSX } from "@/lib/reports";
 import confetti from "canvas-confetti";
-import { format } from "date-fns";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -59,17 +58,24 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
   component: Dashboard,
-  loader: async () => getInitialData(),
+  loader: async () => {
+    const [data, history] = await Promise.all([
+      getInitialData(),
+      getHistory()
+    ]);
+    return { data, history };
+  },
 });
 
 const COLORS = ['#0ea5e9', '#6366f1', '#8b5cf6', '#ec4899'];
 
 function Dashboard() {
-  const data = Route.useLoaderData();
-  const { user, logout, isAuthenticated } = useAuth();
+  const { data, history: initialHistory } = Route.useLoaderData();
+  const { user, logout, isAuthenticated, isLoading: isAuthLoading } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("overview");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -78,64 +84,84 @@ function Dashboard() {
   const [foundPeca, setFoundPeca] = useState<{sap: string, descricao: string} | null>(null);
   
   // Form state
-  const [selectedParqueId, setSelectedParqueId] = useState<string>(data.parques[0]!.id);
-  const [selectedAero, setSelectedAero] = useState<string>(data.parques[0]!.aeros[0]!.toString());
-  const [selectedEstoque, setSelectedEstoque] = useState<string>(data.estoques[0]!);
+  const [selectedParqueId, setSelectedParqueId] = useState<string>(data.parques[0]?.id || "");
+  const [selectedAero, setSelectedAero] = useState<string>(data.parques[0]?.aeros[0]?.toString() || "");
+  const [selectedEstoque, setSelectedEstoque] = useState<string>(data.estoques[0] || "");
   const [quantidade, setQuantidade] = useState(1);
   const [wo, setWo] = useState("");
+  const [history, setHistory] = useState(initialHistory);
   
-  // Auth protection
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!isAuthLoading && !isAuthenticated) {
       navigate({ to: "/login" });
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, isAuthLoading, navigate]);
 
   const selectedParque = useMemo(() => 
-    data.parques.find(p => p.id === selectedParqueId) || data.parques[0]!,
+    data.parques.find(p => p.id === selectedParqueId) || data.parques[0],
     [data.parques, selectedParqueId]
   );
-
-  // History state (mock)
-  const [history, setHistory] = useState([
-    { data: "21/08/2026 09:45", tecnico: "Bruno Terras", parque: "Macaúbas", aero: "04", sap: "1001", peca: "Rolamento Principal", quantidade: 1, wo: "WO-8872", estoque: "1670" },
-    { data: "20/08/2026 14:20", tecnico: "Leonardo Martins", parque: "Seabra", aero: "02", sap: "1005", peca: "Filtro de Óleo", quantidade: 2, wo: "WO-9912", estoque: "1673" },
-  ]);
 
   useEffect(() => {
     const peca = data.catalogo.find(p => p.sap === sapInput);
     setFoundPeca(peca || null);
   }, [sapInput, data.catalogo]);
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (!foundPeca || !user) return;
     
-    const newEntry = {
-      data: format(new Date(), "dd/MM/yyyy HH:mm"),
-      tecnico: user.nome,
-      parque: selectedParque.nome,
-      aero: selectedAero.padStart(2, '0'),
-      sap: foundPeca.sap,
-      peca: foundPeca.descricao,
-      quantidade,
-      wo,
-      estoque: selectedEstoque
-    };
-    
-    setHistory([newEntry, ...history]);
-    toast.success("Movimentação registrada com sucesso!");
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors: ['#0ea5e9', '#6366f1']
-    });
-    
-    // Reset form
-    setSapInput("");
-    setQuantidade(1);
-    setWo("");
-    setActiveTab("history");
+    try {
+      const { data: mData, error } = await supabase
+        .from('movimentacoes')
+        .insert({
+          tecnico_id: user.id,
+          parque_id: selectedParqueId,
+          aero: selectedAero.padStart(2, '0'),
+          sap: foundPeca.sap,
+          quantidade,
+          wo,
+          estoque: selectedEstoque
+        })
+        .select(`
+          *,
+          profiles (nome),
+          parques (nome),
+          pecas (sap, descricao)
+        `)
+        .single();
+
+      if (error) throw error;
+
+      const newEntry = {
+        id: mData.id,
+        data: new Date(mData.data!).toLocaleString('pt-BR'),
+        tecnico: mData.profiles?.nome || user.nome,
+        parque: mData.parques?.nome || (selectedParque?.nome || ""),
+        aero: mData.aero,
+        sap: mData.sap,
+        peca: mData.pecas?.descricao || foundPeca.descricao,
+        quantidade: mData.quantidade,
+        wo: mData.wo || "",
+        estoque: mData.estoque || ""
+      };
+      
+      setHistory([newEntry, ...history]);
+      toast.success("Movimentação registrada com sucesso!");
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#0ea5e9', '#6366f1']
+      });
+      
+      setSapInput("");
+      setQuantidade(1);
+      setWo("");
+      setActiveTab("history");
+    } catch (error) {
+      console.error('Error registering movement:', error);
+      toast.error("Erro ao registrar movimentação.");
+    }
   };
 
   const handleLogout = () => {
@@ -270,12 +296,16 @@ function Dashboard() {
                 <div className="flex-1 text-center md:text-left">
                   <h3 className="text-xl font-bold text-sky-900">Insights da IA</h3>
                   <p className="text-sky-700/80 text-sm">
-                    Análise preditiva: O Aerogerador <strong>NH-05</strong> apresentou um aumento de 30% na troca de filtros. Recomenda-se inspeção preventiva no sistema de arrefecimento.
+                    {history.length > 0 ? (
+                      `Análise baseada em ${history.length} registros: O parque ${chartData.sort((a,b) => b.value - a.value)[0]?.name} possui o maior volume de retiradas. Verifique a periodicidade de manutenção preventiva.`
+                    ) : (
+                      "Nenhum dado de movimentação disponível para análise de IA no momento."
+                    )}
                   </p>
                 </div>
-                <button className="px-6 py-2.5 bg-white text-sky-700 border border-sky-200 rounded-xl text-sm font-bold hover:bg-sky-100 transition-colors shadow-sm">
+                <Button variant="secondary" className="bg-white hover:bg-sky-100 border-sky-200">
                   Ver Detalhes
-                </button>
+                </Button>
               </div>
               {/* Stats Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -407,7 +437,7 @@ function Dashboard() {
                           <SelectValue placeholder="Selecione o aero" />
                         </SelectTrigger>
                         <SelectContent>
-                          {selectedParque.aeros.map((a: number) => (
+                          {selectedParque?.aeros.map((a: number) => (
                             <SelectItem key={a} value={a.toString()}>Aero {a.toString().padStart(2, '0')}</SelectItem>
                           ))}
                         </SelectContent>

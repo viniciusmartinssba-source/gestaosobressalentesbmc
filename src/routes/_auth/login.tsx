@@ -37,10 +37,14 @@ function LoginPage() {
       const tecnico = data.tecnicos.find(t => t.matricula.toLowerCase() === matricula.toLowerCase());
       
       if (tecnico) {
-        // In a real app, we'd verify the password on the server
-        login(tecnico);
-        toast.success(`Bem-vindo, ${tecnico.nome}!`);
-        navigate({ to: "/" });
+        const { error } = await login(tecnico.email, senha);
+        
+        if (error) {
+          toast.error("Credenciais inválidas. Verifique sua matrícula e senha.");
+        } else {
+          toast.success(`Bem-vindo, ${tecnico.nome}!`);
+          navigate({ to: "/" });
+        }
       } else {
         toast.error("Matrícula não encontrada.");
       }
