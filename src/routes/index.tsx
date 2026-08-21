@@ -609,8 +609,9 @@ function Dashboard() {
 
                   <div className="space-y-2">
                     <Label>Peça (Código SAP)</Label>
-                    <div className="flex gap-2">
-                      <div className="relative flex-1">
+                    <div className="flex flex-col gap-2">
+                      <div className="flex gap-2">
+                        <div className="relative flex-1">
                         <Input 
                           type="text" 
                           value={sapInput}
