@@ -370,26 +370,26 @@ function Dashboard() {
                     )}
                   </p>
                 </div>
-                <Button variant="secondary" className="w-full md:w-auto bg-white hover:bg-sky-100 border-sky-200">
+                <Button variant="secondary" className="w-full md:w-auto">
                   Ver Detalhes
                 </Button>
               </div>
               {/* Stats Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                 {stats.map((stat, i) => (
-                  <Card key={i} className="border-none shadow-sm shadow-slate-200 overflow-hidden">
+                  <Card key={i} className="border-none shadow-sm shadow-border overflow-hidden bg-card text-card-foreground">
                     <CardContent className="p-5 md:p-6">
                       <div className="flex justify-between items-start">
                         <div>
-                          <p className="text-xs md:text-sm font-medium text-slate-500 mb-1">{stat.title}</p>
-                          <h3 className={cn("text-xl md:text-2xl font-bold", stat.color || "text-slate-900")}>{stat.value}</h3>
+                          <p className="text-xs md:text-sm font-medium text-muted-foreground mb-1">{stat.title}</p>
+                          <h3 className={cn("text-xl md:text-2xl font-bold", stat.color || "text-foreground")}>{stat.value}</h3>
                         </div>
-                        <div className="bg-slate-50 p-2 md:p-2.5 rounded-xl">
-                          <stat.icon className="text-sky-600" size={20} />
+                        <div className="bg-accent p-2 md:p-2.5 rounded-xl">
+                          <stat.icon className="text-primary" size={20} />
                         </div>
                       </div>
-                      <div className="mt-3 md:mt-4 flex items-center gap-1.5 text-[10px] md:text-xs font-semibold text-emerald-600 bg-emerald-50 w-fit px-2 py-1 rounded-full">
-                        {stat.change} <span className="text-slate-400 font-normal">vs mês anterior</span>
+                      <div className="mt-3 md:mt-4 flex items-center gap-1.5 text-[10px] md:text-xs font-semibold text-emerald-500 bg-emerald-500/10 w-fit px-2 py-1 rounded-full">
+                        {stat.change} <span className="text-muted-foreground font-normal">vs mês anterior</span>
                       </div>
                     </CardContent>
                   </Card>
@@ -398,7 +398,7 @@ function Dashboard() {
 
               {/* Charts Section */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-                <Card className="border-none shadow-sm shadow-slate-200">
+                <Card className="border-none shadow-sm shadow-border bg-card text-card-foreground">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-base md:text-lg">Distribuição por Parque</CardTitle>
                     <CardDescription className="text-xs md:text-sm">Volume de retiradas por unidade eólica</CardDescription>
@@ -406,18 +406,18 @@ function Dashboard() {
                   <CardContent className="h-[300px] md:h-80 px-2 md:px-6">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={chartData}>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
                         <XAxis 
                           dataKey="name" 
                           axisLine={false} 
                           tickLine={false} 
-                          tick={{fill: '#94a3b8', fontSize: 10}} 
+                          tick={{fill: 'var(--muted-foreground)', fontSize: 10}} 
                           dy={10} 
                         />
                         <YAxis 
                           axisLine={false} 
                           tickLine={false} 
-                          tick={{fill: '#94a3b8', fontSize: 10}} 
+                          tick={{fill: 'var(--muted-foreground)', fontSize: 10}} 
                         />
                         <Tooltip 
                           cursor={{fill: '#f8fafc'}}
