@@ -59,7 +59,7 @@ function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-background p-4 font-sans sm:p-6 lg:p-8">
       <Card className="w-full max-w-sm sm:max-w-md border-none shadow-2xl shadow-slate-200">
         <CardHeader className="space-y-4 text-center pb-8">
-          <div className="mx-auto bg-sky-600 p-3 rounded-2xl text-white w-fit shadow-lg shadow-sky-100">
+          <div className="mx-auto bg-primary p-3 rounded-2xl text-primary-foreground w-fit shadow-lg shadow-primary/20">
             <Wind size={32} />
           </div>
           <div className="space-y-1">
