@@ -179,11 +179,29 @@ function Dashboard() {
 
   
 
-  const stats = [
-    { title: "Total Geral de Saídas", value: history.length.toString(), icon: Package, change: "+12%" },
-    { title: "Peças Críticas (IA)", value: "14", icon: AlertTriangle, change: "-2", color: "text-red-500" },
-    { title: "Estoque em Campo", value: "85%", icon: TrendingUp, change: "+5%" },
-  ];
+  const stats = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    
+    const countToday = history.filter(h => {
+      const hDate = new Date(h.data.split(', ')[0].split('/').reverse().join('-'));
+      return hDate.getTime() >= today.getTime();
+    }).length;
+    
+    const countMonth = history.filter(h => {
+      const hDate = new Date(h.data.split(', ')[0].split('/').reverse().join('-'));
+      return hDate.getTime() >= startOfMonth.getTime();
+    }).length;
+
+    return [
+      { title: "Total Geral de Saídas", value: history.length.toString(), icon: Package, change: "+12%" },
+      { title: "Retiradas Hoje", value: countToday.toString(), icon: Calendar, change: "Atualizado" },
+      { title: "Retiradas no Mês", value: countMonth.toString(), icon: TrendingUp, change: "+5%" },
+      { title: "Peças Críticas (IA)", value: "14", icon: AlertTriangle, change: "-2", color: "text-red-500" },
+    ];
+  }, [history]);
 
   const chartData = useMemo(() => data.parques.map(p => ({
     name: p.nome,
