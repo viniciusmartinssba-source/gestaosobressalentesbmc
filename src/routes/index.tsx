@@ -444,49 +444,48 @@ function Dashboard() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label className="text-sm font-semibold text-slate-700">Quantidade</label>
-                      <input 
+                      <Label>Quantidade</Label>
+                      <Input 
                         type="number" 
                         value={quantidade}
                         onChange={(e) => setQuantidade(Number(e.target.value))}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky-500 outline-none transition-all"
+                        className="h-12 rounded-xl bg-slate-50"
+                        min={1}
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-sm font-semibold text-slate-700">Estoque (Opcional)</label>
-                      <select 
-                        value={selectedEstoque}
-                        onChange={(e) => setSelectedEstoque(e.target.value)}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky-500 outline-none transition-all"
-                      >
-                        {data.estoques.map(e => (
-                          <option key={e} value={e}>Estoque {e}</option>
-                        ))}
-                      </select>
+                      <Label>Estoque (Opcional)</Label>
+                      <Select value={selectedEstoque} onValueChange={setSelectedEstoque}>
+                        <SelectTrigger className="h-12 rounded-xl bg-slate-50">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {data.estoques.map(e => (
+                            <SelectItem key={e} value={e}>Estoque {e}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-semibold text-slate-700">Work Order (Opcional)</label>
-                    <input 
+                    <Label>Work Order (Opcional)</Label>
+                    <Input 
                       type="text" 
                       value={wo}
                       onChange={(e) => setWo(e.target.value)}
                       placeholder="Número da WO"
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky-500 outline-none transition-all"
+                      className="h-12 rounded-xl bg-slate-50"
                     />
                   </div>
 
-                  <button 
+                  <Button 
                     onClick={handleRegister}
                     disabled={!foundPeca}
-                    className={cn(
-                      "w-full font-bold py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2",
-                      foundPeca ? "bg-sky-600 hover:bg-sky-700 text-white shadow-sky-100" : "bg-slate-200 text-slate-400 cursor-not-allowed shadow-none"
-                    )}
+                    className="w-full h-14 rounded-xl font-bold text-lg shadow-lg shadow-sky-100 transition-all"
                   >
                     <PlusCircle size={20} /> Confirmar Retirada
-                  </button>
+                  </Button>
                 </CardContent>
               </Card>
             </div>
@@ -497,59 +496,63 @@ function Dashboard() {
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-bold text-slate-800">Registros Recentes</h3>
                 <div className="flex gap-2">
-                  <button 
+                  <Button 
+                    variant="outline"
                     onClick={() => exportToXLSX(history)}
-                    className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-medium transition-colors"
+                    className="rounded-xl border-emerald-200 text-emerald-700 hover:bg-emerald-50"
                   >
                     <FileDown size={18} /> Excel
-                  </button>
-                  <button 
+                  </Button>
+                  <Button 
+                    variant="outline"
                     onClick={() => exportToPDF(history)}
-                    className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-medium transition-colors"
+                    className="rounded-xl border-red-200 text-red-700 hover:bg-red-50"
                   >
                     <FileDown size={18} /> PDF
-                  </button>
+                  </Button>
                 </div>
               </div>
               
               <Card className="border-none shadow-sm shadow-slate-200 overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse">
-                    <thead>
-                      <tr className="bg-slate-50 border-b border-slate-100">
-                        <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Data</th>
-                        <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Técnico</th>
-                        <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Local</th>
-                        <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Peça</th>
-                        <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Qtd</th>
-                        <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase">WO</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-50">
-                      {history.map((item, i) => (
-                        <tr key={i} className="hover:bg-slate-50/50 transition-colors">
-                          <td className="px-6 py-4 text-sm text-slate-600">{item.data}</td>
-                          <td className="px-6 py-4 text-sm font-medium text-slate-900">{item.tecnico}</td>
-                          <td className="px-6 py-4 text-sm text-slate-600">{item.parque} - {item.aero}</td>
-                          <td className="px-6 py-4 text-sm text-slate-600">
-                            <span className="font-mono text-[10px] bg-slate-100 px-1 rounded mr-2">SAP {item.sap}</span>
-                            {item.peca}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-slate-600">{item.quantidade}</td>
-                          <td className="px-6 py-4">
-                            {item.wo ? (
-                              <span className="bg-sky-100 text-sky-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tighter">
-                                {item.wo}
-                              </span>
-                            ) : (
-                              <span className="text-slate-300 text-xs">-</span>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-slate-50/50 hover:bg-slate-50/50">
+                      <TableHead className="font-bold">Data</TableHead>
+                      <TableHead className="font-bold">Técnico</TableHead>
+                      <TableHead className="font-bold">Local</TableHead>
+                      <TableHead className="font-bold">Peça</TableHead>
+                      <TableHead className="font-bold">Qtd</TableHead>
+                      <TableHead className="font-bold text-right">WO</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {history.map((item, i) => (
+                      <TableRow key={i} className="group">
+                        <TableCell className="text-slate-500 text-xs">{item.data}</TableCell>
+                        <TableCell className="font-medium">{item.tecnico}</TableCell>
+                        <TableCell className="text-slate-600">{item.parque} - {item.aero}</TableCell>
+                        <TableCell>
+                          <div className="flex flex-col">
+                            <span className="font-medium">{item.peca}</span>
+                            <span className="text-[10px] text-slate-400 font-mono">SAP {item.sap}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="secondary" className="rounded-lg">{item.quantidade}</Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {item.wo ? (
+                            <Badge className="bg-sky-100 text-sky-700 hover:bg-sky-200 border-none rounded-lg">
+                              {item.wo}
+                            </Badge>
+                          ) : (
+                            <span className="text-slate-300 text-xs">-</span>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </Card>
             </div>
           )}
