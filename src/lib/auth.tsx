@@ -73,7 +73,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       email,
       password: matricula,
     });
-
     return { error };
   };
 
