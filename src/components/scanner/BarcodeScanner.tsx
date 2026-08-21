@@ -9,8 +9,8 @@ interface BarcodeScannerProps {
 
 export const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
   return (
-    <div className="fixed inset-0 z-[100] bg-black/80 flex flex-col items-center justify-center p-4">
-      <div className="relative w-full max-w-md bg-white rounded-3xl overflow-hidden shadow-2xl">
+    <div className="fixed inset-0 z-[100] bg-black/90 md:bg-black/80 flex flex-col items-center justify-center p-0 md:p-4">
+      <div className="relative w-full h-full md:h-auto md:max-w-md bg-white md:rounded-3xl overflow-hidden shadow-2xl flex flex-col">
         <div className="p-4 border-b flex justify-between items-center">
           <h3 className="font-bold text-slate-800 flex items-center gap-2">
             <Camera size={20} className="text-sky-600" /> Scanner de Peça
