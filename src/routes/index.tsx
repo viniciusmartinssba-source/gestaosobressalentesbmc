@@ -39,6 +39,7 @@ import { getInitialData } from "@/lib/data.functions";
 import { BarcodeScanner } from "@/components/scanner/BarcodeScanner";
 import { exportToPDF, exportToXLSX } from "@/lib/reports";
 import confetti from "canvas-confetti";
+import { format } from "date-fns";
 
 export const Route = createFileRoute("/")({
   component: Dashboard,
