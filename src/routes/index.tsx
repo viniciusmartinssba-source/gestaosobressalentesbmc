@@ -557,14 +557,14 @@ function Dashboard() {
                         type="number" 
                         value={quantidade}
                         onChange={(e) => setQuantidade(Number(e.target.value))}
-                        className="h-12 rounded-xl bg-slate-50"
+                        className="h-12 rounded-xl bg-background"
                         min={1}
                       />
                     </div>
                     <div className="space-y-2">
                       <Label>Estoque (Opcional)</Label>
                       <Select value={selectedEstoque} onValueChange={setSelectedEstoque}>
-                        <SelectTrigger className="h-12 rounded-xl bg-slate-50">
+                        <SelectTrigger className="h-12 rounded-xl bg-background">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -583,14 +583,14 @@ function Dashboard() {
                       value={wo}
                       onChange={(e) => setWo(e.target.value)}
                       placeholder="Número da WO"
-                      className="h-12 rounded-xl bg-slate-50"
+                      className="h-12 rounded-xl bg-background"
                     />
                   </div>
 
                   <Button 
                     onClick={handleRegister}
                     disabled={!foundPeca}
-                    className="w-full h-14 rounded-xl font-bold text-lg shadow-lg shadow-sky-100 transition-all"
+                    className="w-full h-14 rounded-xl font-bold text-lg shadow-lg shadow-primary/20 transition-all bg-primary text-primary-foreground hover:bg-primary/90"
                   >
                     <PlusCircle size={20} /> Confirmar Retirada
                   </Button>
