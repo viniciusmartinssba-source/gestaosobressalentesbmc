@@ -136,13 +136,13 @@ function Dashboard() {
         id: mData.id,
         data: new Date(mData.data!).toLocaleString('pt-BR'),
         tecnico: mData.profiles?.nome || user.nome,
-        parque: mData.parques?.nome || selectedParque.nome,
+        parque: mData.parques?.nome || (selectedParque?.nome || ""),
         aero: mData.aero,
         sap: mData.sap,
         peca: mData.pecas?.descricao || foundPeca.descricao,
         quantidade: mData.quantidade,
-        wo: mData.wo,
-        estoque: mData.estoque
+        wo: mData.wo || "",
+        estoque: mData.estoque || ""
       };
       
       setHistory([newEntry, ...history]);
@@ -433,7 +433,7 @@ function Dashboard() {
                           <SelectValue placeholder="Selecione o aero" />
                         </SelectTrigger>
                         <SelectContent>
-                          {selectedParque.aeros.map((a: number) => (
+                          {selectedParque?.aeros.map((a: number) => (
                             <SelectItem key={a} value={a.toString()}>Aero {a.toString().padStart(2, '0')}</SelectItem>
                           ))}
                         </SelectContent>
