@@ -399,11 +399,11 @@ function Dashboard() {
               {/* Charts Section */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <Card className="border-none shadow-sm shadow-slate-200">
-                  <CardHeader>
-                    <CardTitle className="text-lg">Distribuição por Parque</CardTitle>
-                    <CardDescription>Volume de retiradas por unidade eólica</CardDescription>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base md:text-lg">Distribuição por Parque</CardTitle>
+                    <CardDescription className="text-xs md:text-sm">Volume de retiradas por unidade eólica</CardDescription>
                   </CardHeader>
-                  <CardContent className="h-80">
+                  <CardContent className="h-[300px] md:h-80 px-2 md:px-6">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={chartData}>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
@@ -411,30 +411,30 @@ function Dashboard() {
                           dataKey="name" 
                           axisLine={false} 
                           tickLine={false} 
-                          tick={{fill: '#94a3b8', fontSize: 12}} 
+                          tick={{fill: '#94a3b8', fontSize: 10}} 
                           dy={10} 
                         />
                         <YAxis 
                           axisLine={false} 
                           tickLine={false} 
-                          tick={{fill: '#94a3b8', fontSize: 12}} 
+                          tick={{fill: '#94a3b8', fontSize: 10}} 
                         />
                         <Tooltip 
                           cursor={{fill: '#f8fafc'}}
-                          contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)'}}
+                          contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', fontSize: '12px'}}
                         />
                         <Bar dataKey="value" fill="#0284c7" radius={[6, 6, 0, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   </CardContent>
                 </Card>
-
+ 
                 <Card className="border-none shadow-sm shadow-slate-200">
-                  <CardHeader>
-                    <CardTitle className="text-lg">Status do Inventário</CardTitle>
-                    <CardDescription>Peças mais retiradas nos últimos 30 dias</CardDescription>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base md:text-lg">Status do Inventário</CardTitle>
+                    <CardDescription className="text-xs md:text-sm">Peças mais retiradas nos últimos 30 dias</CardDescription>
                   </CardHeader>
-                  <CardContent className="flex items-center justify-center h-80">
+                  <CardContent className="flex items-center justify-center h-[300px] md:h-80 px-2 md:px-6">
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
                         <Pie
