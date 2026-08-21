@@ -66,6 +66,13 @@ export type Database = {
             referencedRelation: "pecas"
             referencedColumns: ["sap"]
           },
+          {
+            foreignKeyName: "movimentacoes_tecnico_id_fkey"
+            columns: ["tecnico_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
       parques: {
