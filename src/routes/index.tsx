@@ -602,30 +602,30 @@ function Dashboard() {
           {activeTab === "history" && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <h3 className="text-lg font-bold text-slate-800">Registros Recentes</h3>
+                <h3 className="text-lg font-bold text-foreground">Registros Recentes</h3>
                 <div className="flex gap-2 w-full sm:w-auto">
                   <Button 
                     variant="outline"
                     onClick={() => exportToXLSX(history)}
-                    className="flex-1 sm:flex-none rounded-xl border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                    className="flex-1 sm:flex-none rounded-xl border-emerald-500/20 text-emerald-500 hover:bg-emerald-500/10"
                   >
                     <FileDown size={18} /> Excel
                   </Button>
                   <Button 
                     variant="outline"
                     onClick={() => exportToPDF(history)}
-                    className="flex-1 sm:flex-none rounded-xl border-red-200 text-red-700 hover:bg-red-50"
+                    className="flex-1 sm:flex-none rounded-xl border-destructive/20 text-destructive hover:bg-destructive/10"
                   >
                     <FileDown size={18} /> PDF
                   </Button>
                 </div>
               </div>
               
-              <Card className="border-none shadow-sm shadow-slate-200">
+              <Card className="border-none shadow-sm shadow-border bg-card text-card-foreground">
                 <div className="overflow-x-auto">
                   <Table>
                     <TableHeader>
-                      <TableRow className="bg-slate-50/50 hover:bg-slate-50/50">
+                      <TableRow className="bg-muted/30 hover:bg-muted/30">
                         <TableHead className="font-bold whitespace-nowrap">Data</TableHead>
                         <TableHead className="font-bold whitespace-nowrap">Técnico</TableHead>
                         <TableHead className="font-bold whitespace-nowrap">Local</TableHead>
@@ -637,13 +637,13 @@ function Dashboard() {
                     <TableBody>
                     {history.map((item, i) => (
                       <TableRow key={i} className="group">
-                        <TableCell className="text-slate-500 text-xs">{item.data}</TableCell>
+                        <TableCell className="text-muted-foreground text-xs">{item.data}</TableCell>
                         <TableCell className="font-medium">{item.tecnico}</TableCell>
-                        <TableCell className="text-slate-600">{item.parque} - {item.aero}</TableCell>
+                        <TableCell className="text-muted-foreground">{item.parque} - {item.aero}</TableCell>
                         <TableCell>
                           <div className="flex flex-col">
                             <span className="font-medium">{item.peca}</span>
-                            <span className="text-[10px] text-slate-400 font-mono">SAP {item.sap}</span>
+                            <span className="text-[10px] text-muted-foreground font-mono">SAP {item.sap}</span>
                           </div>
                         </TableCell>
                         <TableCell>
@@ -651,11 +651,11 @@ function Dashboard() {
                         </TableCell>
                         <TableCell className="text-right">
                           {item.wo ? (
-                            <Badge className="bg-sky-100 text-sky-700 hover:bg-sky-200 border-none rounded-lg">
+                            <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-none rounded-lg">
                               {item.wo}
                             </Badge>
                           ) : (
-                            <span className="text-slate-300 text-xs">-</span>
+                            <span className="text-muted/30 text-xs">-</span>
                           )}
                         </TableCell>
                       </TableRow>
