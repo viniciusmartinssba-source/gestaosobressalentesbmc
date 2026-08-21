@@ -126,17 +126,6 @@ function LoginPage() {
             </Button>
           </form>
 
-          <div className="pt-4 border-t border-border/50">
-            <div className="p-4 rounded-2xl bg-muted/50 border border-border/50 space-y-2 group hover:bg-muted transition-colors">
-              <p className="text-[11px] font-bold text-primary/80 uppercase tracking-wider flex items-center gap-2">
-                <ShieldCheck size={14} /> Dica de Acesso
-              </p>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                valide a senha e usuário de todos...<br/>
-                <span className="text-foreground/80 font-medium">Por exemplo: Usuário: u39920 / Senha: U39920</span>
-              </p>
-            </div>
-          </div>
         </CardContent>
         <CardFooter className="pb-8 pt-0 flex flex-col items-center">
           <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-[0.2em]">
