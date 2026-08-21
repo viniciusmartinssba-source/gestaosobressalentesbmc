@@ -151,17 +151,17 @@ function Dashboard() {
     { title: "Uso de WO", value: "85%", icon: TrendingUp, change: "+5%" },
   ];
 
-  const chartData = data.parques.map(p => ({
+  const chartData = useMemo(() => data.parques.map(p => ({
     name: p.nome,
-    value: history.filter(h => h.parque === p.nome).length + Math.floor(Math.random() * 10) // Adding random for visual effect
-  }));
+    value: history.filter(h => h.parque === p.nome).length
+  })), [data.parques, history]);
 
-  const pieData = [
+  const pieData = useMemo(() => [
     { name: 'Mecânico', value: 400 },
     { name: 'Elétrico', value: 300 },
     { name: 'Sensores', value: 200 },
     { name: 'Outros', value: 100 },
-  ];
+  ], []);
 
   const handleScan = (sap: string) => {
     setSapInput(sap);
