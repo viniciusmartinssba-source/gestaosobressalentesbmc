@@ -1,5 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useState, useEffect, useMemo } from "react";
 import { 
   LayoutDashboard, 
   Package, 
@@ -31,8 +31,6 @@ import {
   PieChart,
   Pie,
   Cell,
-  LineChart,
-  Line,
   Legend
 } from "recharts";
 import { getInitialData } from "@/lib/data.functions";
@@ -40,6 +38,27 @@ import { BarcodeScanner } from "@/components/scanner/BarcodeScanner";
 import { exportToPDF, exportToXLSX } from "@/lib/reports";
 import confetti from "canvas-confetti";
 import { format } from "date-fns";
+import { useAuth } from "@/lib/auth";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/")({
   component: Dashboard,
@@ -50,6 +69,8 @@ const COLORS = ['#0ea5e9', '#6366f1', '#8b5cf6', '#ec4899'];
 
 function Dashboard() {
   const data = Route.useLoaderData();
+  const { user, logout, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("overview");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
@@ -57,12 +78,24 @@ function Dashboard() {
   const [foundPeca, setFoundPeca] = useState<{sap: string, descricao: string} | null>(null);
   
   // Form state
-  const [selectedParque, setSelectedParque] = useState<any>(data.parques[0]);
-  const [selectedAero, setSelectedAero] = useState<number>(data.parques[0]!.aeros[0]!);
+  const [selectedParqueId, setSelectedParqueId] = useState<string>(data.parques[0]!.id);
+  const [selectedAero, setSelectedAero] = useState<string>(data.parques[0]!.aeros[0]!.toString());
   const [selectedEstoque, setSelectedEstoque] = useState<string>(data.estoques[0]!);
   const [quantidade, setQuantidade] = useState(1);
   const [wo, setWo] = useState("");
   
+  // Auth protection
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate({ to: "/login" });
+    }
+  }, [isAuthenticated, navigate]);
+
+  const selectedParque = useMemo(() => 
+    data.parques.find(p => p.id === selectedParqueId) || data.parques[0]!,
+    [data.parques, selectedParqueId]
+  );
+
   // History state (mock)
   const [history, setHistory] = useState([
     { data: "21/08/2026 09:45", tecnico: "Bruno Terras", parque: "Macaúbas", aero: "04", sap: "1001", peca: "Rolamento Principal", quantidade: 1, wo: "WO-8872", estoque: "1670" },
@@ -75,13 +108,13 @@ function Dashboard() {
   }, [sapInput, data.catalogo]);
 
   const handleRegister = () => {
-    if (!foundPeca) return;
+    if (!foundPeca || !user) return;
     
     const newEntry = {
       data: format(new Date(), "dd/MM/yyyy HH:mm"),
-      tecnico: "Bruno Terras", // Simulated user
+      tecnico: user.nome,
       parque: selectedParque.nome,
-      aero: selectedAero?.toString() || "0",
+      aero: selectedAero.padStart(2, '0'),
       sap: foundPeca.sap,
       peca: foundPeca.descricao,
       quantidade,
@@ -90,6 +123,7 @@ function Dashboard() {
     };
     
     setHistory([newEntry, ...history]);
+    toast.success("Movimentação registrada com sucesso!");
     confetti({
       particleCount: 100,
       spread: 70,
@@ -104,23 +138,30 @@ function Dashboard() {
     setActiveTab("history");
   };
 
+  const handleLogout = () => {
+    logout();
+    toast.info("Você saiu do sistema.");
+  };
+
+  if (!isAuthenticated || !user) return null;
+
   const stats = [
     { title: "Total de Saídas", value: history.length.toString(), icon: Package, change: "+12%" },
     { title: "Peças Críticas", value: "14", icon: AlertTriangle, change: "-2", color: "text-red-500" },
     { title: "Uso de WO", value: "85%", icon: TrendingUp, change: "+5%" },
   ];
 
-  const chartData = data.parques.map(p => ({
+  const chartData = useMemo(() => data.parques.map(p => ({
     name: p.nome,
-    value: history.filter(h => h.parque === p.nome).length + Math.floor(Math.random() * 10) // Adding random for visual effect
-  }));
+    value: history.filter(h => h.parque === p.nome).length
+  })), [data.parques, history]);
 
-  const pieData = [
+  const pieData = useMemo(() => [
     { name: 'Mecânico', value: 400 },
     { name: 'Elétrico', value: 300 },
     { name: 'Sensores', value: 200 },
     { name: 'Outros', value: 100 },
-  ];
+  ], []);
 
   const handleScan = (sap: string) => {
     setSapInput(sap);
@@ -178,15 +219,18 @@ function Dashboard() {
 
           <div className="p-4 border-t border-slate-100">
             <div className="flex items-center gap-3 px-4 py-3 mb-2">
-              <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-600">
-                BT
+              <div className="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center font-bold text-sky-700">
+                {user.nome.split(' ').map(n => n[0]).join('')}
               </div>
               <div className="flex-1 overflow-hidden">
-                <p className="text-sm font-medium truncate">Bruno Terras</p>
-                <p className="text-xs text-slate-400">U57097</p>
+                <p className="text-sm font-medium truncate">{user.nome}</p>
+                <p className="text-xs text-slate-400">{user.matricula}</p>
               </div>
             </div>
-            <button className="flex items-center gap-3 w-full px-4 py-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+            <button 
+              onClick={handleLogout}
+              className="flex items-center gap-3 w-full px-4 py-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+            >
               <LogOut size={18} /> Sair
             </button>
           </div>
@@ -266,13 +310,23 @@ function Dashboard() {
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={chartData}>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} dy={10} />
-                        <YAxis axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} />
+                        <XAxis 
+                          dataKey="name" 
+                          axisLine={false} 
+                          tickLine={false} 
+                          tick={{fill: '#94a3b8', fontSize: 12}} 
+                          dy={10} 
+                        />
+                        <YAxis 
+                          axisLine={false} 
+                          tickLine={false} 
+                          tick={{fill: '#94a3b8', fontSize: 12}} 
+                        />
                         <Tooltip 
                           cursor={{fill: '#f8fafc'}}
                           contentStyle={{borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)'}}
                         />
-                        <Bar dataKey="value" fill="#0ea5e9" radius={[6, 6, 0, 0]} />
+                        <Bar dataKey="value" fill="#0284c7" radius={[6, 6, 0, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   </CardContent>
@@ -300,11 +354,12 @@ function Dashboard() {
                           paddingAngle={5}
                           dataKey="value"
                         >
-                          {chartData.map((entry, index) => (
+                          {pieData.map((_entry, index) => (
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length] || "#0ea5e9"} />
                           ))}
                         </Pie>
                         <Tooltip />
+                        <Legend />
                       </PieChart>
                     </ResponsiveContainer>
                   </CardContent>
@@ -323,63 +378,71 @@ function Dashboard() {
                 <CardContent className="space-y-6 pt-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label className="text-sm font-semibold text-slate-700">Parque Eólico</label>
-                      <select 
-                        value={selectedParque.id}
-                        onChange={(e) => {
-                          const p = data.parques.find(p => p.id === e.target.value);
-                          if (p) {
-                            setSelectedParque(p);
-                            setSelectedAero(p.aeros[0]!);
-                          }
+                      <Label>Parque Eólico</Label>
+                      <Select 
+                        value={selectedParqueId}
+                        onValueChange={(val) => {
+                          setSelectedParqueId(val);
+                          const p = data.parques.find(p => p.id === val);
+                          if (p) setSelectedAero(p.aeros[0]!.toString());
                         }}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky-500 outline-none appearance-none transition-all"
                       >
-                        {data.parques.map(p => (
-                          <option key={p.id} value={p.id}>{p.nome}</option>
-                        ))}
-                      </select>
+                        <SelectTrigger className="h-12 rounded-xl bg-slate-50">
+                          <SelectValue placeholder="Selecione o parque" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {data.parques.map(p => (
+                            <SelectItem key={p.id} value={p.id}>{p.nome}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-sm font-semibold text-slate-700">Aerogerador</label>
-                      <select 
+                      <Label>Aerogerador</Label>
+                      <Select 
                         value={selectedAero}
-                        onChange={(e) => setSelectedAero(Number(e.target.value))}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky-500 outline-none appearance-none transition-all"
+                        onValueChange={setSelectedAero}
                       >
-                        {selectedParque.aeros.map((a: number) => (
-                          <option key={a} value={a}>Aero {a.toString().padStart(2, '0')}</option>
-                        ))}
-                      </select>
+                        <SelectTrigger className="h-12 rounded-xl bg-slate-50">
+                          <SelectValue placeholder="Selecione o aero" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {selectedParque.aeros.map((a: number) => (
+                            <SelectItem key={a} value={a.toString()}>Aero {a.toString().padStart(2, '0')}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-semibold text-slate-700">Peça (Código SAP)</label>
+                    <Label>Peça (Código SAP)</Label>
                     <div className="flex gap-2">
                       <div className="relative flex-1">
-                        <input 
+                        <Input 
                           type="text" 
                           value={sapInput}
                           onChange={(e) => setSapInput(e.target.value)}
                           placeholder="Ex: 1001"
                           className={cn(
-                            "w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky-500 outline-none transition-all",
-                            foundPeca && "border-emerald-500 ring-1 ring-emerald-500"
+                            "h-12 rounded-xl bg-slate-50 pr-10",
+                            foundPeca && "border-emerald-500 ring-emerald-500"
                           )}
                         />
                         {foundPeca ? (
-                          <CheckCircle2 className="absolute right-4 top-3.5 text-emerald-500" size={18} />
+                          <CheckCircle2 className="absolute right-3 top-3 text-emerald-500" size={20} />
                         ) : (
-                          <Search className="absolute right-4 top-3.5 text-slate-400" size={18} />
+                          <Search className="absolute right-3 top-3 text-slate-400" size={20} />
                         )}
                       </div>
-                      <button 
+                      <Button 
+                        variant="secondary"
+                        size="icon"
                         onClick={() => setIsScannerOpen(true)}
-                        className="bg-slate-100 p-3 rounded-xl hover:bg-slate-200 transition-colors"
+                        className="h-12 w-12 rounded-xl"
                       >
                         <Camera size={24} className="text-slate-600" />
-                      </button>
+                      </Button>
                     </div>
                     {foundPeca && (
                       <div className="bg-emerald-50 p-3 rounded-xl border border-emerald-100 animate-in fade-in slide-in-from-top-1">
@@ -392,49 +455,48 @@ function Dashboard() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label className="text-sm font-semibold text-slate-700">Quantidade</label>
-                      <input 
+                      <Label>Quantidade</Label>
+                      <Input 
                         type="number" 
                         value={quantidade}
                         onChange={(e) => setQuantidade(Number(e.target.value))}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky-500 outline-none transition-all"
+                        className="h-12 rounded-xl bg-slate-50"
+                        min={1}
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-sm font-semibold text-slate-700">Estoque (Opcional)</label>
-                      <select 
-                        value={selectedEstoque}
-                        onChange={(e) => setSelectedEstoque(e.target.value)}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky-500 outline-none transition-all"
-                      >
-                        {data.estoques.map(e => (
-                          <option key={e} value={e}>Estoque {e}</option>
-                        ))}
-                      </select>
+                      <Label>Estoque (Opcional)</Label>
+                      <Select value={selectedEstoque} onValueChange={setSelectedEstoque}>
+                        <SelectTrigger className="h-12 rounded-xl bg-slate-50">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {data.estoques.map(e => (
+                            <SelectItem key={e} value={e}>Estoque {e}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-semibold text-slate-700">Work Order (Opcional)</label>
-                    <input 
+                    <Label>Work Order (Opcional)</Label>
+                    <Input 
                       type="text" 
                       value={wo}
                       onChange={(e) => setWo(e.target.value)}
                       placeholder="Número da WO"
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky-500 outline-none transition-all"
+                      className="h-12 rounded-xl bg-slate-50"
                     />
                   </div>
 
-                  <button 
+                  <Button 
                     onClick={handleRegister}
                     disabled={!foundPeca}
-                    className={cn(
-                      "w-full font-bold py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2",
-                      foundPeca ? "bg-sky-600 hover:bg-sky-700 text-white shadow-sky-100" : "bg-slate-200 text-slate-400 cursor-not-allowed shadow-none"
-                    )}
+                    className="w-full h-14 rounded-xl font-bold text-lg shadow-lg shadow-sky-100 transition-all"
                   >
                     <PlusCircle size={20} /> Confirmar Retirada
-                  </button>
+                  </Button>
                 </CardContent>
               </Card>
             </div>
@@ -445,59 +507,63 @@ function Dashboard() {
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-bold text-slate-800">Registros Recentes</h3>
                 <div className="flex gap-2">
-                  <button 
+                  <Button 
+                    variant="outline"
                     onClick={() => exportToXLSX(history)}
-                    className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-medium transition-colors"
+                    className="rounded-xl border-emerald-200 text-emerald-700 hover:bg-emerald-50"
                   >
                     <FileDown size={18} /> Excel
-                  </button>
-                  <button 
+                  </Button>
+                  <Button 
+                    variant="outline"
                     onClick={() => exportToPDF(history)}
-                    className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-medium transition-colors"
+                    className="rounded-xl border-red-200 text-red-700 hover:bg-red-50"
                   >
                     <FileDown size={18} /> PDF
-                  </button>
+                  </Button>
                 </div>
               </div>
               
               <Card className="border-none shadow-sm shadow-slate-200 overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse">
-                    <thead>
-                      <tr className="bg-slate-50 border-b border-slate-100">
-                        <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Data</th>
-                        <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Técnico</th>
-                        <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Local</th>
-                        <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Peça</th>
-                        <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Qtd</th>
-                        <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase">WO</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-50">
-                      {history.map((item, i) => (
-                        <tr key={i} className="hover:bg-slate-50/50 transition-colors">
-                          <td className="px-6 py-4 text-sm text-slate-600">{item.data}</td>
-                          <td className="px-6 py-4 text-sm font-medium text-slate-900">{item.tecnico}</td>
-                          <td className="px-6 py-4 text-sm text-slate-600">{item.parque} - {item.aero}</td>
-                          <td className="px-6 py-4 text-sm text-slate-600">
-                            <span className="font-mono text-[10px] bg-slate-100 px-1 rounded mr-2">SAP {item.sap}</span>
-                            {item.peca}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-slate-600">{item.quantidade}</td>
-                          <td className="px-6 py-4">
-                            {item.wo ? (
-                              <span className="bg-sky-100 text-sky-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tighter">
-                                {item.wo}
-                              </span>
-                            ) : (
-                              <span className="text-slate-300 text-xs">-</span>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-slate-50/50 hover:bg-slate-50/50">
+                      <TableHead className="font-bold">Data</TableHead>
+                      <TableHead className="font-bold">Técnico</TableHead>
+                      <TableHead className="font-bold">Local</TableHead>
+                      <TableHead className="font-bold">Peça</TableHead>
+                      <TableHead className="font-bold">Qtd</TableHead>
+                      <TableHead className="font-bold text-right">WO</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {history.map((item, i) => (
+                      <TableRow key={i} className="group">
+                        <TableCell className="text-slate-500 text-xs">{item.data}</TableCell>
+                        <TableCell className="font-medium">{item.tecnico}</TableCell>
+                        <TableCell className="text-slate-600">{item.parque} - {item.aero}</TableCell>
+                        <TableCell>
+                          <div className="flex flex-col">
+                            <span className="font-medium">{item.peca}</span>
+                            <span className="text-[10px] text-slate-400 font-mono">SAP {item.sap}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="secondary" className="rounded-lg">{item.quantidade}</Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {item.wo ? (
+                            <Badge className="bg-sky-100 text-sky-700 hover:bg-sky-200 border-none rounded-lg">
+                              {item.wo}
+                            </Badge>
+                          ) : (
+                            <span className="text-slate-300 text-xs">-</span>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </Card>
             </div>
           )}
