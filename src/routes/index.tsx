@@ -860,7 +860,13 @@ function Dashboard() {
                   <div className="flex justify-between items-center">
                     <div>
                       <CardTitle className="text-2xl">Importar Materiais</CardTitle>
-                      <CardDescription className="text-primary-foreground/80 mt-1">Cole os dados das abas da planilha abaixo.</CardDescription>
+                      <CardDescription className="text-primary-foreground/80 mt-1">
+                        O código SAP e o nome do material deve estar fiel a planilha, favor revisar e validar
+                        <br /><br />
+                        <a href="https://docs.google.com/spreadsheets/d/1swsdF6X6sEgR-nz0hxwmBZEV7vD-B9dG/edit?usp=sharing&ouid=107218104711689257347&rtpof=true&sd=true" target="_blank" rel="noopener noreferrer" className="underline hover:text-white transition-colors">
+                          https://docs.google.com/spreadsheets/d/1swsdF6X6sEgR-nz0hxwmBZEV7vD-B9dG/edit?usp=sharing&ouid=107218104711689257347&rtpof=true&sd=true
+                        </a>
+                      </CardDescription>
                     </div>
                     <Button variant="ghost" size="icon" onClick={() => setIsImportModalOpen(false)} className="text-primary-foreground hover:bg-white/10 rounded-full">
                       <X size={24} />
