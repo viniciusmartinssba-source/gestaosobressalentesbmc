@@ -16,7 +16,7 @@ export const importMaterials = createServerFn({ method: "POST" })
       const parts = line.split(/[;,\t]/);
       if (parts.length < 2) return null;
       
-      const sap = parts[0].trim();
+      const sap = parts[0]?.trim();
       const descricao = parts.slice(1).join(' ').trim();
       
       if (!sap || !descricao) return null;
