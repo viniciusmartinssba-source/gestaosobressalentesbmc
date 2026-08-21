@@ -95,7 +95,7 @@ function LoginPage() {
             </div>
             <Button 
               type="submit" 
-              className="w-full h-12 rounded-xl bg-sky-600 hover:bg-sky-700 font-bold text-lg shadow-lg shadow-sky-100 transition-all"
+              className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90 font-bold text-lg shadow-lg shadow-primary/20 transition-all text-primary-foreground"
               disabled={isLoading}
             >
               {isLoading ? "Autenticando..." : "Entrar no Sistema"}
