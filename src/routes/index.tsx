@@ -433,10 +433,11 @@ function Dashboard() {
                   <BarChart3 size={32} />
                 </div>
                 <div className="flex-1 text-center md:text-left z-10">
-                  <h3 className="text-xl font-bold text-foreground">Insights Estratégicos</h3>
-                  <p className="text-muted-foreground text-sm max-w-2xl leading-relaxed">
-                    Análise em tempo real baseada no histórico de movimentações para otimização da gestão de sobressalentes e manutenção preventiva.
-                  </p>
+                  <h3 className="text-xl font-bold text-foreground mb-1">Insights Estratégicos</h3>
+                  <div className="text-muted-foreground text-sm max-w-2xl leading-relaxed space-y-1">
+                    <p>O painel CRM exibe as métricas em tempo real de retiradas por técnico, parque e peça.</p>
+                    <p className="font-medium text-primary/80 italic">Dica: Utilize a busca no catálogo para localizar materiais rapidamente pelo código SAP ou descrição.</p>
+                  </div>
                 </div>
                 <Button variant="secondary" className="w-full md:w-auto rounded-xl px-6 font-semibold shadow-sm hover:scale-105 transition-transform cursor-pointer">
                   Análise Completa
