@@ -202,7 +202,7 @@ function Dashboard() {
     setIsScannerOpen(false);
   };
   return (
-    <div className="flex h-screen bg-slate-50 font-sans text-slate-900 overflow-hidden">
+    <div className="flex h-screen bg-background font-sans text-foreground overflow-hidden">
       {/* Sidebar Desktop */}
       <aside className="hidden md:flex flex-col w-64 bg-white border-r border-slate-200">
         <div className="p-6 flex items-center gap-3 border-b border-slate-100">
@@ -269,7 +269,7 @@ function Dashboard() {
       {/* Main Content */}
       <main className="flex-1 flex flex-col overflow-hidden relative">
         {/* Header */}
-        <header className="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-4 md:px-6 shrink-0">
+        <header className="bg-card border-b border-border h-16 flex items-center justify-between px-4 md:px-6 shrink-0">
           <div className="flex items-center gap-3">
             <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
               <SheetTrigger asChild>
