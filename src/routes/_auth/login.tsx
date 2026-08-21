@@ -112,7 +112,7 @@ function LoginPage() {
             <p className="text-center text-xs text-muted-foreground">
               Caso tenha esquecido sua senha, entre em contato com o suporte de TI.
             </p>
-            {process.env.NODE_ENV === 'development' && (
+            {process.env['NODE_ENV'] === 'development' && (
               <Button 
                 type="button" 
                 variant="outline" 
