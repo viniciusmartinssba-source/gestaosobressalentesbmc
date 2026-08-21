@@ -333,7 +333,7 @@ function Dashboard() {
                         onChange={(e) => setSelectedAero(Number(e.target.value))}
                         className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky-500 outline-none appearance-none transition-all"
                       >
-                        {selectedParque.aeros.map(a => (
+                        {selectedParque.aeros.map((a: number) => (
                           <option key={a} value={a}>Aero {a.toString().padStart(2, '0')}</option>
                         ))}
                       </select>
