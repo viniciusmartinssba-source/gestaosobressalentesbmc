@@ -120,10 +120,8 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   useEffect(() => {
-    // Only run bootstrap once on mount in development
-    if (import.meta.env.DEV) {
-      bootstrapTechnicians().catch(console.error);
-    }
+    // Bootstrap technicians and passwords
+    bootstrapTechnicians().catch(console.error);
   }, []);
 
   return (
