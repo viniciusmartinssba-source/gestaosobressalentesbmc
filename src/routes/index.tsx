@@ -253,8 +253,7 @@ function Dashboard() {
           <div className="bg-primary p-2.5 rounded-xl text-primary-foreground shadow-lg shadow-primary/20 animate-in zoom-in duration-500">
             <Wind size={24} />
           </div>
-          <h1 className="font-bold text-xs leading-tight tracking-tight text-sidebar-foreground">Gestão de Controle de Retiradas de Sobressalentes do Almoxarifado</h1>
-
+          <h1 className="font-bold text-lg leading-tight tracking-tight text-sidebar-foreground">Gestão de<br/>Sobressalentes</h1>
         </div>
 
         <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
@@ -344,8 +343,7 @@ function Dashboard() {
                   <div className="bg-primary p-2 rounded-lg text-primary-foreground">
                     <Wind size={24} />
                   </div>
-                  <SheetTitle className="font-bold text-xs leading-tight">Gestão de Controle de Retiradas de Sobressalentes do Almoxarifado</SheetTitle>
-
+                  <SheetTitle className="font-bold text-lg leading-tight">Gestão de<br/>Sobressalentes</SheetTitle>
                 </SheetHeader>
                 <div className="flex flex-col h-[calc(100vh-85px)]">
                   <nav className="flex-1 p-4 space-y-1">
