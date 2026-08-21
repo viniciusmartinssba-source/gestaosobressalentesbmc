@@ -354,8 +354,8 @@ function Dashboard() {
                           paddingAngle={5}
                           dataKey="value"
                         >
-                          {pieData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length] || COLORS[0]} />
+                          {pieData.map((_entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length] || "#0ea5e9"} />
                           ))}
                         </Pie>
                         <Tooltip />
