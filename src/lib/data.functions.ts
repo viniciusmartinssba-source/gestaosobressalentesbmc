@@ -42,7 +42,7 @@ export const getHistory = createServerFn({ method: "GET" }).handler(async () => 
     sap: m.sap,
     peca: m.pecas?.descricao || 'Desconhecida',
     quantidade: m.quantidade,
-    wo: m.wo,
-    estoque: m.estoque
+    wo: m.wo || '',
+    estoque: m.estoque || ''
   }));
 });
