@@ -430,7 +430,7 @@ function Dashboard() {
                 <Card className="rounded-3xl border-border shadow-none p-6 bg-card/50 backdrop-blur-sm">
                   <CardHeader className="p-0 pb-6">
                     <CardTitle className="text-lg font-bold">Distribuição por Parque</CardTitle>
-                    <CardDescription>Volume de retiradas por unidade</CardDescription>
+                    <CardDescription>Volume de retiradas por unidade eólica</CardDescription>
                   </CardHeader>
                   <CardContent className="h-[300px] p-0">
                     <ResponsiveContainer width="100%" height="100%">
@@ -460,8 +460,35 @@ function Dashboard() {
 
                 <Card className="rounded-3xl border-border shadow-none p-6 bg-card/50 backdrop-blur-sm">
                   <CardHeader className="p-0 pb-6">
+                    <CardTitle className="text-lg font-bold">Uso por Aerogerador</CardTitle>
+                    <CardDescription>Top 5 aerogeradores com mais movimentações</CardDescription>
+                  </CardHeader>
+                  <CardContent className="h-[300px] p-0">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={aeroChartData} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                        <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="var(--border)" opacity={0.4} />
+                        <XAxis type="number" hide />
+                        <YAxis 
+                          dataKey="name" 
+                          type="category" 
+                          axisLine={false} 
+                          tickLine={false} 
+                          tick={{fill: 'var(--muted-foreground)', fontSize: 12}}
+                        />
+                        <Tooltip 
+                          cursor={{fill: 'var(--accent)', opacity: 0.2}}
+                          contentStyle={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                        />
+                        <Bar dataKey="value" fill="var(--chart-2)" radius={[0, 6, 6, 0]} barSize={24} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+
+                <Card className="rounded-3xl border-border shadow-none p-6 bg-card/50 backdrop-blur-sm">
+                  <CardHeader className="p-0 pb-6">
                     <CardTitle className="text-lg font-bold">Status do Inventário</CardTitle>
-                    <CardDescription>Peças mais retiradas nos últimos 30 dias</CardDescription>
+                    <CardDescription>Visão geral de peças em campo</CardDescription>
                   </CardHeader>
                   <CardContent className="h-[300px] p-0 flex items-center justify-center">
                     <ResponsiveContainer width="100%" height="100%">
