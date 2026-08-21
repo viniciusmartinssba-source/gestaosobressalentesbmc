@@ -180,9 +180,9 @@ function Dashboard() {
   
 
   const stats = [
-    { title: "Total de Saídas", value: history.length.toString(), icon: Package, change: "+12%" },
-    { title: "Peças Críticas", value: "14", icon: AlertTriangle, change: "-2", color: "text-red-500" },
-    { title: "Uso de WO", value: "85%", icon: TrendingUp, change: "+5%" },
+    { title: "Total Geral de Saídas", value: history.length.toString(), icon: Package, change: "+12%" },
+    { title: "Peças Críticas (IA)", value: "14", icon: AlertTriangle, change: "-2", color: "text-red-500" },
+    { title: "Estoque em Campo", value: "85%", icon: TrendingUp, change: "+5%" },
   ];
 
   const chartData = useMemo(() => data.parques.map(p => ({
@@ -190,11 +190,23 @@ function Dashboard() {
     value: history.filter(h => h.parque === p.nome).length
   })), [data.parques, history]);
 
+  const aeroChartData = useMemo(() => {
+    const aeroCounts: Record<string, number> = {};
+    history.forEach(h => {
+      const key = `Aero ${h.aero}`;
+      aeroCounts[key] = (aeroCounts[key] || 0) + 1;
+    });
+    return Object.entries(aeroCounts)
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 5);
+  }, [history]);
+
   const pieData = useMemo(() => [
-    { name: 'Mecânico', value: 400 },
-    { name: 'Elétrico', value: 300 },
-    { name: 'Sensores', value: 200 },
-    { name: 'Outros', value: 100 },
+    { name: 'Em Uso', value: 400 },
+    { name: 'Crítico', value: 300 },
+    { name: 'Reserva', value: 200 },
+    { name: 'Manutenção', value: 100 },
   ], []);
 
   const handleScan = (sap: string) => {
@@ -418,7 +430,7 @@ function Dashboard() {
                 <Card className="rounded-3xl border-border shadow-none p-6 bg-card/50 backdrop-blur-sm">
                   <CardHeader className="p-0 pb-6">
                     <CardTitle className="text-lg font-bold">Distribuição por Parque</CardTitle>
-                    <CardDescription>Volume de retiradas por unidade</CardDescription>
+                    <CardDescription>Volume de retiradas por unidade eólica</CardDescription>
                   </CardHeader>
                   <CardContent className="h-[300px] p-0">
                     <ResponsiveContainer width="100%" height="100%">
@@ -448,8 +460,35 @@ function Dashboard() {
 
                 <Card className="rounded-3xl border-border shadow-none p-6 bg-card/50 backdrop-blur-sm">
                   <CardHeader className="p-0 pb-6">
+                    <CardTitle className="text-lg font-bold">Uso por Aerogerador</CardTitle>
+                    <CardDescription>Top 5 aerogeradores com mais movimentações</CardDescription>
+                  </CardHeader>
+                  <CardContent className="h-[300px] p-0">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={aeroChartData} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                        <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="var(--border)" opacity={0.4} />
+                        <XAxis type="number" hide />
+                        <YAxis 
+                          dataKey="name" 
+                          type="category" 
+                          axisLine={false} 
+                          tickLine={false} 
+                          tick={{fill: 'var(--muted-foreground)', fontSize: 12}}
+                        />
+                        <Tooltip 
+                          cursor={{fill: 'var(--accent)', opacity: 0.2}}
+                          contentStyle={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                        />
+                        <Bar dataKey="value" fill="var(--chart-2)" radius={[0, 6, 6, 0]} barSize={24} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+
+                <Card className="rounded-3xl border-border shadow-none p-6 bg-card/50 backdrop-blur-sm">
+                  <CardHeader className="p-0 pb-6">
                     <CardTitle className="text-lg font-bold">Status do Inventário</CardTitle>
-                    <CardDescription>Peças mais retiradas nos últimos 30 dias</CardDescription>
+                    <CardDescription>Visão geral de peças em campo</CardDescription>
                   </CardHeader>
                   <CardContent className="h-[300px] p-0 flex items-center justify-center">
                     <ResponsiveContainer width="100%" height="100%">
