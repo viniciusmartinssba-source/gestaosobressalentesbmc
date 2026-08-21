@@ -290,7 +290,7 @@ function Dashboard() {
                       onClick={() => { setActiveTab("overview"); setIsSidebarOpen(false); }}
                       className={cn(
                         "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
-                        activeTab === "overview" ? "bg-sky-50 text-sky-700 font-medium" : "text-slate-500 hover:bg-slate-50"
+                        activeTab === "overview" ? "bg-accent text-accent-foreground font-medium" : "text-muted-foreground hover:bg-accent/50"
                       )}
                     >
                       <LayoutDashboard size={20} /> Dashboard
@@ -299,7 +299,7 @@ function Dashboard() {
                       onClick={() => { setActiveTab("register"); setIsSidebarOpen(false); }}
                       className={cn(
                         "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
-                        activeTab === "register" ? "bg-sky-50 text-sky-700 font-medium" : "text-slate-500 hover:bg-slate-50"
+                        activeTab === "register" ? "bg-accent text-accent-foreground font-medium" : "text-muted-foreground hover:bg-accent/50"
                       )}
                     >
                       <PlusCircle size={20} /> Registrar Saída
@@ -308,7 +308,7 @@ function Dashboard() {
                       onClick={() => { setActiveTab("history"); setIsSidebarOpen(false); }}
                       className={cn(
                         "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
-                        activeTab === "history" ? "bg-sky-50 text-sky-700 font-medium" : "text-slate-500 hover:bg-slate-50"
+                        activeTab === "history" ? "bg-accent text-accent-foreground font-medium" : "text-muted-foreground hover:bg-accent/50"
                       )}
                     >
                       <HistoryIcon size={20} /> Histórico
