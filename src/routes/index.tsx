@@ -206,7 +206,7 @@ function Dashboard() {
       {/* Sidebar Desktop */}
       <aside className="hidden md:flex flex-col w-64 bg-white border-r border-slate-200">
         <div className="p-6 flex items-center gap-3 border-b border-slate-100">
-          <div className="bg-sky-600 p-2 rounded-lg text-white">
+          <div className="bg-primary p-2 rounded-lg text-primary-foreground">
             <Wind size={24} />
           </div>
           <h1 className="font-bold text-lg leading-tight">Gestão de<br/>Sobressalentes</h1>
@@ -217,7 +217,7 @@ function Dashboard() {
             onClick={() => setActiveTab("overview")}
             className={cn(
               "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
-              activeTab === "overview" ? "bg-sky-50 text-sky-700 font-medium" : "text-slate-500 hover:bg-slate-50"
+              activeTab === "overview" ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20" : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50"
             )}
           >
             <LayoutDashboard size={20} /> Dashboard
@@ -226,7 +226,7 @@ function Dashboard() {
             onClick={() => setActiveTab("register")}
             className={cn(
               "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
-              activeTab === "register" ? "bg-sky-50 text-sky-700 font-medium" : "text-slate-500 hover:bg-slate-50"
+              activeTab === "register" ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20" : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50"
             )}
           >
             <PlusCircle size={20} /> Registrar Saída
@@ -235,31 +235,31 @@ function Dashboard() {
             onClick={() => setActiveTab("history")}
             className={cn(
               "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
-              activeTab === "history" ? "bg-sky-50 text-sky-700 font-medium" : "text-slate-500 hover:bg-slate-50"
+              activeTab === "history" ? "bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20" : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50"
             )}
           >
             <HistoryIcon size={20} /> Histórico
           </button>
           <button 
-            className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50"
+            className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sidebar-foreground/70 hover:bg-sidebar-accent/50"
           >
             <Search size={20} /> Catálogo
           </button>
         </nav>
 
-        <div className="p-4 border-t border-slate-100">
+        <div className="p-4 border-t border-sidebar-border">
           <div className="flex items-center gap-3 px-4 py-3 mb-2">
-            <div className="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center font-bold text-sky-700 shrink-0">
+            <div className="w-10 h-10 rounded-full bg-sidebar-accent flex items-center justify-center font-bold text-sidebar-foreground shrink-0">
               {user.nome.split(' ').map(n => n[0]).join('')}
             </div>
             <div className="flex-1 overflow-hidden">
               <p className="text-sm font-medium truncate">{user.nome}</p>
-              <p className="text-xs text-slate-400">{user.matricula}</p>
+              <p className="text-xs text-sidebar-foreground/50">{user.matricula}</p>
             </div>
           </div>
           <button 
             onClick={handleLogout}
-            className="flex items-center gap-3 w-full px-4 py-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+            className="flex items-center gap-3 w-full px-4 py-2 text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
           >
             <LogOut size={18} /> Sair
           </button>
@@ -314,19 +314,19 @@ function Dashboard() {
                       <HistoryIcon size={20} /> Histórico
                     </button>
                   </nav>
-                  <div className="p-4 border-t border-slate-100">
+                  <div className="p-4 border-t border-border">
                     <div className="flex items-center gap-3 px-4 py-3 mb-2">
-                      <div className="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center font-bold text-sky-700 shrink-0">
+                      <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center font-bold text-accent-foreground shrink-0">
                         {user.nome.split(' ').map(n => n[0]).join('')}
                       </div>
                       <div className="flex-1 overflow-hidden">
                         <p className="text-sm font-medium truncate">{user.nome}</p>
-                        <p className="text-xs text-slate-400">{user.matricula}</p>
+                        <p className="text-xs text-muted-foreground">{user.matricula}</p>
                       </div>
                     </div>
                     <button 
                       onClick={handleLogout}
-                      className="flex items-center gap-3 w-full px-4 py-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                      className="flex items-center gap-3 w-full px-4 py-2 text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
                     >
                       <LogOut size={18} /> Sair
                     </button>
@@ -335,7 +335,7 @@ function Dashboard() {
               </SheetContent>
             </Sheet>
             
-            <h2 className="text-sm md:text-lg font-semibold uppercase tracking-wider text-slate-500 truncate max-w-[200px] md:max-w-none">
+            <h2 className="text-sm md:text-lg font-semibold uppercase tracking-wider text-muted-foreground truncate max-w-[200px] md:max-w-none">
               {activeTab === "overview" && "Dashboard"}
               {activeTab === "register" && "Registro"}
               {activeTab === "history" && "Histórico"}
