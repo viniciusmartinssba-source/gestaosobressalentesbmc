@@ -390,11 +390,10 @@ function Dashboard() {
                 <div className="flex-1 text-center md:text-left z-10">
                   <h3 className="text-xl font-bold text-foreground">Insights Inteligentes</h3>
                   <p className="text-muted-foreground text-sm max-w-2xl leading-relaxed">
-                    {history.length > 0 ? (
-                      `Análise baseada em ${history.length} registros: O parque ${chartData.sort((a,b) => b.value - a.value)[0]?.name} possui o maior volume de retiradas. Verifique a periodicidade de manutenção preventiva.`
-                    ) : (
-                      "Nenhum dado de movimentação disponível para análise no momento."
-                    )}
+                    Estoque em campo não precisa ter...
+
+                    - Quantidade de peças retiradas por dia;
+                    - Quantidade de peças retiradas no mês;
                   </p>
                 </div>
                 <Button variant="secondary" className="w-full md:w-auto rounded-xl px-6 font-semibold shadow-sm hover:scale-105 transition-transform cursor-pointer">
