@@ -574,7 +574,7 @@ function Dashboard() {
                           if (p) setSelectedAero(p.aeros[0]!.toString());
                         }}
                       >
-                        <SelectTrigger className="h-12 rounded-xl bg-slate-50">
+                        <SelectTrigger className="h-12 rounded-xl bg-slate-50 text-black">
                           <SelectValue placeholder="Selecione o parque" />
                         </SelectTrigger>
                         <SelectContent>
@@ -590,7 +590,7 @@ function Dashboard() {
                         value={selectedAero}
                         onValueChange={setSelectedAero}
                       >
-                        <SelectTrigger className="h-12 rounded-xl bg-slate-50">
+                        <SelectTrigger className="h-12 rounded-xl bg-slate-50 text-black">
                           <SelectValue placeholder="Selecione o aero" />
                         </SelectTrigger>
                         <SelectContent>
@@ -614,7 +614,7 @@ function Dashboard() {
                             onChange={(e) => setSapInput(e.target.value)}
                             placeholder="Buscar SAP ou Nome..."
                             className={cn(
-                              "h-12 rounded-xl bg-slate-50 pr-10",
+                              "h-12 rounded-xl bg-slate-50 pr-10 text-black",
                               foundPeca && "border-emerald-500 ring-emerald-500"
                             )}
                           />
