@@ -6,7 +6,7 @@ export const getInitialData = createServerFn({ method: "GET" }).handler(async ()
   
   const [parquesRes, profilesRes] = await Promise.all([
     supabaseAdmin.from('parques').select('*').order('nome'),
-    supabaseAdmin.from('profiles').select('id, nome, matricula').order('nome')
+    supabaseAdmin.from('profiles').select('id, nome, matricula, email').order('nome')
   ]);
 
   if (parquesRes.error) throw parquesRes.error;
