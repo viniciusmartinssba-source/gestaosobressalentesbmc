@@ -119,8 +119,8 @@ export const exportToXLSX = (data: Movimentacao[]) => {
   const totalCols = headers.length;
   // Estiliza título e subtítulo (todas as células do merge)
   for (let c = 0; c < totalCols; c++) {
-    ws[XLSX.utils.encode_cell({ r: 0, c })] = { ...(ws[XLSX.utils.encode_cell({ r: 0, c })] || { v: "" }), ...titleCell, v: c === 0 ? aoa[0][0] : "", t: "s" };
-    ws[XLSX.utils.encode_cell({ r: 1, c })] = { ...(ws[XLSX.utils.encode_cell({ r: 1, c })] || { v: "" }), ...subtitleCell, v: c === 0 ? aoa[1][0] : "", t: "s" };
+    ws[XLSX.utils.encode_cell({ r: 0, c })] = { ...titleCell, v: c === 0 ? aoa[0]![0] : "", t: "s" };
+    ws[XLSX.utils.encode_cell({ r: 1, c })] = { ...subtitleCell, v: c === 0 ? aoa[1]![0] : "", t: "s" };
   }
   // Cabeçalho
   for (let c = 0; c < totalCols; c++) {
@@ -131,7 +131,7 @@ export const exportToXLSX = (data: Movimentacao[]) => {
   data.forEach((item, i) => {
     const r = i + 3;
     const alt = i % 2 === 1;
-    const row = aoa[r];
+    const row = aoa[r]!;
     for (let c = 0; c < totalCols; c++) {
       const ref = XLSX.utils.encode_cell({ r, c });
       const numeric = c === 3 || c === 6; // Aerogerador e Quantidade centralizados
