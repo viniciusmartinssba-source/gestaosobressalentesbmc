@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
-import { Route as ApiPublicSeedPecasRouteImport } from './routes/api/public/seed-pecas'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -23,40 +22,31 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicSeedPecasRoute = ApiPublicSeedPecasRouteImport.update({
-  id: '/api/public/seed-pecas',
-  path: '/api/public/seed-pecas',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof AuthLoginRoute
-  '/api/public/seed-pecas': typeof ApiPublicSeedPecasRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof AuthLoginRoute
-  '/api/public/seed-pecas': typeof ApiPublicSeedPecasRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_auth/login': typeof AuthLoginRoute
-  '/api/public/seed-pecas': typeof ApiPublicSeedPecasRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/api/public/seed-pecas'
+  fullPaths: '/' | '/login'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/api/public/seed-pecas'
-  id: '__root__' | '/' | '/_auth/login' | '/api/public/seed-pecas'
+  to: '/' | '/login'
+  id: '__root__' | '/' | '/_auth/login'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthLoginRoute: typeof AuthLoginRoute
-  ApiPublicSeedPecasRoute: typeof ApiPublicSeedPecasRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -75,20 +65,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/seed-pecas': {
-      id: '/api/public/seed-pecas'
-      path: '/api/public/seed-pecas'
-      fullPath: '/api/public/seed-pecas'
-      preLoaderRoute: typeof ApiPublicSeedPecasRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthLoginRoute: AuthLoginRoute,
-  ApiPublicSeedPecasRoute: ApiPublicSeedPecasRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
