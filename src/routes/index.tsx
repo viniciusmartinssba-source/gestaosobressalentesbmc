@@ -603,70 +603,92 @@ function Dashboard() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Peça (Código SAP)</Label>
-                    <div className="flex flex-col gap-2">
-                      <div className="flex gap-2">
-                        <div className="relative flex-1">
-                        <div className="relative">
-                          <Input 
-                            type="text" 
-                            value={sapInput}
-                            onChange={(e) => setSapInput(e.target.value)}
-                            placeholder="Buscar SAP ou Nome..."
-                            className={cn(
-                              "h-12 rounded-xl bg-slate-50 pr-10 text-black",
-                              foundPeca && "border-emerald-500 ring-emerald-500"
-                            )}
-                          />
-                          {sapInput && !foundPeca && (
-                            <div className="absolute left-0 right-0 top-full mt-1 z-50 bg-card border border-border rounded-xl shadow-lg max-h-48 overflow-y-auto overflow-x-hidden">
-                              {data.catalogo
-                                .filter(p => 
-                                  p.sap.toLowerCase().includes(sapInput.toLowerCase()) || 
-                                  p.descricao.toLowerCase().includes(sapInput.toLowerCase())
-                                )
-                                .slice(0, 5)
-                                .map(p => (
-                                  <button
-                                    key={p.sap}
-                                    className="w-full text-left p-3 hover:bg-accent/50 transition-colors border-b border-border/50 last:border-0"
-                                    onClick={() => {
-                                      setSapInput(p.sap);
-                                      setFoundPeca(p);
-                                    }}
-                                  >
-                                    <div className="font-mono text-xs font-bold text-primary">{p.sap}</div>
-                                    <div className="text-sm truncate">{p.descricao}</div>
-                                  </button>
-                                ))
-                              }
-                            </div>
+                    <Label>Código SAP da Peça</Label>
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <Input
+                          type="text"
+                          inputMode="numeric"
+                          value={sapInput}
+                          onChange={(e) => setSapInput(e.target.value.trim())}
+                          placeholder="Digite o código SAP"
+                          className={cn(
+                            "h-12 rounded-xl bg-slate-50 pr-10 text-black font-mono",
+                            foundPeca && "border-emerald-500 ring-emerald-500",
+                            sapInput && !foundPeca && "border-destructive"
                           )}
-                        </div>
+                        />
                         {foundPeca ? (
                           <CheckCircle2 className="absolute right-3 top-3 text-emerald-500" size={20} />
                         ) : (
-                          <Search className="absolute right-3 top-3 text-slate-400" size={20} />
+                          <Package className="absolute right-3 top-3 text-slate-400" size={20} />
                         )}
                       </div>
-                      <Button 
+                      <Button
                         variant="secondary"
                         size="icon"
                         onClick={() => setIsScannerOpen(true)}
-                        className="h-12 w-12 rounded-xl"
+                        className="h-12 w-12 rounded-xl shrink-0"
                       >
                         <Camera size={24} className="text-slate-600" />
                       </Button>
                     </div>
-                      {foundPeca && (
-                        <div className="bg-emerald-50 p-3 rounded-xl border border-emerald-100 animate-in fade-in slide-in-from-top-1">
-                          <p className="text-sm text-emerald-700 font-medium">
-                            {foundPeca.descricao}
-                          </p>
+                    {foundPeca ? (
+                      <div className="bg-emerald-50 p-3 rounded-xl border border-emerald-100 animate-in fade-in slide-in-from-top-1">
+                        <p className="text-sm text-emerald-700 font-medium">{foundPeca.descricao}</p>
+                      </div>
+                    ) : sapInput ? (
+                      <p className="text-xs text-destructive font-medium">
+                        Código SAP não encontrado no catálogo.
+                      </p>
+                    ) : null}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Consultar Peça (por código ou nome)</Label>
+                    <div className="relative">
+                      <Input
+                        type="text"
+                        value={pecaSearch}
+                        onChange={(e) => setPecaSearch(e.target.value)}
+                        placeholder="Ex.: 28477 ou BASE RELE"
+                        className="h-12 rounded-xl bg-slate-50 pr-10 text-black"
+                      />
+                      <Search className="absolute right-3 top-3 text-slate-400" size={20} />
+                      {pecaSearch.trim().length >= 2 && (
+                        <div className="absolute left-0 right-0 top-full mt-1 z-50 bg-card border border-border rounded-xl shadow-lg max-h-56 overflow-y-auto overflow-x-hidden">
+                          {data.catalogo
+                            .filter(p =>
+                              p.sap.toLowerCase().includes(pecaSearch.trim().toLowerCase()) ||
+                              p.descricao.toLowerCase().includes(pecaSearch.trim().toLowerCase())
+                            )
+                            .slice(0, 8)
+                            .map(p => (
+                              <button
+                                key={p.sap}
+                                type="button"
+                                className="w-full text-left p-3 hover:bg-accent/50 transition-colors border-b border-border/50 last:border-0"
+                                onClick={() => {
+                                  setSapInput(p.sap);
+                                  setFoundPeca(p);
+                                  setPecaSearch("");
+                                }}
+                              >
+                                <div className="font-mono text-xs font-bold text-primary">{p.sap}</div>
+                                <div className="text-sm truncate">{p.descricao}</div>
+                              </button>
+                            ))}
+                          {data.catalogo.filter(p =>
+                            p.sap.toLowerCase().includes(pecaSearch.trim().toLowerCase()) ||
+                            p.descricao.toLowerCase().includes(pecaSearch.trim().toLowerCase())
+                          ).length === 0 && (
+                            <p className="p-3 text-sm text-muted-foreground">Nenhuma peça encontrada.</p>
+                          )}
                         </div>
                       )}
                     </div>
                   </div>
+
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
