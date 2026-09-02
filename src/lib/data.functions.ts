@@ -4,20 +4,32 @@ import { supabase } from "@/integrations/supabase/client";
 export const getInitialData = createServerFn({ method: "GET" }).handler(async () => {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   
-  const [parquesRes, pecasRes, profilesRes] = await Promise.all([
+  const [parquesRes, profilesRes] = await Promise.all([
     supabaseAdmin.from('parques').select('*').order('nome'),
-    supabaseAdmin.from('pecas').select('*').order('descricao'),
-    supabaseAdmin.from('profiles').select('*').order('nome')
+    supabaseAdmin.from('profiles').select('id, nome, matricula').order('nome')
   ]);
 
   if (parquesRes.error) throw parquesRes.error;
-  if (pecasRes.error) throw pecasRes.error;
   if (profilesRes.error) throw profilesRes.error;
+
+  // pecas can exceed the 1000-row API limit: fetch in pages, minimal columns
+  const catalogo: { sap: string; descricao: string }[] = [];
+  const PAGE = 1000;
+  for (let from = 0; ; from += PAGE) {
+    const { data, error } = await supabaseAdmin
+      .from('pecas')
+      .select('sap, descricao')
+      .order('descricao')
+      .range(from, from + PAGE - 1);
+    if (error) throw error;
+    catalogo.push(...(data || []));
+    if (!data || data.length < PAGE) break;
+  }
 
   return {
     parques: parquesRes.data || [],
     estoques: ["1670", "1673"],
-    catalogo: pecasRes.data || [],
+    catalogo,
     tecnicos: profilesRes.data || [],
   };
 });
