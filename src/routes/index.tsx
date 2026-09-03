@@ -632,7 +632,7 @@ function Dashboard() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label>Aerogerador</Label>
+                      <Label>Aerogerador <span className="text-destructive">*</span></Label>
                       <Select 
                         value={selectedAero}
                         onValueChange={setSelectedAero}
