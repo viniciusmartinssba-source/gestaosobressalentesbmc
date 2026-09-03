@@ -126,10 +126,47 @@ function Dashboard() {
     setFoundPeca(peca || null);
   }, [sapInput, data.catalogo]);
 
+  const handleFotoChange = (file: File | null) => {
+    if (!file) {
+      setFoto(null);
+      setFotoPreview(null);
+      return;
+    }
+    if (!file.type.startsWith("image/")) {
+      toast.error("Selecione um arquivo de imagem.");
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("A imagem deve ter no máximo 10MB.");
+      return;
+    }
+    setFoto(file);
+    setFotoPreview(URL.createObjectURL(file));
+  };
+
   const handleRegister = async () => {
-    if (!foundPeca || !user) return;
-    
+    if (!selectedParqueId || !selectedAero || !foundPeca || !user) {
+      toast.error("Preencha Parque Eólico, Aerogerador e Código SAP.");
+      return;
+    }
+
+    setIsSubmitting(true);
     try {
+      let fotoPath: string | null = null;
+      if (foto) {
+        const ext = foto.name.split(".").pop() || "jpg";
+        const path = `${user.id}/${Date.now()}.${ext}`;
+        const { error: uploadError } = await supabase.storage
+          .from("movimentacoes-fotos")
+          .upload(path, foto, { contentType: foto.type });
+        if (uploadError) {
+          console.error("Error uploading photo:", uploadError);
+          toast.error("Não foi possível enviar a foto. Registro seguirá sem imagem.");
+        } else {
+          fotoPath = path;
+        }
+      }
+
       const { data: mData, error } = await supabase
         .from('movimentacoes')
         .insert({
@@ -139,7 +176,8 @@ function Dashboard() {
           sap: foundPeca.sap,
           quantidade,
           wo,
-          estoque: selectedEstoque
+          estoque: selectedEstoque,
+          foto_url: fotoPath
         })
         .select(`
           *,
@@ -176,12 +214,17 @@ function Dashboard() {
       setSapInput("");
       setQuantidade(1);
       setWo("");
+      setFoto(null);
+      setFotoPreview(null);
       setActiveTab("history");
     } catch (error) {
       console.error('Error registering movement:', error);
       toast.error("Erro ao registrar movimentação.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
 
   const handleLogout = () => {
     logout();
