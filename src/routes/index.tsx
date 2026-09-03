@@ -774,12 +774,55 @@ function Dashboard() {
                     />
                   </div>
 
+                  <div className="space-y-2">
+                    <Label>Foto da Peça (Opcional)</Label>
+                    {fotoPreview ? (
+                      <div className="relative rounded-xl overflow-hidden border border-border">
+                        <img
+                          src={fotoPreview}
+                          alt="Pré-visualização da foto da peça"
+                          className="w-full max-h-56 object-cover"
+                        />
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          size="icon"
+                          onClick={() => handleFotoChange(null)}
+                          className="absolute top-2 right-2 h-9 w-9 rounded-lg"
+                        >
+                          <X size={18} />
+                        </Button>
+                      </div>
+                    ) : (
+                      <label
+                        htmlFor="foto-peca"
+                        className="flex flex-col items-center justify-center gap-2 h-28 rounded-xl border border-dashed border-border bg-background cursor-pointer hover:bg-accent/40 transition-colors"
+                      >
+                        <Camera size={22} className="text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">
+                          Toque para tirar ou anexar uma foto
+                        </span>
+                      </label>
+                    )}
+                    <input
+                      id="foto-peca"
+                      type="file"
+                      accept="image/*"
+                      capture="environment"
+                      className="hidden"
+                      onChange={(e) => handleFotoChange(e.target.files?.[0] ?? null)}
+                    />
+                    {foto && (
+                      <p className="text-xs text-muted-foreground truncate">{foto.name}</p>
+                    )}
+                  </div>
+
                   <Button 
                     onClick={handleRegister}
-                    disabled={!foundPeca}
+                    disabled={!selectedParqueId || !selectedAero || !foundPeca || isSubmitting}
                     className="w-full h-14 rounded-xl font-bold text-lg shadow-lg shadow-primary/20 transition-all bg-primary text-primary-foreground hover:bg-primary/90"
                   >
-                    <PlusCircle size={20} /> Confirmar Retirada
+                    <PlusCircle size={20} /> {isSubmitting ? "Registrando..." : "Confirmar Retirada"}
                   </Button>
                 </CardContent>
               </Card>
