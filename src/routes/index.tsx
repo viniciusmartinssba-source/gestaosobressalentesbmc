@@ -101,6 +101,9 @@ function Dashboard() {
   const [selectedEstoque, setSelectedEstoque] = useState<string>(data.estoques[0] || "");
   const [quantidade, setQuantidade] = useState(1);
   const [wo, setWo] = useState("");
+  const [foto, setFoto] = useState<File | null>(null);
+  const [fotoPreview, setFotoPreview] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [history, setHistory] = useState(initialHistory);
   
   useEffect(() => {
