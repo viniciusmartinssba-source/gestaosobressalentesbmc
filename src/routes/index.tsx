@@ -101,6 +101,9 @@ function Dashboard() {
   const [selectedEstoque, setSelectedEstoque] = useState<string>(data.estoques[0] || "");
   const [quantidade, setQuantidade] = useState(1);
   const [wo, setWo] = useState("");
+  const [foto, setFoto] = useState<File | null>(null);
+  const [fotoPreview, setFotoPreview] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [history, setHistory] = useState(initialHistory);
   
   useEffect(() => {
@@ -123,10 +126,47 @@ function Dashboard() {
     setFoundPeca(peca || null);
   }, [sapInput, data.catalogo]);
 
+  const handleFotoChange = (file: File | null) => {
+    if (!file) {
+      setFoto(null);
+      setFotoPreview(null);
+      return;
+    }
+    if (!file.type.startsWith("image/")) {
+      toast.error("Selecione um arquivo de imagem.");
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("A imagem deve ter no máximo 10MB.");
+      return;
+    }
+    setFoto(file);
+    setFotoPreview(URL.createObjectURL(file));
+  };
+
   const handleRegister = async () => {
-    if (!foundPeca || !user) return;
-    
+    if (!selectedParqueId || !selectedAero || !foundPeca || !user) {
+      toast.error("Preencha Parque Eólico, Aerogerador e Código SAP.");
+      return;
+    }
+
+    setIsSubmitting(true);
     try {
+      let fotoPath: string | null = null;
+      if (foto) {
+        const ext = foto.name.split(".").pop() || "jpg";
+        const path = `${user.id}/${Date.now()}.${ext}`;
+        const { error: uploadError } = await supabase.storage
+          .from("movimentacoes-fotos")
+          .upload(path, foto, { contentType: foto.type });
+        if (uploadError) {
+          console.error("Error uploading photo:", uploadError);
+          toast.error("Não foi possível enviar a foto. Registro seguirá sem imagem.");
+        } else {
+          fotoPath = path;
+        }
+      }
+
       const { data: mData, error } = await supabase
         .from('movimentacoes')
         .insert({
@@ -136,7 +176,8 @@ function Dashboard() {
           sap: foundPeca.sap,
           quantidade,
           wo,
-          estoque: selectedEstoque
+          estoque: selectedEstoque,
+          foto_url: fotoPath
         })
         .select(`
           *,
@@ -173,12 +214,17 @@ function Dashboard() {
       setSapInput("");
       setQuantidade(1);
       setWo("");
+      setFoto(null);
+      setFotoPreview(null);
       setActiveTab("history");
     } catch (error) {
       console.error('Error registering movement:', error);
       toast.error("Erro ao registrar movimentação.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
 
   const handleLogout = () => {
     logout();
@@ -566,7 +612,7 @@ function Dashboard() {
                 <CardContent className="space-y-6 pt-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Parque Eólico</Label>
+                      <Label>Parque Eólico <span className="text-destructive">*</span></Label>
                       <Select 
                         value={selectedParqueId}
                         onValueChange={(val) => {
@@ -586,7 +632,7 @@ function Dashboard() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label>Aerogerador</Label>
+                      <Label>Aerogerador <span className="text-destructive">*</span></Label>
                       <Select 
                         value={selectedAero}
                         onValueChange={setSelectedAero}
@@ -604,7 +650,7 @@ function Dashboard() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Código SAP da Peça</Label>
+                    <Label>Código SAP da Peça <span className="text-destructive">*</span></Label>
                     <div className="flex gap-2">
                       <div className="relative flex-1">
                         <Input
@@ -728,12 +774,55 @@ function Dashboard() {
                     />
                   </div>
 
+                  <div className="space-y-2">
+                    <Label>Foto da Peça (Opcional)</Label>
+                    {fotoPreview ? (
+                      <div className="relative rounded-xl overflow-hidden border border-border">
+                        <img
+                          src={fotoPreview}
+                          alt="Pré-visualização da foto da peça"
+                          className="w-full max-h-56 object-cover"
+                        />
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          size="icon"
+                          onClick={() => handleFotoChange(null)}
+                          className="absolute top-2 right-2 h-9 w-9 rounded-lg"
+                        >
+                          <X size={18} />
+                        </Button>
+                      </div>
+                    ) : (
+                      <label
+                        htmlFor="foto-peca"
+                        className="flex flex-col items-center justify-center gap-2 h-28 rounded-xl border border-dashed border-border bg-background cursor-pointer hover:bg-accent/40 transition-colors"
+                      >
+                        <Camera size={22} className="text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">
+                          Toque para tirar ou anexar uma foto
+                        </span>
+                      </label>
+                    )}
+                    <input
+                      id="foto-peca"
+                      type="file"
+                      accept="image/*"
+                      capture="environment"
+                      className="hidden"
+                      onChange={(e) => handleFotoChange(e.target.files?.[0] ?? null)}
+                    />
+                    {foto && (
+                      <p className="text-xs text-muted-foreground truncate">{foto.name}</p>
+                    )}
+                  </div>
+
                   <Button 
                     onClick={handleRegister}
-                    disabled={!foundPeca}
+                    disabled={!selectedParqueId || !selectedAero || !foundPeca || isSubmitting}
                     className="w-full h-14 rounded-xl font-bold text-lg shadow-lg shadow-primary/20 transition-all bg-primary text-primary-foreground hover:bg-primary/90"
                   >
-                    <PlusCircle size={20} /> Confirmar Retirada
+                    <PlusCircle size={20} /> {isSubmitting ? "Registrando..." : "Confirmar Retirada"}
                   </Button>
                 </CardContent>
               </Card>

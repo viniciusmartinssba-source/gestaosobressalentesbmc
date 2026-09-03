@@ -20,6 +20,7 @@ export type Database = {
           created_at: string | null
           data: string | null
           estoque: string | null
+          foto_url: string | null
           id: string
           parque_id: string
           quantidade: number
@@ -32,6 +33,7 @@ export type Database = {
           created_at?: string | null
           data?: string | null
           estoque?: string | null
+          foto_url?: string | null
           id?: string
           parque_id: string
           quantidade: number
@@ -44,6 +46,7 @@ export type Database = {
           created_at?: string | null
           data?: string | null
           estoque?: string | null
+          foto_url?: string | null
           id?: string
           parque_id?: string
           quantidade?: number
