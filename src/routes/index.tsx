@@ -650,7 +650,7 @@ function Dashboard() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Código SAP da Peça</Label>
+                    <Label>Código SAP da Peça <span className="text-destructive">*</span></Label>
                     <div className="flex gap-2">
                       <div className="relative flex-1">
                         <Input
