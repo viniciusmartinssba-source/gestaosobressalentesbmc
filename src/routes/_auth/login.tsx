@@ -127,11 +127,6 @@ function LoginPage() {
           </form>
 
         </CardContent>
-        <CardFooter className="pb-8 pt-0 flex flex-col items-center">
-          <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-[0.2em]">
-            Engenharia de Manutenção &copy; 2026
-          </p>
-        </CardFooter>
       </Card>
     </div>
   );
