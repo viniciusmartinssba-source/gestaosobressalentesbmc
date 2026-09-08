@@ -1,16 +1,5 @@
-const express = require('express');
-const path = require('path');
-const app = express();
+process.env.PORT = process.env.PORT || 3000;
+process.env.NODE_ENV = 'production';
 
-const PORT = process.env.PORT || 3000;
-
-// Aponta para a pasta onde o projeto real foi construído
-app.use(express.static(path.join(__dirname, '.output', 'public')));
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '.output', 'public', 'index.html'));
-});
-
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-});
+// Importa o servidor gerado pelo build do Lovable na pasta .output
+import('./.output/server/index.mjs');
