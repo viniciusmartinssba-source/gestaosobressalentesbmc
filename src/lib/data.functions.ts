@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { supabase } from "@/integrations/supabase/client";
+
 
 export const getInitialData = createServerFn({ method: "GET" }).handler(async () => {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -35,7 +35,9 @@ export const getInitialData = createServerFn({ method: "GET" }).handler(async ()
 });
 
 export const getHistory = createServerFn({ method: "GET" }).handler(async () => {
-  const { data, error } = await supabase
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+  const { data, error } = await supabaseAdmin
     .from('movimentacoes')
     .select(`
       *,
@@ -43,11 +45,12 @@ export const getHistory = createServerFn({ method: "GET" }).handler(async () => 
       parques (nome),
       pecas (sap, descricao)
     `)
-    .order('data', { ascending: false });
+    .order('data', { ascending: false })
+    .limit(1000);
 
   if (error) throw error;
 
-  return data.map(m => ({
+  return (data ?? []).map((m: any) => ({
     id: m.id,
     data: new Date(m.data!).toLocaleString('pt-BR'),
     tecnico: m.profiles?.nome || 'Desconhecido',
