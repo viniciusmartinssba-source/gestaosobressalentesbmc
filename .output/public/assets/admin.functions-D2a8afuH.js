@@ -1,0 +1,1 @@
+import{m as e,u as t}from"./index-DX7mJ-OT.js";var n=t({method:`POST`}).handler(e(`c63d92fa0ea7bb319a7019b8c78a277278a375c24cff1811ec3d10fbb3b3e240`));export{n as importMaterials};
