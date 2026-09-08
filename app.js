@@ -1,10 +1,12 @@
 const express = require('express');
 const path = require('path');
 
+// Força o Node.js a rodar a partir da pasta onde o app.js está localizado
+process.chdir(__dirname);
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Define o caminho absoluto exato onde o app.js está rodando no servidor
 const publicPath = path.join(__dirname, '.output/public');
 
 // Serve os arquivos estáticos
