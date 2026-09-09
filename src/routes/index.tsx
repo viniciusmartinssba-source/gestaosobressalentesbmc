@@ -103,8 +103,15 @@ function Dashboard() {
   const [wo, setWo] = useState("");
   const [foto, setFoto] = useState<File | null>(null);
   const [fotoPreview, setFotoPreview] = useState<string | null>(null);
+  const [dataRetirada, setDataRetirada] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [history, setHistory] = useState(initialHistory);
+
+  // Mantém a lista sincronizada com os dados vindos do banco a cada carregamento
+  useEffect(() => {
+    setHistory(initialHistory);
+  }, [initialHistory]);
+  
   
   useEffect(() => {
     if (!isAuthLoading && !isAuthenticated) {
@@ -177,7 +184,8 @@ function Dashboard() {
           quantidade,
           wo,
           estoque: selectedEstoque,
-          foto_url: fotoPath
+          foto_url: fotoPath,
+          ...(dataRetirada ? { data: new Date(dataRetirada).toISOString() } : {})
         })
         .select(`
           *,
@@ -191,6 +199,7 @@ function Dashboard() {
 
       const newEntry = {
         id: mData.id,
+        dataISO: mData.data as string,
         data: new Date(mData.data!).toLocaleString('pt-BR'),
         tecnico: mData.profiles?.nome || user.nome,
         parque: mData.parques?.nome || (selectedParque?.nome || ""),
@@ -216,6 +225,7 @@ function Dashboard() {
       setWo("");
       setFoto(null);
       setFotoPreview(null);
+      setDataRetirada("");
       setActiveTab("history");
     } catch (error) {
       console.error('Error registering movement:', error);
@@ -233,32 +243,49 @@ function Dashboard() {
 
   
 
+  const criticalParts = useMemo(() => {
+    const counts: Record<string, { sap: string; peca: string; total: number }> = {};
+    history.forEach(h => {
+      const entry = counts[h.sap] || { sap: h.sap, peca: h.peca, total: 0 };
+      entry.total += Number(h.quantidade) || 0;
+      counts[h.sap] = entry;
+    });
+    return Object.values(counts).sort((a, b) => b.total - a.total);
+  }, [history]);
+
   const stats = useMemo(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    
-    const countToday = history.filter(h => {
-      const parts = h.data.split(', ')[0]?.split('/');
-      if (!parts || parts.length < 3) return false;
-      const hDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
-      return hDate.getTime() >= today.getTime();
-    }).length;
-    
-    const countMonth = history.filter(h => {
-      const parts = h.data.split(', ')[0]?.split('/');
-      if (!parts || parts.length < 3) return false;
-      const hDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
-      return hDate.getTime() >= startOfMonth.getTime();
-    }).length;
+
+    const countToday = history.filter(h => new Date(h.dataISO).getTime() >= today.getTime()).length;
+    const countMonth = history.filter(h => new Date(h.dataISO).getTime() >= startOfMonth.getTime()).length;
+
+    // Peça crítica: acumula retiradas por SAP; entra na contagem a partir de 3 unidades
+    const criticas = criticalParts.filter(p => p.total >= 3).length;
 
     return [
-      { title: "Total Geral de Saídas", value: history.length.toString(), icon: Package, change: "+12%" },
+      { title: "Total Geral de Saídas", value: history.length.toString(), icon: Package, change: "Atualizado" },
       { title: "Retiradas Hoje", value: countToday.toString(), icon: Calendar, change: "Atualizado" },
-      { title: "Retiradas no Mês", value: countMonth.toString(), icon: TrendingUp, change: "+5%" },
-      { title: "Peças Críticas (IA)", value: "14", icon: AlertTriangle, change: "-2", color: "text-red-500" },
+      { title: "Retiradas no Mês", value: countMonth.toString(), icon: TrendingUp, change: "Atualizado" },
+      { title: "Peças Críticas", value: criticas.toString(), icon: AlertTriangle, change: "3+ retiradas", color: criticas > 0 ? "text-red-500" : "text-foreground" },
     ];
+  }, [history, criticalParts]);
+
+  const todayChartData = useMemo(() => {
+    const start = new Date();
+    start.setHours(0, 0, 0, 0);
+    const buckets: Record<string, number> = {};
+    history
+      .filter(h => new Date(h.dataISO).getTime() >= start.getTime())
+      .forEach(h => {
+        const hora = `${new Date(h.dataISO).getHours().toString().padStart(2, '0')}h`;
+        buckets[hora] = (buckets[hora] || 0) + (Number(h.quantidade) || 0);
+      });
+    return Object.entries(buckets)
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => a.name.localeCompare(b.name));
   }, [history]);
 
   const chartData = useMemo(() => data.parques.map(p => ({
@@ -269,7 +296,7 @@ function Dashboard() {
   const aeroChartData = useMemo(() => {
     const aeroCounts: Record<string, number> = {};
     history.forEach(h => {
-      const key = `Aero ${h.aero}`;
+      const key = `${h.parque} · Aero ${h.aero}`;
       aeroCounts[key] = (aeroCounts[key] || 0) + 1;
     });
     return Object.entries(aeroCounts)
@@ -278,12 +305,10 @@ function Dashboard() {
       .slice(0, 5);
   }, [history]);
 
-  const pieData = useMemo(() => [
-    { name: 'Em Uso', value: 400 },
-    { name: 'Crítico', value: 300 },
-    { name: 'Reserva', value: 200 },
-    { name: 'Manutenção', value: 100 },
-  ], []);
+  const pieData = useMemo(
+    () => criticalParts.slice(0, 4).map(p => ({ name: p.peca, value: p.total })),
+    [criticalParts]
+  );
 
   const handleScan = (sap: string) => {
     setSapInput(sap);
