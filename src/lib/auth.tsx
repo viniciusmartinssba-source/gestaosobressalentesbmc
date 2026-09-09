@@ -43,6 +43,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         fetchProfile(session.user.id);
       } else {
         setUser(null);
+        setIsAdmin(false);
         setIsLoading(false);
       }
     });
