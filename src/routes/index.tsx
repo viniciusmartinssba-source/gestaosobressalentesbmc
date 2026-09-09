@@ -431,7 +431,24 @@ function Dashboard() {
     setIsScannerOpen(false);
   };
 
-  if (!isAuthenticated || !user) return null;
+  if (isAuthLoading || (isAuthenticated && !user)) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-background text-muted-foreground">
+        <div className="flex flex-col items-center gap-3">
+          <RefreshCw className="h-6 w-6 animate-spin text-primary" />
+          <p className="text-sm">Carregando painel...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated || !user) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-background text-muted-foreground">
+        <p className="text-sm">Redirecionando para o login...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen bg-background font-sans text-foreground overflow-hidden">
