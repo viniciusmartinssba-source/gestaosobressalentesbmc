@@ -52,6 +52,7 @@ export const getHistory = createServerFn({ method: "GET" }).handler(async () => 
 
   return (data ?? []).map((m: any) => ({
     id: m.id,
+    dataISO: m.data as string,
     data: new Date(m.data!).toLocaleString('pt-BR'),
     tecnico: m.profiles?.nome || 'Desconhecido',
     parque: m.parques?.nome || 'N/A',
