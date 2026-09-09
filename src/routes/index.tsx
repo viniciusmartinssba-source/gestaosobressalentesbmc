@@ -133,6 +133,99 @@ function Dashboard() {
   useEffect(() => {
     setHistory(initialHistory);
   }, [initialHistory]);
+
+  const handleRefreshDashboard = async () => {
+    setIsRefreshing(true);
+    try {
+      await router.invalidate();
+      toast.success("Dashboard atualizado!");
+    } catch {
+      toast.error("Não foi possível atualizar agora.");
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
+  const handleAddMaterial = async () => {
+    setIsSavingMaterial(true);
+    try {
+      await addMaterial({ data: { sap: novoSap.trim(), descricao: novaDescricao.trim() } });
+      toast.success("Material salvo no catálogo!");
+      setNovoSap("");
+      setNovaDescricao("");
+      await router.invalidate();
+    } catch (e: any) {
+      toast.error(e?.message || "Não foi possível salvar o material.");
+    } finally {
+      setIsSavingMaterial(false);
+    }
+  };
+
+  const openEdit = (item: typeof initialHistory[number]) => {
+    const parque = data.parques.find(p => p.nome === item.parque);
+    const iso = item.dataISO ? new Date(item.dataISO) : new Date();
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    setEditing({
+      id: item.id,
+      parque_id: parque?.id || data.parques[0]?.id || "",
+      aero: item.aero,
+      sap: item.sap,
+      quantidade: item.quantidade,
+      wo: item.wo || "",
+      estoque: item.estoque || "",
+      data: `${iso.getFullYear()}-${pad(iso.getMonth() + 1)}-${pad(iso.getDate())}T${pad(iso.getHours())}:${pad(iso.getMinutes())}`,
+    });
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editing) return;
+    setIsSavingEdit(true);
+    try {
+      await updateMovimentacao({
+        data: {
+          id: editing.id,
+          parque_id: editing.parque_id,
+          aero: editing.aero,
+          sap: editing.sap,
+          quantidade: Number(editing.quantidade) || 1,
+          wo: editing.wo || null,
+          estoque: editing.estoque || null,
+          data: editing.data ? new Date(editing.data).toISOString() : null,
+        },
+      });
+      toast.success("Lançamento atualizado!");
+      setEditing(null);
+      await router.invalidate();
+    } catch (e: any) {
+      toast.error(e?.message || "Não foi possível salvar as alterações.");
+    } finally {
+      setIsSavingEdit(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!window.confirm("Deseja realmente excluir este lançamento?")) return;
+    try {
+      await deleteMovimentacao({ data: { id } });
+      setHistory(prev => prev.filter(h => h.id !== id));
+      toast.success("Lançamento excluído.");
+      await router.invalidate();
+    } catch (e: any) {
+      toast.error(e?.message || "Não foi possível excluir o lançamento.");
+    }
+  };
+
+  const handleGenerateInsights = async () => {
+    setIsGeneratingInsights(true);
+    try {
+      const res = await generateInsights();
+      setInsights(res.insights);
+    } catch (e: any) {
+      toast.error(e?.message || "Não foi possível gerar os insights agora.");
+    } finally {
+      setIsGeneratingInsights(false);
+    }
+  };
   
   
   useEffect(() => {
