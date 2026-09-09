@@ -679,7 +679,7 @@ function Dashboard() {
           {activeTab === "overview" && (
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="bg-card border border-border rounded-3xl p-6 shadow-sm flex flex-col md:flex-row items-center gap-6 relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-50" />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-50" />
                 <div className="bg-primary/10 p-4 rounded-2xl text-primary shadow-inner shrink-0 transition-transform group-hover:scale-110 duration-500">
                   <BarChart3 size={32} />
                 </div>
