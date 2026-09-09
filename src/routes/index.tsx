@@ -535,6 +535,33 @@ function Dashboard() {
 
               {/* Charts Section */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card className="rounded-3xl border-border shadow-none p-6 bg-card/50 backdrop-blur-sm lg:col-span-2">
+                  <CardHeader className="p-0 pb-6">
+                    <CardTitle className="text-lg font-bold">Retiradas de Hoje</CardTitle>
+                    <CardDescription>Quantidade de peças retiradas por horário no dia de hoje</CardDescription>
+                  </CardHeader>
+                  <CardContent className="h-[280px] p-0">
+                    {todayChartData.length === 0 ? (
+                      <div className="h-full flex items-center justify-center text-sm text-muted-foreground">
+                        Nenhuma retirada registrada hoje.
+                      </div>
+                    ) : (
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={todayChartData} margin={{ top: 20, right: 20, left: 0, bottom: 0 }}>
+                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" opacity={0.4} />
+                          <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: 'var(--muted-foreground)', fontSize: 12}} dy={10} />
+                          <YAxis allowDecimals={false} axisLine={false} tickLine={false} tick={{fill: 'var(--muted-foreground)', fontSize: 12}} />
+                          <Tooltip
+                            cursor={{fill: 'var(--accent)', opacity: 0.2}}
+                            contentStyle={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)', borderRadius: '12px' }}
+                          />
+                          <Bar dataKey="value" name="Peças" fill="var(--primary)" radius={[6, 6, 0, 0]} barSize={36} />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    )}
+                  </CardContent>
+                </Card>
+
                 <Card className="rounded-3xl border-border shadow-none p-6 bg-card/50 backdrop-blur-sm">
                   <CardHeader className="p-0 pb-6">
                     <CardTitle className="text-lg font-bold">Distribuição por Parque</CardTitle>
@@ -595,8 +622,8 @@ function Dashboard() {
 
                 <Card className="rounded-3xl border-border shadow-none p-6 bg-card/50 backdrop-blur-sm">
                   <CardHeader className="p-0 pb-6">
-                    <CardTitle className="text-lg font-bold">Status do Inventário</CardTitle>
-                    <CardDescription>Visão geral de peças em campo</CardDescription>
+                    <CardTitle className="text-lg font-bold">Peças Críticas</CardTitle>
+                    <CardDescription>Peças com maior acúmulo de retiradas</CardDescription>
                   </CardHeader>
                   <CardContent className="h-[300px] p-0 flex items-center justify-center">
                     <ResponsiveContainer width="100%" height="100%">
@@ -798,6 +825,20 @@ function Dashboard() {
                       className="h-12 rounded-xl bg-background"
                     />
                   </div>
+
+                  <div className="space-y-2">
+                    <Label>Data e Hora da Retirada (Opcional)</Label>
+                    <Input
+                      type="datetime-local"
+                      value={dataRetirada}
+                      onChange={(e) => setDataRetirada(e.target.value)}
+                      className="h-12 rounded-xl bg-background"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Se deixar em branco, será registrado o horário da confirmação da retirada.
+                    </p>
+                  </div>
+
 
                   <div className="space-y-2">
                     <Label>Foto da Peça (Opcional)</Label>
