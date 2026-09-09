@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
 import { useState, useEffect, useMemo } from "react";
 import { 
   LayoutDashboard, 
@@ -17,7 +17,12 @@ import {
   CheckCircle2,
   BarChart3,
   Users,
-  Calendar
+  Calendar,
+  Boxes,
+  Sparkles,
+  Pencil,
+  Trash2,
+  RefreshCw
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -83,8 +88,9 @@ const COLORS = ['#0ea5e9', '#6366f1', '#8b5cf6', '#ec4899'];
 
 function Dashboard() {
   const { data, history: initialHistory } = Route.useLoaderData();
-  const { user, logout, isAuthenticated, isLoading: isAuthLoading } = useAuth();
+  const { user, logout, isAuthenticated, isLoading: isAuthLoading, isAdmin } = useAuth();
   const navigate = useNavigate();
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("overview");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
@@ -376,6 +382,32 @@ function Dashboard() {
             <Search size={20} className={cn("transition-transform group-hover:scale-110", activeTab === "catalog" && "scale-110")} /> 
             <span className="text-sm">Catálogo</span>
           </button>
+          {isAdmin && (
+            <button
+              onClick={() => setActiveTab("material")}
+              className={cn(
+                "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all duration-200 group cursor-pointer",
+                activeTab === "material"
+                  ? "bg-primary text-primary-foreground font-bold shadow-md shadow-primary/20 scale-[1.02]"
+                  : "text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground hover:scale-[1.01]"
+              )}
+            >
+              <Boxes size={20} className="transition-transform group-hover:scale-110" />
+              <span className="text-sm">Novo Material</span>
+            </button>
+          )}
+          <button
+            onClick={() => setActiveTab("ia")}
+            className={cn(
+              "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all duration-200 group cursor-pointer",
+              activeTab === "ia"
+                ? "bg-primary text-primary-foreground font-bold shadow-md shadow-primary/20 scale-[1.02]"
+                : "text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground hover:scale-[1.01]"
+            )}
+          >
+            <Sparkles size={20} className="transition-transform group-hover:scale-110" />
+            <span className="text-sm">Insights por IA</span>
+          </button>
         </nav>
 
         <div className="p-4 border-t border-sidebar-border/50 bg-sidebar-accent/10">
@@ -453,6 +485,26 @@ function Dashboard() {
                     >
                       <Search size={20} /> Catálogo
                     </button>
+                    {isAdmin && (
+                      <button
+                        onClick={() => { setActiveTab("material"); setIsSidebarOpen(false); }}
+                        className={cn(
+                          "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
+                          activeTab === "material" ? "bg-accent text-accent-foreground font-medium" : "text-muted-foreground hover:bg-accent/50"
+                        )}
+                      >
+                        <Boxes size={20} /> Novo Material
+                      </button>
+                    )}
+                    <button
+                      onClick={() => { setActiveTab("ia"); setIsSidebarOpen(false); }}
+                      className={cn(
+                        "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
+                        activeTab === "ia" ? "bg-accent text-accent-foreground font-medium" : "text-muted-foreground hover:bg-accent/50"
+                      )}
+                    >
+                      <Sparkles size={20} /> Insights por IA
+                    </button>
                   </nav>
                   <div className="p-4 border-t border-border">
                     <div className="flex items-center gap-3 px-4 py-3 mb-2">
@@ -480,6 +532,8 @@ function Dashboard() {
               {activeTab === "register" && "Registro"}
               {activeTab === "history" && "Histórico"}
               {activeTab === "catalog" && "Catálogo"}
+              {activeTab === "material" && "Novo Material"}
+              {activeTab === "ia" && "Insights por IA"}
             </h2>
           </div>
           <div className="text-sm font-medium text-slate-500 flex items-center gap-2">
@@ -505,8 +559,14 @@ function Dashboard() {
                 <div className="flex-1 text-center md:text-left z-10">
                   <h3 className="text-xl font-bold text-foreground">Insights Estratégicos</h3>
                 </div>
-                <Button variant="secondary" className="w-full md:w-auto rounded-xl px-6 font-semibold shadow-sm hover:scale-105 transition-transform cursor-pointer">
-                  Análise Completa
+                <Button
+                  variant="secondary"
+                  onClick={handleRefreshDashboard}
+                  disabled={isRefreshing}
+                  className="w-full md:w-auto rounded-xl px-6 font-semibold shadow-sm hover:scale-105 transition-transform cursor-pointer"
+                >
+                  <RefreshCw size={18} className={cn(isRefreshing && "animate-spin")} />
+                  {isRefreshing ? "Atualizando..." : "Atualizar Dashboard"}
                 </Button>
               </div>
               
@@ -928,11 +988,12 @@ function Dashboard() {
                         <TableHead className="font-bold whitespace-nowrap">Peça</TableHead>
                         <TableHead className="font-bold whitespace-nowrap">Qtd</TableHead>
                         <TableHead className="font-bold text-right whitespace-nowrap">WO</TableHead>
+                        {isAdmin && <TableHead className="font-bold text-right whitespace-nowrap">Ações</TableHead>}
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                    {history.map((item, i) => (
-                      <TableRow key={i} className="group">
+                    {history.map((item) => (
+                      <TableRow key={item.id} className="group">
                         <TableCell className="text-muted-foreground text-xs">{item.data}</TableCell>
                         <TableCell className="font-medium">{item.tecnico}</TableCell>
                         <TableCell className="text-muted-foreground">{item.parque} - {item.aero}</TableCell>
@@ -954,6 +1015,30 @@ function Dashboard() {
                             <span className="text-muted/30 text-xs">-</span>
                           )}
                         </TableCell>
+                        {isAdmin && (
+                          <TableCell className="text-right">
+                            <div className="flex justify-end gap-1">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 rounded-lg text-primary hover:bg-primary/10"
+                                onClick={() => openEdit(item)}
+                                aria-label="Editar lançamento"
+                              >
+                                <Pencil size={16} />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 rounded-lg text-destructive hover:bg-destructive/10"
+                                onClick={() => handleDelete(item.id)}
+                                aria-label="Excluir lançamento"
+                              >
+                                <Trash2 size={16} />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        )}
                       </TableRow>
                     ))}
                   </TableBody>
@@ -977,15 +1062,18 @@ function Dashboard() {
                     />
                   </div>
                 </div>
-                <div className="flex gap-2 w-full sm:w-auto">
-                  <Button 
-                    variant="outline"
-                    className="flex-1 sm:flex-none rounded-xl"
-                    onClick={() => setIsImportModalOpen(true)}
-                  >
-                    <PlusCircle size={18} /> Importar Planilha
-                  </Button>
-                </div>
+                {isAdmin && (
+                  <div className="flex gap-2 w-full sm:w-auto">
+                    <Button
+                      variant="outline"
+                      className="flex-1 sm:flex-none rounded-xl"
+                      onClick={() => setActiveTab("material")}
+                    >
+                      <Boxes size={18} /> Novo Material
+                    </Button>
+                  </div>
+                )}
+
               </div>
 
               <Card className="border-none shadow-sm shadow-border bg-card text-card-foreground">
@@ -1024,59 +1112,169 @@ function Dashboard() {
             </div>
           )}
 
-          {/* Import Modal */}
-          {isImportModalOpen && (
-            <div className="fixed inset-0 z-[110] bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in duration-200">
-              <Card className="w-full max-w-2xl rounded-3xl overflow-hidden border-none shadow-2xl">
-                <CardHeader className="bg-primary text-primary-foreground p-6">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <CardTitle className="text-2xl">Importar Materiais</CardTitle>
-                      <CardDescription className="text-primary-foreground/80 mt-1">
-                        O código SAP e o nome do material deve estar fiel a planilha, favor revisar e validar
-                        <br /><br />
-                        <a href="https://docs.google.com/spreadsheets/d/1swsdF6X6sEgR-nz0hxwmBZEV7vD-B9dG/edit?usp=sharing&ouid=107218104711689257347&rtpof=true&sd=true" target="_blank" rel="noopener noreferrer" className="underline hover:text-white transition-colors">
-                          https://docs.google.com/spreadsheets/d/1swsdF6X6sEgR-nz0hxwmBZEV7vD-B9dG/edit?usp=sharing&ouid=107218104711689257347&rtpof=true&sd=true
-                        </a>
-                      </CardDescription>
-                    </div>
-                    <Button variant="ghost" size="icon" onClick={() => setIsImportModalOpen(false)} className="text-primary-foreground hover:bg-white/10 rounded-full">
-                      <X size={24} />
-                    </Button>
-                  </div>
+          {/* Novo Material (Admin) */}
+          {activeTab === "material" && isAdmin && (
+            <div className="max-w-2xl mx-auto animate-in fade-in duration-300">
+              <Card className="border-none shadow-md shadow-border overflow-hidden rounded-2xl bg-card text-card-foreground">
+                <CardHeader className="bg-primary text-primary-foreground">
+                  <CardTitle>Cadastrar Novo Material</CardTitle>
+                  <CardDescription className="text-primary-foreground/80">
+                    Adicione ao catálogo uma peça recém-cadastrada no almoxarifado.
+                  </CardDescription>
                 </CardHeader>
-                <CardContent className="p-6 space-y-4">
+                <CardContent className="space-y-6 pt-6">
                   <div className="space-y-2">
-                    <Label className="text-sm font-semibold">Conteúdo da Planilha (Copiado/Colado)</Label>
-                    <textarea 
-                      className="w-full h-64 p-4 rounded-2xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-primary focus:outline-none font-mono text-xs resize-none"
-                      placeholder="Exemplo:&#10;1001;Placa Eletrônica&#10;1002;Fusível 10A..."
-                      value={importText}
-                      onChange={(e) => setImportText(e.target.value)}
+                    <Label>Código SAP <span className="text-destructive">*</span></Label>
+                    <Input
+                      value={novoSap}
+                      onChange={(e) => setNovoSap(e.target.value.trim())}
+                      placeholder="Ex.: 1000284"
+                      className="h-12 rounded-xl bg-background font-mono"
                     />
-                    <p className="text-[10px] text-muted-foreground">O sistema aceita formatos separados por ponto e vírgula (;), vírgula (,) ou tabulação.</p>
+                    {novoSap && data.catalogo.some(p => p.sap === novoSap) && (
+                      <p className="text-xs text-amber-500 font-medium">
+                        Este código já existe no catálogo e será atualizado.
+                      </p>
+                    )}
                   </div>
-                  
-                  <div className="flex gap-3 pt-2">
-                    <Button variant="outline" className="flex-1 rounded-xl h-12" onClick={() => setIsImportModalOpen(false)}>Cancelar</Button>
-                    <Button 
-                      className="flex-[2] rounded-xl h-12 font-bold" 
-                      onClick={async () => {
-                        try {
-                          const { importMaterials } = await import("@/lib/admin.functions");
-                          const result = await importMaterials({ data: { csvData: importText } });
-                          toast.success(`${result.importedCount} materiais importados com sucesso!`);
-                          setIsImportModalOpen(false);
-                          setImportText("");
-                          // Refresh page to load new data
-                          window.location.reload();
-                        } catch (err: any) {
-                          toast.error(err.message || "Erro na importação.");
-                        }
+                  <div className="space-y-2">
+                    <Label>Descrição do Material <span className="text-destructive">*</span></Label>
+                    <Input
+                      value={novaDescricao}
+                      onChange={(e) => setNovaDescricao(e.target.value)}
+                      placeholder="Ex.: BASE RELE 14 PINOS"
+                      className="h-12 rounded-xl bg-background"
+                    />
+                  </div>
+                  <Button
+                    className="w-full h-14 rounded-xl font-bold text-lg"
+                    disabled={!novoSap.trim() || !novaDescricao.trim() || isSavingMaterial}
+                    onClick={handleAddMaterial}
+                  >
+                    <Boxes size={20} /> {isSavingMaterial ? "Salvando..." : "Salvar no Catálogo"}
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Insights IA */}
+          {activeTab === "ia" && (
+            <div className="space-y-6 animate-in fade-in duration-300">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                  <h3 className="text-lg font-bold text-foreground">Insights por IA</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Análise automática das retiradas registradas no sistema.
+                  </p>
+                </div>
+                <Button
+                  className="rounded-xl font-semibold w-full sm:w-auto"
+                  onClick={handleGenerateInsights}
+                  disabled={isGeneratingInsights}
+                >
+                  <Sparkles size={18} /> {isGeneratingInsights ? "Analisando..." : "Gerar Insights"}
+                </Button>
+              </div>
+
+              <Card className="rounded-3xl border-border bg-card/50 backdrop-blur-sm p-6">
+                {isGeneratingInsights ? (
+                  <p className="text-sm text-muted-foreground animate-pulse">
+                    A IA está analisando as movimentações. Isso pode levar alguns instantes...
+                  </p>
+                ) : insights ? (
+                  <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">{insights}</div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    Clique em "Gerar Insights" para que a IA analise as retiradas e aponte peças críticas,
+                    tendências e recomendações de reposição.
+                  </p>
+                )}
+              </Card>
+            </div>
+          )}
+
+          {/* Modal de edição de lançamento (Admin) */}
+          {editing && (
+            <div className="fixed inset-0 z-[110] bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in duration-200">
+              <Card className="w-full max-w-lg rounded-3xl overflow-hidden border-none shadow-2xl">
+                <CardHeader className="bg-primary text-primary-foreground p-6 flex-row items-center justify-between">
+                  <CardTitle className="text-xl">Editar Lançamento</CardTitle>
+                  <Button variant="ghost" size="icon" onClick={() => setEditing(null)} className="text-primary-foreground hover:bg-white/10 rounded-full">
+                    <X size={22} />
+                  </Button>
+                </CardHeader>
+                <CardContent className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+                  <div className="space-y-2">
+                    <Label>Parque Eólico</Label>
+                    <Select
+                      value={editing.parque_id}
+                      onValueChange={(val) => {
+                        const p = data.parques.find(pp => pp.id === val);
+                        setEditing({ ...editing, parque_id: val, aero: p?.aeros[0]?.toString().padStart(2, '0') || editing.aero });
                       }}
-                      disabled={!importText.trim()}
                     >
-                      Processar e Salvar no Banco
+                      <SelectTrigger className="h-12 rounded-xl bg-slate-50 text-black"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {data.parques.map(p => <SelectItem key={p.id} value={p.id}>{p.nome}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Aerogerador</Label>
+                    <Select value={editing.aero} onValueChange={(val) => setEditing({ ...editing, aero: val })}>
+                      <SelectTrigger className="h-12 rounded-xl bg-slate-50 text-black"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {(data.parques.find(p => p.id === editing.parque_id)?.aeros ?? []).map((a: number) => (
+                          <SelectItem key={a} value={a.toString().padStart(2, '0')}>Aero {a.toString().padStart(2, '0')}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Código SAP</Label>
+                    <Input
+                      value={editing.sap}
+                      onChange={(e) => setEditing({ ...editing, sap: e.target.value.trim() })}
+                      className="h-12 rounded-xl bg-slate-50 text-black font-mono"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      {data.catalogo.find(p => p.sap === editing.sap)?.descricao || "Código não encontrado no catálogo."}
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Quantidade</Label>
+                      <Input
+                        type="number"
+                        min={1}
+                        value={editing.quantidade}
+                        onChange={(e) => setEditing({ ...editing, quantidade: Number(e.target.value) })}
+                        className="h-12 rounded-xl bg-background"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Work Order</Label>
+                      <Input
+                        value={editing.wo}
+                        onChange={(e) => setEditing({ ...editing, wo: e.target.value })}
+                        className="h-12 rounded-xl bg-background"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Data e Hora</Label>
+                    <Input
+                      type="datetime-local"
+                      value={editing.data}
+                      onChange={(e) => setEditing({ ...editing, data: e.target.value })}
+                      className="h-12 rounded-xl bg-background"
+                    />
+                  </div>
+                  <div className="flex gap-3 pt-2">
+                    <Button variant="outline" className="flex-1 rounded-xl h-12" onClick={() => setEditing(null)}>Cancelar</Button>
+                    <Button className="flex-[2] rounded-xl h-12 font-bold" onClick={handleSaveEdit} disabled={isSavingEdit}>
+                      {isSavingEdit ? "Salvando..." : "Salvar Alterações"}
                     </Button>
                   </div>
                 </CardContent>

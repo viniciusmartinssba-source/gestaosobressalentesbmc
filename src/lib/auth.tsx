@@ -16,12 +16,14 @@ const AuthContext = createContext<{
   logout: () => Promise<void>;
   isAuthenticated: boolean;
   isLoading: boolean;
+  isAdmin: boolean;
 } | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserProfile>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     // Get initial session
@@ -58,6 +60,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (error) throw error;
       setUser(data);
+
+      const { data: roles } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userId);
+      setIsAdmin((roles ?? []).some((r) => r.role === 'admin'));
     } catch (error) {
       console.error('Error fetching profile:', error);
     } finally {
@@ -87,7 +95,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       login, 
       logout, 
       isAuthenticated: !!session,
-      isLoading
+      isLoading,
+      isAdmin
     }}>
       {children}
     </AuthContext.Provider>
