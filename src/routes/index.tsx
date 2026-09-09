@@ -98,8 +98,24 @@ function Dashboard() {
   const [foundPeca, setFoundPeca] = useState<{sap: string, descricao: string} | null>(null);
   const [catalogSearch, setCatalogSearch] = useState("");
   const [pecaSearch, setPecaSearch] = useState("");
-  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
-  const [importText, setImportText] = useState("");
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [novoSap, setNovoSap] = useState("");
+  const [novaDescricao, setNovaDescricao] = useState("");
+  const [isSavingMaterial, setIsSavingMaterial] = useState(false);
+  const [insights, setInsights] = useState("");
+  const [isGeneratingInsights, setIsGeneratingInsights] = useState(false);
+  const [editing, setEditing] = useState<{
+    id: string;
+    parque_id: string;
+    aero: string;
+    sap: string;
+    quantidade: number;
+    wo: string;
+    estoque: string;
+    data: string;
+  } | null>(null);
+  const [isSavingEdit, setIsSavingEdit] = useState(false);
+  
   
   // Form state
   const [selectedParqueId, setSelectedParqueId] = useState<string>(data.parques[0]?.id || "");
