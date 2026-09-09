@@ -40,6 +40,7 @@ import {
   Legend
 } from "recharts";
 import { getInitialData, getHistory } from "@/lib/data.functions";
+import { addMaterial, updateMovimentacao, deleteMovimentacao, generateInsights } from "@/lib/admin.functions";
 import { BarcodeScanner } from "@/components/scanner/BarcodeScanner";
 import { exportToPDF, exportToXLSX } from "@/lib/reports";
 import confetti from "canvas-confetti";
