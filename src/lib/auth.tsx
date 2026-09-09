@@ -69,6 +69,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsAdmin((roles ?? []).some((r) => r.role === 'admin'));
     } catch (error) {
       console.error('Error fetching profile:', error);
+      // Sessão sem perfil válido: encerra para não travar a tela em branco
+      setUser(null);
+      setIsAdmin(false);
+      await supabase.auth.signOut();
     } finally {
       setIsLoading(false);
     }
