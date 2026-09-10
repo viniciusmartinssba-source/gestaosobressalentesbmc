@@ -1,6 +1,13 @@
 import { createFileRoute, useNavigate, redirect } from "@tanstack/react-router";
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -32,13 +39,15 @@ function LoginPage() {
 
     try {
       // Simulate network delay
-      await new Promise(resolve => setTimeout(resolve, 800));
+      await new Promise((resolve) => setTimeout(resolve, 800));
 
-      const tecnico = data.tecnicos.find(t => t.matricula.toLowerCase() === matricula.toLowerCase());
-      
+      const tecnico = data.tecnicos.find(
+        (t) => t.matricula.toLowerCase() === matricula.toLowerCase(),
+      );
+
       if (tecnico) {
         const { error } = await login(tecnico.email, senha);
-        
+
         if (error) {
           toast.error("Credenciais inválidas. Verifique sua matrícula e senha.");
         } else {
@@ -69,7 +78,9 @@ function LoginPage() {
             <Wind size={32} />
           </div>
           <div>
-            <CardTitle className="text-3xl font-extrabold tracking-tight">Gestão de Sobressalentes</CardTitle>
+            <CardTitle className="text-3xl font-extrabold tracking-tight">
+              Gestão de Sobressalentes
+            </CardTitle>
             <CardDescription className="text-muted-foreground mt-2 font-medium">
               Acesse o painel operacional para registro de peças
             </CardDescription>
@@ -84,10 +95,13 @@ function LoginPage() {
             <div className="space-y-2">
               <label className="text-sm font-bold text-foreground/80 px-1">Matrícula</label>
               <div className="relative group">
-                <User className="absolute left-3.5 top-3 text-muted-foreground group-focus-within:text-primary transition-colors" size={18} />
-                <Input 
+                <User
+                  className="absolute left-3.5 top-3 text-muted-foreground group-focus-within:text-primary transition-colors"
+                  size={18}
+                />
+                <Input
                   id="matricula"
-                  type="text" 
+                  type="text"
                   placeholder="Ex: U57097"
                   value={matricula}
                   onChange={(e) => setMatricula(e.target.value.toUpperCase())}
@@ -99,10 +113,13 @@ function LoginPage() {
             <div className="space-y-2">
               <label className="text-sm font-bold text-foreground/80 px-1">Senha</label>
               <div className="relative group">
-                <Lock className="absolute left-3.5 top-3 text-muted-foreground group-focus-within:text-primary transition-colors" size={18} />
-                <Input 
+                <Lock
+                  className="absolute left-3.5 top-3 text-muted-foreground group-focus-within:text-primary transition-colors"
+                  size={18}
+                />
+                <Input
                   id="senha"
-                  type="password" 
+                  type="password"
                   placeholder="Sua senha de acesso"
                   value={senha}
                   onChange={(e) => setSenha(e.target.value)}
@@ -112,9 +129,9 @@ function LoginPage() {
               </div>
             </div>
 
-            <Button 
-              type="submit" 
-              className="w-full h-13 rounded-xl font-bold text-lg shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer bg-primary text-primary-foreground" 
+            <Button
+              type="submit"
+              className="w-full h-13 rounded-xl font-bold text-lg shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer bg-primary text-primary-foreground"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -122,10 +139,11 @@ function LoginPage() {
                   <div className="w-5 h-5 border-3 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
                   <span>Autenticando...</span>
                 </div>
-              ) : "Entrar no Painel"}
+              ) : (
+                "Entrar no Painel"
+              )}
             </Button>
           </form>
-
         </CardContent>
       </Card>
     </div>

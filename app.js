@@ -9,12 +9,7 @@ process.env.NITRO_PORT = String(port);
 process.env.HOST = host;
 process.env.NITRO_HOST = host;
 
-const serverEntry = path.join(
-  __dirname,
-  ".output",
-  "server",
-  "index.mjs"
-);
+const serverEntry = path.join(__dirname, ".output", "server", "index.mjs");
 
 console.log("Iniciando servidor Nitro...");
 console.log("Arquivo do servidor:", serverEntry);

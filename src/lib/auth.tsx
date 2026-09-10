@@ -1,6 +1,6 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { type Session, type User as SupabaseUser } from '@supabase/supabase-js';
+import { createContext, useContext, useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { type Session, type User as SupabaseUser, type AuthError } from "@supabase/supabase-js";
 
 type UserProfile = {
   nome: string;
@@ -9,15 +9,18 @@ type UserProfile = {
   id: string;
 } | null;
 
-const AuthContext = createContext<{
-  user: UserProfile;
-  session: Session | null;
-  login: (email: string, matricula: string) => Promise<{ error: any }>;
-  logout: () => Promise<void>;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  isAdmin: boolean;
-} | undefined>(undefined);
+const AuthContext = createContext<
+  | {
+      user: UserProfile;
+      session: Session | null;
+      login: (email: string, matricula: string) => Promise<{ error: AuthError | null }>;
+      logout: () => Promise<void>;
+      isAuthenticated: boolean;
+      isLoading: boolean;
+      isAdmin: boolean;
+    }
+  | undefined
+>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserProfile>(null);
@@ -37,7 +40,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       if (session) {
         fetchProfile(session.user.id);
@@ -53,22 +58,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchProfile = async (userId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
+      const { data, error } = await supabase.from("profiles").select("*").eq("id", userId).single();
 
       if (error) throw error;
       setUser(data);
 
       const { data: roles } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', userId);
-      setIsAdmin((roles ?? []).some((r) => r.role === 'admin'));
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId);
+      setIsAdmin((roles ?? []).some((r) => r.role === "admin"));
     } catch (error) {
-      console.error('Error fetching profile:', error);
+      console.error("Error fetching profile:", error);
       // Sessão sem perfil válido: encerra para não travar a tela em branco
       setUser(null);
       setIsAdmin(false);
@@ -94,15 +95,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      session, 
-      login, 
-      logout, 
-      isAuthenticated: !!session,
-      isLoading,
-      isAdmin
-    }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        session,
+        login,
+        logout,
+        isAuthenticated: !!session,
+        isLoading,
+        isAdmin,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -110,6 +113,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) throw new Error('useAuth must be used within AuthProvider');
+  if (!context) throw new Error("useAuth must be used within AuthProvider");
   return context;
 };

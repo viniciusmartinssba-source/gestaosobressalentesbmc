@@ -15,14 +15,14 @@ export const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
           <h3 className="font-bold text-slate-800 flex items-center gap-2">
             <Camera size={20} className="text-sky-600" /> Scanner de Peça
           </h3>
-          <button 
+          <button
             onClick={onClose}
             className="p-2 hover:bg-slate-100 rounded-full transition-colors"
           >
             <X size={24} />
           </button>
         </div>
-        
+
         <div className="flex-1 p-4 flex flex-col justify-center">
           <div className="relative aspect-square md:aspect-auto md:h-64 overflow-hidden rounded-2xl bg-slate-100">
             <QrReader

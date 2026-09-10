@@ -1,12 +1,24 @@
 import { createServerFn } from "@tanstack/react-start";
 
+interface MovimentacaoRow {
+  id: string;
+  data: string | null;
+  aero: string;
+  sap: string;
+  quantidade: number;
+  wo: string | null;
+  estoque: string | null;
+  profiles: { nome: string } | null;
+  parques: { nome: string } | null;
+  pecas: { sap: string; descricao: string } | null;
+}
 
 export const getInitialData = createServerFn({ method: "GET" }).handler(async () => {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  
+
   const [parquesRes, profilesRes] = await Promise.all([
-    supabaseAdmin.from('parques').select('*').order('nome'),
-    supabaseAdmin.from('profiles').select('id, nome, matricula, email').order('nome')
+    supabaseAdmin.from("parques").select("*").order("nome"),
+    supabaseAdmin.from("profiles").select("id, nome, matricula, email").order("nome"),
   ]);
 
   if (parquesRes.error) throw parquesRes.error;
@@ -17,9 +29,9 @@ export const getInitialData = createServerFn({ method: "GET" }).handler(async ()
   const PAGE = 1000;
   for (let from = 0; ; from += PAGE) {
     const { data, error } = await supabaseAdmin
-      .from('pecas')
-      .select('sap, descricao')
-      .order('descricao')
+      .from("pecas")
+      .select("sap, descricao")
+      .order("descricao")
       .range(from, from + PAGE - 1);
     if (error) throw error;
     catalogo.push(...(data || []));
@@ -38,29 +50,31 @@ export const getHistory = createServerFn({ method: "GET" }).handler(async () => 
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
   const { data, error } = await supabaseAdmin
-    .from('movimentacoes')
-    .select(`
+    .from("movimentacoes")
+    .select(
+      `
       *,
       profiles (nome),
       parques (nome),
       pecas (sap, descricao)
-    `)
-    .order('data', { ascending: false })
+    `,
+    )
+    .order("data", { ascending: false })
     .limit(1000);
 
   if (error) throw error;
 
-  return (data ?? []).map((m: any) => ({
+  return (data ?? []).map((m: MovimentacaoRow) => ({
     id: m.id,
-    dataISO: m.data as string,
-    data: new Date(m.data!).toLocaleString('pt-BR'),
-    tecnico: m.profiles?.nome || 'Desconhecido',
-    parque: m.parques?.nome || 'N/A',
+    dataISO: m.data || new Date().toISOString(),
+    data: new Date(m.data || Date.now()).toLocaleString("pt-BR"),
+    tecnico: m.profiles?.nome || "Desconhecido",
+    parque: m.parques?.nome || "N/A",
     aero: m.aero,
     sap: m.sap,
-    peca: m.pecas?.descricao || 'Desconhecida',
+    peca: m.pecas?.descricao || "Desconhecida",
     quantidade: m.quantidade,
-    wo: m.wo || '',
-    estoque: m.estoque || ''
+    wo: m.wo || "",
+    estoque: m.estoque || "",
   }));
 });

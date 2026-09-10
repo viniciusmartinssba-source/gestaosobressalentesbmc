@@ -2,6 +2,29 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
+interface MovimentacaoJoinRow {
+  id: string;
+  data: string;
+  aero: string;
+  sap: string;
+  quantidade: number;
+  wo: string | null;
+  estoque: string | null;
+  profiles: { nome: string } | null;
+  parques: { nome: string } | null;
+  pecas: { sap: string; descricao: string } | null;
+}
+
+interface RegistroInsight {
+  data: string | null;
+  aero: string;
+  quantidade: number;
+  wo: string | null;
+  estoque: string | null;
+  parques: { nome: string };
+  pecas: { sap: string; descricao: string };
+}
+
 /** Cadastro de um novo material no catálogo (somente admin, garantido por RLS). */
 export const addMaterial = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -58,19 +81,19 @@ export const updateMovimentacao = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     if (!row) throw new Error("Lançamento não encontrado ou sem permissão para editar.");
 
-    const m = row as any;
+    const m = row as MovimentacaoJoinRow;
     return {
-      id: m.id as string,
-      dataISO: m.data as string,
+      id: m.id,
+      dataISO: m.data,
       data: new Date(m.data).toLocaleString("pt-BR"),
       tecnico: m.profiles?.nome || "Desconhecido",
       parque: m.parques?.nome || "N/A",
-      aero: m.aero as string,
-      sap: m.sap as string,
+      aero: m.aero,
+      sap: m.sap,
       peca: m.pecas?.descricao || "Desconhecida",
-      quantidade: m.quantidade as number,
-      wo: (m.wo as string) || "",
-      estoque: (m.estoque as string) || "",
+      quantidade: m.quantidade,
+      wo: m.wo || "",
+      estoque: m.estoque || "",
     };
   });
 
@@ -105,7 +128,7 @@ export const generateInsights = createServerFn({ method: "POST" })
       .limit(400);
     if (error) throw new Error(error.message);
 
-    const registros = (data ?? []).map((m: any) => ({
+    const registros = (data ?? []).map((m: RegistroInsight) => ({
       data: m.data,
       parque: m.parques?.nome ?? "N/A",
       aero: m.aero,
@@ -147,8 +170,10 @@ ${JSON.stringify(registros)}`;
     });
 
     if (!res.ok || !res.body) {
-      if (res.status === 429) throw new Error("Muitas solicitações à IA. Tente novamente em instantes.");
-      if (res.status === 402) throw new Error("Créditos de IA esgotados. Adicione créditos para continuar.");
+      if (res.status === 429)
+        throw new Error("Muitas solicitações à IA. Tente novamente em instantes.");
+      if (res.status === 402)
+        throw new Error("Créditos de IA esgotados. Adicione créditos para continuar.");
       throw new Error(`Falha ao gerar insights (${res.status}).`);
     }
 
