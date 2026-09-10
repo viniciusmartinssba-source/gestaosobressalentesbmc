@@ -1,13 +1,13 @@
 import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
 import { useState, useEffect, useMemo } from "react";
-import { 
-  LayoutDashboard, 
-  Package, 
-  History as HistoryIcon, 
-  LogOut, 
-  Search, 
-  PlusCircle, 
-  TrendingUp, 
+import {
+  LayoutDashboard,
+  Package,
+  History as HistoryIcon,
+  LogOut,
+  Search,
+  PlusCircle,
+  TrendingUp,
   AlertTriangle,
   Menu,
   X,
@@ -22,25 +22,30 @@ import {
   Sparkles,
   Pencil,
   Trash2,
-  RefreshCw
+  RefreshCw,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
   PieChart,
   Pie,
   Cell,
-  Legend
+  Legend,
 } from "recharts";
 import { getInitialData, getHistory } from "@/lib/data.functions";
-import { addMaterial, updateMovimentacao, deleteMovimentacao, generateInsights } from "@/lib/admin.functions";
+import {
+  addMaterial,
+  updateMovimentacao,
+  deleteMovimentacao,
+  generateInsights,
+} from "@/lib/admin.functions";
 import { BarcodeScanner } from "@/components/scanner/BarcodeScanner";
 import { exportToPDF, exportToXLSX } from "@/lib/reports";
 import confetti from "canvas-confetti";
@@ -66,26 +71,17 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 export const Route = createFileRoute("/")({
   component: Dashboard,
   loader: async () => {
-    const [data, history] = await Promise.all([
-      getInitialData(),
-      getHistory()
-    ]);
+    const [data, history] = await Promise.all([getInitialData(), getHistory()]);
     return { data, history };
   },
 });
 
-const COLORS = ['#0ea5e9', '#6366f1', '#8b5cf6', '#ec4899'];
+const COLORS = ["#0ea5e9", "#6366f1", "#8b5cf6", "#ec4899"];
 
 function Dashboard() {
   const { data, history: initialHistory } = Route.useLoaderData();
@@ -96,7 +92,7 @@ function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [sapInput, setSapInput] = useState("");
-  const [foundPeca, setFoundPeca] = useState<{sap: string, descricao: string} | null>(null);
+  const [foundPeca, setFoundPeca] = useState<{ sap: string; descricao: string } | null>(null);
   const [catalogSearch, setCatalogSearch] = useState("");
   const [pecaSearch, setPecaSearch] = useState("");
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -116,11 +112,12 @@ function Dashboard() {
     data: string;
   } | null>(null);
   const [isSavingEdit, setIsSavingEdit] = useState(false);
-  
-  
+
   // Form state
   const [selectedParqueId, setSelectedParqueId] = useState<string>(data.parques[0]?.id || "");
-  const [selectedAero, setSelectedAero] = useState<string>(data.parques[0]?.aeros[0]?.toString() || "");
+  const [selectedAero, setSelectedAero] = useState<string>(
+    data.parques[0]?.aeros[0]?.toString() || "",
+  );
   const [selectedEstoque, setSelectedEstoque] = useState<string>(data.estoques[0] || "");
   const [quantidade, setQuantidade] = useState(1);
   const [wo, setWo] = useState("");
@@ -155,17 +152,17 @@ function Dashboard() {
       setNovoSap("");
       setNovaDescricao("");
       await router.invalidate();
-    } catch (e: any) {
-      toast.error(e?.message || "Não foi possível salvar o material.");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Não foi possível salvar o material.");
     } finally {
       setIsSavingMaterial(false);
     }
   };
 
-  const openEdit = (item: typeof initialHistory[number]) => {
-    const parque = data.parques.find(p => p.nome === item.parque);
+  const openEdit = (item: (typeof initialHistory)[number]) => {
+    const parque = data.parques.find((p) => p.nome === item.parque);
     const iso = item.dataISO ? new Date(item.dataISO) : new Date();
-    const pad = (n: number) => n.toString().padStart(2, '0');
+    const pad = (n: number) => n.toString().padStart(2, "0");
     setEditing({
       id: item.id,
       parque_id: parque?.id || data.parques[0]?.id || "",
@@ -197,8 +194,8 @@ function Dashboard() {
       toast.success("Lançamento atualizado!");
       setEditing(null);
       await router.invalidate();
-    } catch (e: any) {
-      toast.error(e?.message || "Não foi possível salvar as alterações.");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Não foi possível salvar as alterações.");
     } finally {
       setIsSavingEdit(false);
     }
@@ -208,11 +205,11 @@ function Dashboard() {
     if (!window.confirm("Deseja realmente excluir este lançamento?")) return;
     try {
       await deleteMovimentacao({ data: { id } });
-      setHistory(prev => prev.filter(h => h.id !== id));
+      setHistory((prev) => prev.filter((h) => h.id !== id));
       toast.success("Lançamento excluído.");
       await router.invalidate();
-    } catch (e: any) {
-      toast.error(e?.message || "Não foi possível excluir o lançamento.");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Não foi possível excluir o lançamento.");
     }
   };
 
@@ -221,23 +218,22 @@ function Dashboard() {
     try {
       const res = await generateInsights();
       setInsights(res.insights);
-    } catch (e: any) {
-      toast.error(e?.message || "Não foi possível gerar os insights agora.");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Não foi possível gerar os insights agora.");
     } finally {
       setIsGeneratingInsights(false);
     }
   };
-  
-  
+
   useEffect(() => {
     if (!isAuthLoading && !isAuthenticated) {
       navigate({ to: "/login" });
     }
   }, [isAuthenticated, isAuthLoading, navigate]);
 
-  const selectedParque = useMemo(() => 
-    data.parques.find(p => p.id === selectedParqueId) || data.parques[0],
-    [data.parques, selectedParqueId]
+  const selectedParque = useMemo(
+    () => data.parques.find((p) => p.id === selectedParqueId) || data.parques[0],
+    [data.parques, selectedParqueId],
   );
 
   useEffect(() => {
@@ -245,7 +241,7 @@ function Dashboard() {
       setFoundPeca(null);
       return;
     }
-    const peca = data.catalogo.find(p => p.sap === sapInput);
+    const peca = data.catalogo.find((p) => p.sap === sapInput);
     setFoundPeca(peca || null);
   }, [sapInput, data.catalogo]);
 
@@ -291,24 +287,26 @@ function Dashboard() {
       }
 
       const { data: mData, error } = await supabase
-        .from('movimentacoes')
+        .from("movimentacoes")
         .insert({
           tecnico_id: user.id,
           parque_id: selectedParqueId,
-          aero: selectedAero.padStart(2, '0'),
+          aero: selectedAero.padStart(2, "0"),
           sap: foundPeca.sap,
           quantidade,
           wo,
           estoque: selectedEstoque,
           foto_url: fotoPath,
-          ...(dataRetirada ? { data: new Date(dataRetirada).toISOString() } : {})
+          ...(dataRetirada ? { data: new Date(dataRetirada).toISOString() } : {}),
         })
-        .select(`
+        .select(
+          `
           *,
           profiles (nome),
           parques (nome),
           pecas (sap, descricao)
-        `)
+        `,
+        )
         .single();
 
       if (error) throw error;
@@ -316,26 +314,26 @@ function Dashboard() {
       const newEntry = {
         id: mData.id,
         dataISO: mData.data as string,
-        data: new Date(mData.data!).toLocaleString('pt-BR'),
+        data: new Date(mData.data!).toLocaleString("pt-BR"),
         tecnico: mData.profiles?.nome || user.nome,
-        parque: mData.parques?.nome || (selectedParque?.nome || ""),
+        parque: mData.parques?.nome || selectedParque?.nome || "",
         aero: mData.aero,
         sap: mData.sap,
         peca: mData.pecas?.descricao || foundPeca.descricao,
         quantidade: mData.quantidade,
         wo: mData.wo || "",
-        estoque: mData.estoque || ""
+        estoque: mData.estoque || "",
       };
-      
+
       setHistory([newEntry, ...history]);
       toast.success("Movimentação registrada com sucesso!");
       confetti({
         particleCount: 100,
         spread: 70,
         origin: { y: 0.6 },
-        colors: ['#0ea5e9', '#6366f1']
+        colors: ["#0ea5e9", "#6366f1"],
       });
-      
+
       setSapInput("");
       setQuantidade(1);
       setWo("");
@@ -344,24 +342,21 @@ function Dashboard() {
       setDataRetirada("");
       setActiveTab("history");
     } catch (error) {
-      console.error('Error registering movement:', error);
+      console.error("Error registering movement:", error);
       toast.error("Erro ao registrar movimentação.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-
   const handleLogout = () => {
     logout();
     toast.info("Você saiu do sistema.");
   };
 
-  
-
   const criticalParts = useMemo(() => {
     const counts: Record<string, { sap: string; peca: string; total: number }> = {};
-    history.forEach(h => {
+    history.forEach((h) => {
       const entry = counts[h.sap] || { sap: h.sap, peca: h.peca, total: 0 };
       entry.total += Number(h.quantidade) || 0;
       counts[h.sap] = entry;
@@ -375,17 +370,42 @@ function Dashboard() {
 
     const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
-    const countToday = history.filter(h => new Date(h.dataISO).getTime() >= today.getTime()).length;
-    const countMonth = history.filter(h => new Date(h.dataISO).getTime() >= startOfMonth.getTime()).length;
+    const countToday = history.filter(
+      (h) => new Date(h.dataISO || Date.now()).getTime() >= today.getTime(),
+    ).length;
+    const countMonth = history.filter(
+      (h) => new Date(h.dataISO || Date.now()).getTime() >= startOfMonth.getTime(),
+    ).length;
 
     // Peça crítica: acumula retiradas por SAP; entra na contagem a partir de 3 unidades
-    const criticas = criticalParts.filter(p => p.total >= 3).length;
+    const criticas = criticalParts.filter((p) => p.total >= 3).length;
 
     return [
-      { title: "Total Geral de Saídas", value: history.length.toString(), icon: Package, change: "Atualizado" },
-      { title: "Retiradas Hoje", value: countToday.toString(), icon: Calendar, change: "Atualizado" },
-      { title: "Retiradas no Mês", value: countMonth.toString(), icon: TrendingUp, change: "Atualizado" },
-      { title: "Peças Críticas", value: criticas.toString(), icon: AlertTriangle, change: "3+ retiradas", color: criticas > 0 ? "text-red-500" : "text-foreground" },
+      {
+        title: "Total Geral de Saídas",
+        value: history.length.toString(),
+        icon: Package,
+        change: "Atualizado",
+      },
+      {
+        title: "Retiradas Hoje",
+        value: countToday.toString(),
+        icon: Calendar,
+        change: "Atualizado",
+      },
+      {
+        title: "Retiradas no Mês",
+        value: countMonth.toString(),
+        icon: TrendingUp,
+        change: "Atualizado",
+      },
+      {
+        title: "Peças Críticas",
+        value: criticas.toString(),
+        icon: AlertTriangle,
+        change: "3+ retiradas",
+        color: criticas > 0 ? "text-red-500" : "text-foreground",
+      },
     ];
   }, [history, criticalParts]);
 
@@ -394,9 +414,9 @@ function Dashboard() {
     start.setHours(0, 0, 0, 0);
     const buckets: Record<string, number> = {};
     history
-      .filter(h => new Date(h.dataISO).getTime() >= start.getTime())
-      .forEach(h => {
-        const hora = `${new Date(h.dataISO).getHours().toString().padStart(2, '0')}h`;
+      .filter((h) => new Date(h.dataISO || Date.now()).getTime() >= start.getTime())
+      .forEach((h) => {
+        const hora = `${new Date(h.dataISO || Date.now()).getHours().toString().padStart(2, "0")}h`;
         buckets[hora] = (buckets[hora] || 0) + (Number(h.quantidade) || 0);
       });
     return Object.entries(buckets)
@@ -404,14 +424,18 @@ function Dashboard() {
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [history]);
 
-  const chartData = useMemo(() => data.parques.map(p => ({
-    name: p.nome,
-    value: history.filter(h => h.parque === p.nome).length
-  })), [data.parques, history]);
+  const chartData = useMemo(
+    () =>
+      data.parques.map((p) => ({
+        name: p.nome,
+        value: history.filter((h) => h.parque === p.nome).length,
+      })),
+    [data.parques, history],
+  );
 
   const aeroChartData = useMemo(() => {
     const aeroCounts: Record<string, number> = {};
-    history.forEach(h => {
+    history.forEach((h) => {
       const key = `${h.parque} · Aero ${h.aero}`;
       aeroCounts[key] = (aeroCounts[key] || 0) + 1;
     });
@@ -422,8 +446,8 @@ function Dashboard() {
   }, [history]);
 
   const pieData = useMemo(
-    () => criticalParts.slice(0, 4).map(p => ({ name: p.peca, value: p.total })),
-    [criticalParts]
+    () => criticalParts.slice(0, 4).map((p) => ({ name: p.peca, value: p.total })),
+    [criticalParts],
   );
 
   const handleScan = (sap: string) => {
@@ -455,58 +479,85 @@ function Dashboard() {
       {/* Sidebar Desktop */}
       <aside className="hidden md:flex flex-col w-64 bg-sidebar border-r border-sidebar-border transition-all duration-300 ease-in-out">
         <div className="p-6 flex items-center gap-3 border-b border-sidebar-border/50">
-          <div className="bg-primary p-2.5 rounded-xl text-primary-foreground shadow-lg shadow-primary/20 animate-in zoom-in duration-500">
-          </div>
-          <h1 className="font-bold text-lg leading-tight tracking-tight text-sidebar-foreground">Gestão de<br/>Sobressalentes</h1>
+          <div className="bg-primary p-2.5 rounded-xl text-primary-foreground shadow-lg shadow-primary/20 animate-in zoom-in duration-500"></div>
+          <h1 className="font-bold text-lg leading-tight tracking-tight text-sidebar-foreground">
+            Gestão de
+            <br />
+            Sobressalentes
+          </h1>
         </div>
 
         <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-          <button 
+          <button
             onClick={() => setActiveTab("overview")}
             className={cn(
               "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all duration-200 group cursor-pointer",
-              activeTab === "overview" 
-                ? "bg-primary text-primary-foreground font-bold shadow-md shadow-primary/20 scale-[1.02]" 
-                : "text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground hover:scale-[1.01]"
+              activeTab === "overview"
+                ? "bg-primary text-primary-foreground font-bold shadow-md shadow-primary/20 scale-[1.02]"
+                : "text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground hover:scale-[1.01]",
             )}
           >
-            <LayoutDashboard size={20} className={cn("transition-transform group-hover:scale-110", activeTab === "overview" && "scale-110")} /> 
+            <LayoutDashboard
+              size={20}
+              className={cn(
+                "transition-transform group-hover:scale-110",
+                activeTab === "overview" && "scale-110",
+              )}
+            />
             <span className="text-sm">Dashboard</span>
           </button>
-          <button 
+          <button
             onClick={() => setActiveTab("register")}
             className={cn(
               "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all duration-200 group cursor-pointer",
-              activeTab === "register" 
-                ? "bg-primary text-primary-foreground font-bold shadow-md shadow-primary/20 scale-[1.02]" 
-                : "text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground hover:scale-[1.01]"
+              activeTab === "register"
+                ? "bg-primary text-primary-foreground font-bold shadow-md shadow-primary/20 scale-[1.02]"
+                : "text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground hover:scale-[1.01]",
             )}
           >
-            <PlusCircle size={20} className={cn("transition-transform group-hover:scale-110", activeTab === "register" && "scale-110")} /> 
+            <PlusCircle
+              size={20}
+              className={cn(
+                "transition-transform group-hover:scale-110",
+                activeTab === "register" && "scale-110",
+              )}
+            />
             <span className="text-sm">Registrar Saída</span>
           </button>
-          <button 
+          <button
             onClick={() => setActiveTab("history")}
             className={cn(
               "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all duration-200 group cursor-pointer",
-              activeTab === "history" 
-                ? "bg-primary text-primary-foreground font-bold shadow-md shadow-primary/20 scale-[1.02]" 
-                : "text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground hover:scale-[1.01]"
+              activeTab === "history"
+                ? "bg-primary text-primary-foreground font-bold shadow-md shadow-primary/20 scale-[1.02]"
+                : "text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground hover:scale-[1.01]",
             )}
           >
-            <HistoryIcon size={20} className={cn("transition-transform group-hover:scale-110", activeTab === "history" && "scale-110")} /> 
+            <HistoryIcon
+              size={20}
+              className={cn(
+                "transition-transform group-hover:scale-110",
+                activeTab === "history" && "scale-110",
+              )}
+            />
             <span className="text-sm">Histórico</span>
           </button>
-          <button 
+          <button
             onClick={() => setActiveTab("catalog")}
             className={cn(
               "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all duration-200 group cursor-pointer",
-              activeTab === "catalog" 
-                ? "bg-primary text-primary-foreground font-bold shadow-md shadow-primary/20 scale-[1.02]" 
-                : "text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground hover:scale-[1.01]"
+              activeTab === "catalog"
+                ? "bg-primary text-primary-foreground font-bold shadow-md shadow-primary/20 scale-[1.02]"
+                : "text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground hover:scale-[1.01]",
             )}
           >
-            <Search size={20} className={cn("transition-transform group-hover:scale-110", activeTab === "catalog" && "scale-110")} /> 
+            <Search
+              size={20}
+              className={cn(
+                "transition-transform group-hover:scale-110",
+                activeTab === "catalog" && "scale-110",
+              )}
+            />
             <span className="text-sm">Catálogo</span>
           </button>
           {isAdmin && (
@@ -516,7 +567,7 @@ function Dashboard() {
                 "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all duration-200 group cursor-pointer",
                 activeTab === "material"
                   ? "bg-primary text-primary-foreground font-bold shadow-md shadow-primary/20 scale-[1.02]"
-                  : "text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground hover:scale-[1.01]"
+                  : "text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground hover:scale-[1.01]",
               )}
             >
               <Boxes size={20} className="transition-transform group-hover:scale-110" />
@@ -529,7 +580,7 @@ function Dashboard() {
               "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all duration-200 group cursor-pointer",
               activeTab === "ia"
                 ? "bg-primary text-primary-foreground font-bold shadow-md shadow-primary/20 scale-[1.02]"
-                : "text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground hover:scale-[1.01]"
+                : "text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground hover:scale-[1.01]",
             )}
           >
             <Sparkles size={20} className="transition-transform group-hover:scale-110" />
@@ -540,18 +591,23 @@ function Dashboard() {
         <div className="p-4 border-t border-sidebar-border/50 bg-sidebar-accent/10">
           <div className="flex items-center gap-3 px-3 py-2.5 mb-2 rounded-xl border border-transparent hover:border-sidebar-border transition-colors group">
             <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center font-bold text-primary shrink-0 transition-transform group-hover:scale-105">
-              {user.nome.split(' ').map(n => n[0]).join('')}
+              {user.nome
+                .split(" ")
+                .map((n) => n[0])
+                .join("")}
             </div>
             <div className="flex-1 overflow-hidden">
               <p className="text-sm font-bold truncate text-sidebar-foreground">{user.nome}</p>
-              <p className="text-[10px] text-sidebar-foreground/50 font-medium uppercase tracking-wider">{user.matricula}</p>
+              <p className="text-[10px] text-sidebar-foreground/50 font-medium uppercase tracking-wider">
+                {user.matricula}
+              </p>
             </div>
           </div>
-          <button 
+          <button
             onClick={handleLogout}
             className="flex items-center gap-3 w-full px-4 py-2.5 text-destructive/80 hover:text-destructive hover:bg-destructive/10 rounded-xl transition-all duration-200 text-sm font-medium group cursor-pointer"
           >
-            <LogOut size={18} className="transition-transform group-hover:-translate-x-1" /> 
+            <LogOut size={18} className="transition-transform group-hover:-translate-x-1" />
             Sair do Sistema
           </button>
         </div>
@@ -570,64 +626,97 @@ function Dashboard() {
               </SheetTrigger>
               <SheetContent side="left" className="p-0 w-72">
                 <SheetHeader className="p-6 flex-row items-center gap-3 border-b border-slate-100 text-left">
-                  <div className="bg-primary p-2 rounded-lg text-primary-foreground">
-                  </div>
-                  <SheetTitle className="font-bold text-lg leading-tight">Gestão de<br/>Sobressalentes</SheetTitle>
+                  <div className="bg-primary p-2 rounded-lg text-primary-foreground"></div>
+                  <SheetTitle className="font-bold text-lg leading-tight">
+                    Gestão de
+                    <br />
+                    Sobressalentes
+                  </SheetTitle>
                 </SheetHeader>
                 <div className="flex flex-col h-[calc(100vh-85px)]">
                   <nav className="flex-1 p-4 space-y-1">
-                    <button 
-                      onClick={() => { setActiveTab("overview"); setIsSidebarOpen(false); }}
+                    <button
+                      onClick={() => {
+                        setActiveTab("overview");
+                        setIsSidebarOpen(false);
+                      }}
                       className={cn(
                         "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
-                        activeTab === "overview" ? "bg-accent text-accent-foreground font-medium" : "text-muted-foreground hover:bg-accent/50"
+                        activeTab === "overview"
+                          ? "bg-accent text-accent-foreground font-medium"
+                          : "text-muted-foreground hover:bg-accent/50",
                       )}
                     >
                       <LayoutDashboard size={20} /> Dashboard
                     </button>
-                    <button 
-                      onClick={() => { setActiveTab("register"); setIsSidebarOpen(false); }}
+                    <button
+                      onClick={() => {
+                        setActiveTab("register");
+                        setIsSidebarOpen(false);
+                      }}
                       className={cn(
                         "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
-                        activeTab === "register" ? "bg-accent text-accent-foreground font-medium" : "text-muted-foreground hover:bg-accent/50"
+                        activeTab === "register"
+                          ? "bg-accent text-accent-foreground font-medium"
+                          : "text-muted-foreground hover:bg-accent/50",
                       )}
                     >
                       <PlusCircle size={20} /> Registrar Saída
                     </button>
-                    <button 
-                      onClick={() => { setActiveTab("history"); setIsSidebarOpen(false); }}
+                    <button
+                      onClick={() => {
+                        setActiveTab("history");
+                        setIsSidebarOpen(false);
+                      }}
                       className={cn(
                         "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
-                        activeTab === "history" ? "bg-accent text-accent-foreground font-medium" : "text-muted-foreground hover:bg-accent/50"
+                        activeTab === "history"
+                          ? "bg-accent text-accent-foreground font-medium"
+                          : "text-muted-foreground hover:bg-accent/50",
                       )}
                     >
                       <HistoryIcon size={20} /> Histórico
                     </button>
-                    <button 
-                      onClick={() => { setActiveTab("catalog"); setIsSidebarOpen(false); }}
+                    <button
+                      onClick={() => {
+                        setActiveTab("catalog");
+                        setIsSidebarOpen(false);
+                      }}
                       className={cn(
                         "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
-                        activeTab === "catalog" ? "bg-accent text-accent-foreground font-medium" : "text-muted-foreground hover:bg-accent/50"
+                        activeTab === "catalog"
+                          ? "bg-accent text-accent-foreground font-medium"
+                          : "text-muted-foreground hover:bg-accent/50",
                       )}
                     >
                       <Search size={20} /> Catálogo
                     </button>
                     {isAdmin && (
                       <button
-                        onClick={() => { setActiveTab("material"); setIsSidebarOpen(false); }}
+                        onClick={() => {
+                          setActiveTab("material");
+                          setIsSidebarOpen(false);
+                        }}
                         className={cn(
                           "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
-                          activeTab === "material" ? "bg-accent text-accent-foreground font-medium" : "text-muted-foreground hover:bg-accent/50"
+                          activeTab === "material"
+                            ? "bg-accent text-accent-foreground font-medium"
+                            : "text-muted-foreground hover:bg-accent/50",
                         )}
                       >
                         <Boxes size={20} /> Novo Material
                       </button>
                     )}
                     <button
-                      onClick={() => { setActiveTab("ia"); setIsSidebarOpen(false); }}
+                      onClick={() => {
+                        setActiveTab("ia");
+                        setIsSidebarOpen(false);
+                      }}
                       className={cn(
                         "flex items-center gap-3 w-full px-4 py-3 rounded-xl transition-all",
-                        activeTab === "ia" ? "bg-accent text-accent-foreground font-medium" : "text-muted-foreground hover:bg-accent/50"
+                        activeTab === "ia"
+                          ? "bg-accent text-accent-foreground font-medium"
+                          : "text-muted-foreground hover:bg-accent/50",
                       )}
                     >
                       <Sparkles size={20} /> Insights por IA
@@ -636,14 +725,17 @@ function Dashboard() {
                   <div className="p-4 border-t border-border">
                     <div className="flex items-center gap-3 px-4 py-3 mb-2">
                       <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center font-bold text-accent-foreground shrink-0">
-                        {user.nome.split(' ').map(n => n[0]).join('')}
+                        {user.nome
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")}
                       </div>
                       <div className="flex-1 overflow-hidden">
                         <p className="text-sm font-medium truncate">{user.nome}</p>
                         <p className="text-xs text-muted-foreground">{user.matricula}</p>
                       </div>
                     </div>
-                    <button 
+                    <button
                       onClick={handleLogout}
                       className="flex items-center gap-3 w-full px-4 py-2 text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
                     >
@@ -653,7 +745,7 @@ function Dashboard() {
                 </div>
               </SheetContent>
             </Sheet>
-            
+
             <h2 className="text-sm md:text-lg font-semibold uppercase tracking-wider text-muted-foreground truncate max-w-[200px] md:max-w-none">
               {activeTab === "overview" && "Dashboard"}
               {activeTab === "register" && "Registro"}
@@ -666,10 +758,14 @@ function Dashboard() {
           <div className="text-sm font-medium text-slate-500 flex items-center gap-2">
             <Calendar size={16} className="hidden sm:block" />
             <span className="hidden sm:block">
-              {new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })}
+              {new Date().toLocaleDateString("pt-BR", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })}
             </span>
             <span className="sm:hidden">
-              {new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: '2-digit' })}
+              {new Date().toLocaleDateString("pt-BR", { day: "numeric", month: "2-digit" })}
             </span>
           </div>
         </header>
@@ -696,16 +792,28 @@ function Dashboard() {
                   {isRefreshing ? "Atualizando..." : "Atualizar Dashboard"}
                 </Button>
               </div>
-              
+
               {/* Stats Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {stats.map((stat, i) => (
-                  <Card key={i} className="rounded-3xl border-border bg-card/50 backdrop-blur-sm shadow-none hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 group">
+                  <Card
+                    key={i}
+                    className="rounded-3xl border-border bg-card/50 backdrop-blur-sm shadow-none hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 group"
+                  >
                     <CardContent className="p-6">
                       <div className="flex justify-between items-start">
                         <div>
-                          <p className="text-sm font-medium text-muted-foreground mb-1">{stat.title}</p>
-                          <h3 className={cn("text-3xl font-extrabold tracking-tight transition-colors", stat.color || "text-foreground")}>{stat.value}</h3>
+                          <p className="text-sm font-medium text-muted-foreground mb-1">
+                            {stat.title}
+                          </p>
+                          <h3
+                            className={cn(
+                              "text-3xl font-extrabold tracking-tight transition-colors",
+                              stat.color || "text-foreground",
+                            )}
+                          >
+                            {stat.value}
+                          </h3>
                         </div>
                         <div className="bg-accent/50 p-3 rounded-2xl text-primary transition-transform group-hover:rotate-12">
                           <stat.icon size={24} />
@@ -713,7 +821,8 @@ function Dashboard() {
                       </div>
                       <div className="mt-4 flex items-center gap-2 text-xs font-bold text-emerald-600 bg-emerald-500/10 w-fit px-3 py-1 rounded-full">
                         <TrendingUp size={12} />
-                        {stat.change} <span className="text-emerald-700/70 font-medium">vs mês anterior</span>
+                        {stat.change}{" "}
+                        <span className="text-emerald-700/70 font-medium">vs mês anterior</span>
                       </div>
                     </CardContent>
                   </Card>
@@ -725,7 +834,9 @@ function Dashboard() {
                 <Card className="rounded-3xl border-border shadow-none p-6 bg-card/50 backdrop-blur-sm lg:col-span-2">
                   <CardHeader className="p-0 pb-6">
                     <CardTitle className="text-lg font-bold">Retiradas de Hoje</CardTitle>
-                    <CardDescription>Quantidade de peças retiradas por horário no dia de hoje</CardDescription>
+                    <CardDescription>
+                      Quantidade de peças retiradas por horário no dia de hoje
+                    </CardDescription>
                   </CardHeader>
                   <CardContent className="h-[280px] p-0">
                     {todayChartData.length === 0 ? (
@@ -734,15 +845,44 @@ function Dashboard() {
                       </div>
                     ) : (
                       <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={todayChartData} margin={{ top: 20, right: 20, left: 0, bottom: 0 }}>
-                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" opacity={0.4} />
-                          <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: 'var(--muted-foreground)', fontSize: 12}} dy={10} />
-                          <YAxis allowDecimals={false} axisLine={false} tickLine={false} tick={{fill: 'var(--muted-foreground)', fontSize: 12}} />
-                          <Tooltip
-                            cursor={{fill: 'var(--accent)', opacity: 0.2}}
-                            contentStyle={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)', borderRadius: '12px' }}
+                        <BarChart
+                          data={todayChartData}
+                          margin={{ top: 20, right: 20, left: 0, bottom: 0 }}
+                        >
+                          <CartesianGrid
+                            strokeDasharray="3 3"
+                            vertical={false}
+                            stroke="var(--border)"
+                            opacity={0.4}
                           />
-                          <Bar dataKey="value" name="Peças" fill="var(--primary)" radius={[6, 6, 0, 0]} barSize={36} />
+                          <XAxis
+                            dataKey="name"
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: "var(--muted-foreground)", fontSize: 12 }}
+                            dy={10}
+                          />
+                          <YAxis
+                            allowDecimals={false}
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: "var(--muted-foreground)", fontSize: 12 }}
+                          />
+                          <Tooltip
+                            cursor={{ fill: "var(--accent)", opacity: 0.2 }}
+                            contentStyle={{
+                              backgroundColor: "var(--card)",
+                              borderColor: "var(--border)",
+                              borderRadius: "12px",
+                            }}
+                          />
+                          <Bar
+                            dataKey="value"
+                            name="Peças"
+                            fill="var(--primary)"
+                            radius={[6, 6, 0, 0]}
+                            barSize={36}
+                          />
                         </BarChart>
                       </ResponsiveContainer>
                     )}
@@ -756,25 +896,43 @@ function Dashboard() {
                   </CardHeader>
                   <CardContent className="h-[300px] p-0">
                     <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={chartData} margin={{ top: 20, right: 20, left: 0, bottom: 0 }}>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" opacity={0.4} />
-                        <XAxis 
-                          dataKey="name" 
-                          axisLine={false} 
-                          tickLine={false} 
-                          tick={{fill: 'var(--muted-foreground)', fontSize: 12}} 
-                          dy={10} 
+                      <BarChart
+                        data={chartData}
+                        margin={{ top: 20, right: 20, left: 0, bottom: 0 }}
+                      >
+                        <CartesianGrid
+                          strokeDasharray="3 3"
+                          vertical={false}
+                          stroke="var(--border)"
+                          opacity={0.4}
                         />
-                        <YAxis 
-                          axisLine={false} 
-                          tickLine={false} 
-                          tick={{fill: 'var(--muted-foreground)', fontSize: 12}} 
+                        <XAxis
+                          dataKey="name"
+                          axisLine={false}
+                          tickLine={false}
+                          tick={{ fill: "var(--muted-foreground)", fontSize: 12 }}
+                          dy={10}
                         />
-                        <Tooltip 
-                          cursor={{fill: 'var(--accent)', opacity: 0.2}}
-                          contentStyle={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                        <YAxis
+                          axisLine={false}
+                          tickLine={false}
+                          tick={{ fill: "var(--muted-foreground)", fontSize: 12 }}
                         />
-                        <Bar dataKey="value" fill="var(--primary)" radius={[6, 6, 0, 0]} barSize={40} />
+                        <Tooltip
+                          cursor={{ fill: "var(--accent)", opacity: 0.2 }}
+                          contentStyle={{
+                            backgroundColor: "var(--card)",
+                            borderColor: "var(--border)",
+                            borderRadius: "12px",
+                            boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
+                          }}
+                        />
+                        <Bar
+                          dataKey="value"
+                          fill="var(--primary)"
+                          radius={[6, 6, 0, 0]}
+                          barSize={40}
+                        />
                       </BarChart>
                     </ResponsiveContainer>
                   </CardContent>
@@ -787,21 +945,40 @@ function Dashboard() {
                   </CardHeader>
                   <CardContent className="h-[300px] p-0">
                     <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={aeroChartData} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                        <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="var(--border)" opacity={0.4} />
+                      <BarChart
+                        data={aeroChartData}
+                        layout="vertical"
+                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                      >
+                        <CartesianGrid
+                          strokeDasharray="3 3"
+                          horizontal={false}
+                          stroke="var(--border)"
+                          opacity={0.4}
+                        />
                         <XAxis type="number" hide />
-                        <YAxis 
-                          dataKey="name" 
-                          type="category" 
-                          axisLine={false} 
-                          tickLine={false} 
-                          tick={{fill: 'var(--muted-foreground)', fontSize: 12}}
+                        <YAxis
+                          dataKey="name"
+                          type="category"
+                          axisLine={false}
+                          tickLine={false}
+                          tick={{ fill: "var(--muted-foreground)", fontSize: 12 }}
                         />
-                        <Tooltip 
-                          cursor={{fill: 'var(--accent)', opacity: 0.2}}
-                          contentStyle={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                        <Tooltip
+                          cursor={{ fill: "var(--accent)", opacity: 0.2 }}
+                          contentStyle={{
+                            backgroundColor: "var(--card)",
+                            borderColor: "var(--border)",
+                            borderRadius: "12px",
+                            boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
+                          }}
                         />
-                        <Bar dataKey="value" fill="var(--chart-2)" radius={[0, 6, 6, 0]} barSize={24} />
+                        <Bar
+                          dataKey="value"
+                          fill="var(--chart-2)"
+                          radius={[0, 6, 6, 0]}
+                          barSize={24}
+                        />
                       </BarChart>
                     </ResponsiveContainer>
                   </CardContent>
@@ -826,13 +1003,21 @@ function Dashboard() {
                           stroke="none"
                         >
                           {pieData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length] || "#0ea5e9"} />
+                            <Cell
+                              key={`cell-${index}`}
+                              fill={COLORS[index % COLORS.length] || "#0ea5e9"}
+                            />
                           ))}
                         </Pie>
-                        <Tooltip 
-                          contentStyle={{ backgroundColor: 'var(--card)', borderColor: 'var(--border)', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: "var(--card)",
+                            borderColor: "var(--border)",
+                            borderRadius: "12px",
+                            boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
+                          }}
                         />
-                        <Legend verticalAlign="bottom" height={36}/>
+                        <Legend verticalAlign="bottom" height={36} />
                       </PieChart>
                     </ResponsiveContainer>
                   </CardContent>
@@ -846,17 +1031,21 @@ function Dashboard() {
               <Card className="border-none shadow-md shadow-border overflow-hidden rounded-none sm:rounded-2xl bg-card text-card-foreground">
                 <CardHeader className="bg-primary text-primary-foreground">
                   <CardTitle>Nova Movimentação</CardTitle>
-                  <CardDescription className="text-primary-foreground/80">Preencha os campos abaixo para registrar a retirada da peça.</CardDescription>
+                  <CardDescription className="text-primary-foreground/80">
+                    Preencha os campos abaixo para registrar a retirada da peça.
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6 pt-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Parque Eólico <span className="text-destructive">*</span></Label>
-                      <Select 
+                      <Label>
+                        Parque Eólico <span className="text-destructive">*</span>
+                      </Label>
+                      <Select
                         value={selectedParqueId}
                         onValueChange={(val) => {
                           setSelectedParqueId(val);
-                          const p = data.parques.find(p => p.id === val);
+                          const p = data.parques.find((p) => p.id === val);
                           if (p) setSelectedAero(p.aeros[0]!.toString());
                         }}
                       >
@@ -864,24 +1053,27 @@ function Dashboard() {
                           <SelectValue placeholder="Selecione o parque" />
                         </SelectTrigger>
                         <SelectContent>
-                          {data.parques.map(p => (
-                            <SelectItem key={p.id} value={p.id}>{p.nome}</SelectItem>
+                          {data.parques.map((p) => (
+                            <SelectItem key={p.id} value={p.id}>
+                              {p.nome}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label>Aerogerador <span className="text-destructive">*</span></Label>
-                      <Select 
-                        value={selectedAero}
-                        onValueChange={setSelectedAero}
-                      >
+                      <Label>
+                        Aerogerador <span className="text-destructive">*</span>
+                      </Label>
+                      <Select value={selectedAero} onValueChange={setSelectedAero}>
                         <SelectTrigger className="h-12 rounded-xl bg-slate-50 text-black">
                           <SelectValue placeholder="Selecione o aero" />
                         </SelectTrigger>
                         <SelectContent>
                           {selectedParque?.aeros.map((a: number) => (
-                            <SelectItem key={a} value={a.toString()}>Aero {a.toString().padStart(2, '0')}</SelectItem>
+                            <SelectItem key={a} value={a.toString()}>
+                              Aero {a.toString().padStart(2, "0")}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -889,7 +1081,9 @@ function Dashboard() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Código SAP da Peça <span className="text-destructive">*</span></Label>
+                    <Label>
+                      Código SAP da Peça <span className="text-destructive">*</span>
+                    </Label>
                     <div className="flex gap-2">
                       <div className="relative flex-1">
                         <Input
@@ -901,11 +1095,14 @@ function Dashboard() {
                           className={cn(
                             "h-12 rounded-xl bg-slate-50 pr-10 text-black font-mono",
                             foundPeca && "border-emerald-500 ring-emerald-500",
-                            sapInput && !foundPeca && "border-destructive"
+                            sapInput && !foundPeca && "border-destructive",
                           )}
                         />
                         {foundPeca ? (
-                          <CheckCircle2 className="absolute right-3 top-3 text-emerald-500" size={20} />
+                          <CheckCircle2
+                            className="absolute right-3 top-3 text-emerald-500"
+                            size={20}
+                          />
                         ) : (
                           <Package className="absolute right-3 top-3 text-slate-400" size={20} />
                         )}
@@ -921,7 +1118,9 @@ function Dashboard() {
                     </div>
                     {foundPeca ? (
                       <div className="bg-emerald-50 p-3 rounded-xl border border-emerald-100 animate-in fade-in slide-in-from-top-1">
-                        <p className="text-sm text-emerald-700 font-medium">{foundPeca.descricao}</p>
+                        <p className="text-sm text-emerald-700 font-medium">
+                          {foundPeca.descricao}
+                        </p>
                       </div>
                     ) : sapInput ? (
                       <p className="text-xs text-destructive font-medium">
@@ -944,12 +1143,13 @@ function Dashboard() {
                       {pecaSearch.trim().length >= 2 && (
                         <div className="absolute left-0 right-0 top-full mt-1 z-50 bg-card border border-border rounded-xl shadow-lg max-h-56 overflow-y-auto overflow-x-hidden">
                           {data.catalogo
-                            .filter(p =>
-                              p.sap.toLowerCase().includes(pecaSearch.trim().toLowerCase()) ||
-                              p.descricao.toLowerCase().includes(pecaSearch.trim().toLowerCase())
+                            .filter(
+                              (p) =>
+                                p.sap.toLowerCase().includes(pecaSearch.trim().toLowerCase()) ||
+                                p.descricao.toLowerCase().includes(pecaSearch.trim().toLowerCase()),
                             )
                             .slice(0, 8)
-                            .map(p => (
+                            .map((p) => (
                               <button
                                 key={p.sap}
                                 type="button"
@@ -960,27 +1160,31 @@ function Dashboard() {
                                   setPecaSearch("");
                                 }}
                               >
-                                <div className="font-mono text-xs font-bold text-primary">{p.sap}</div>
+                                <div className="font-mono text-xs font-bold text-primary">
+                                  {p.sap}
+                                </div>
                                 <div className="text-sm truncate">{p.descricao}</div>
                               </button>
                             ))}
-                          {data.catalogo.filter(p =>
-                            p.sap.toLowerCase().includes(pecaSearch.trim().toLowerCase()) ||
-                            p.descricao.toLowerCase().includes(pecaSearch.trim().toLowerCase())
+                          {data.catalogo.filter(
+                            (p) =>
+                              p.sap.toLowerCase().includes(pecaSearch.trim().toLowerCase()) ||
+                              p.descricao.toLowerCase().includes(pecaSearch.trim().toLowerCase()),
                           ).length === 0 && (
-                            <p className="p-3 text-sm text-muted-foreground">Nenhuma peça encontrada.</p>
+                            <p className="p-3 text-sm text-muted-foreground">
+                              Nenhuma peça encontrada.
+                            </p>
                           )}
                         </div>
                       )}
                     </div>
                   </div>
 
-
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label>Quantidade</Label>
-                      <Input 
-                        type="number" 
+                      <Input
+                        type="number"
                         value={quantidade}
                         onChange={(e) => setQuantidade(Number(e.target.value))}
                         className="h-12 rounded-xl bg-background"
@@ -994,8 +1198,10 @@ function Dashboard() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          {data.estoques.map(e => (
-                            <SelectItem key={e} value={e}>Estoque {e}</SelectItem>
+                          {data.estoques.map((e) => (
+                            <SelectItem key={e} value={e}>
+                              Estoque {e}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -1004,8 +1210,8 @@ function Dashboard() {
 
                   <div className="space-y-2">
                     <Label>Work Order (Opcional)</Label>
-                    <Input 
-                      type="text" 
+                    <Input
+                      type="text"
                       value={wo}
                       onChange={(e) => setWo(e.target.value)}
                       placeholder="Número da WO"
@@ -1025,7 +1231,6 @@ function Dashboard() {
                       Se deixar em branco, será registrado o horário da confirmação da retirada.
                     </p>
                   </div>
-
 
                   <div className="space-y-2">
                     <Label>Foto da Peça (Opcional)</Label>
@@ -1065,17 +1270,16 @@ function Dashboard() {
                       className="hidden"
                       onChange={(e) => handleFotoChange(e.target.files?.[0] ?? null)}
                     />
-                    {foto && (
-                      <p className="text-xs text-muted-foreground truncate">{foto.name}</p>
-                    )}
+                    {foto && <p className="text-xs text-muted-foreground truncate">{foto.name}</p>}
                   </div>
 
-                  <Button 
+                  <Button
                     onClick={handleRegister}
                     disabled={!selectedParqueId || !selectedAero || !foundPeca || isSubmitting}
                     className="w-full h-14 rounded-xl font-bold text-lg shadow-lg shadow-primary/20 transition-all bg-primary text-primary-foreground hover:bg-primary/90"
                   >
-                    <PlusCircle size={20} /> {isSubmitting ? "Registrando..." : "Confirmar Retirada"}
+                    <PlusCircle size={20} />{" "}
+                    {isSubmitting ? "Registrando..." : "Confirmar Retirada"}
                   </Button>
                 </CardContent>
               </Card>
@@ -1087,14 +1291,14 @@ function Dashboard() {
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <h3 className="text-lg font-bold text-foreground">Registros Recentes</h3>
                 <div className="flex gap-2 w-full sm:w-auto">
-                  <Button 
+                  <Button
                     variant="outline"
                     onClick={() => exportToXLSX(history)}
                     className="flex-1 sm:flex-none rounded-xl border-emerald-500/20 text-emerald-500 hover:bg-emerald-500/10"
                   >
                     <FileDown size={18} /> Excel
                   </Button>
-                  <Button 
+                  <Button
                     variant="outline"
                     onClick={() => exportToPDF(history)}
                     className="flex-1 sm:flex-none rounded-xl border-destructive/20 text-destructive hover:bg-destructive/10"
@@ -1103,7 +1307,7 @@ function Dashboard() {
                   </Button>
                 </div>
               </div>
-              
+
               <Card className="border-none shadow-sm shadow-border bg-card text-card-foreground">
                 <div className="overflow-x-auto">
                   <Table>
@@ -1115,60 +1319,72 @@ function Dashboard() {
                         <TableHead className="font-bold whitespace-nowrap">Peça</TableHead>
                         <TableHead className="font-bold whitespace-nowrap">Qtd</TableHead>
                         <TableHead className="font-bold text-right whitespace-nowrap">WO</TableHead>
-                        {isAdmin && <TableHead className="font-bold text-right whitespace-nowrap">Ações</TableHead>}
+                        {isAdmin && (
+                          <TableHead className="font-bold text-right whitespace-nowrap">
+                            Ações
+                          </TableHead>
+                        )}
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                    {history.map((item) => (
-                      <TableRow key={item.id} className="group">
-                        <TableCell className="text-muted-foreground text-xs">{item.data}</TableCell>
-                        <TableCell className="font-medium">{item.tecnico}</TableCell>
-                        <TableCell className="text-muted-foreground">{item.parque} - {item.aero}</TableCell>
-                        <TableCell>
-                          <div className="flex flex-col">
-                            <span className="font-medium">{item.peca}</span>
-                            <span className="text-[10px] text-muted-foreground font-mono">SAP {item.sap}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="secondary" className="rounded-lg">{item.quantidade}</Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {item.wo ? (
-                            <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-none rounded-lg">
-                              {item.wo}
-                            </Badge>
-                          ) : (
-                            <span className="text-muted/30 text-xs">-</span>
-                          )}
-                        </TableCell>
-                        {isAdmin && (
-                          <TableCell className="text-right">
-                            <div className="flex justify-end gap-1">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 rounded-lg text-primary hover:bg-primary/10"
-                                onClick={() => openEdit(item)}
-                                aria-label="Editar lançamento"
-                              >
-                                <Pencil size={16} />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 rounded-lg text-destructive hover:bg-destructive/10"
-                                onClick={() => handleDelete(item.id)}
-                                aria-label="Excluir lançamento"
-                              >
-                                <Trash2 size={16} />
-                              </Button>
+                      {history.map((item) => (
+                        <TableRow key={item.id} className="group">
+                          <TableCell className="text-muted-foreground text-xs">
+                            {item.data}
+                          </TableCell>
+                          <TableCell className="font-medium">{item.tecnico}</TableCell>
+                          <TableCell className="text-muted-foreground">
+                            {item.parque} - {item.aero}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex flex-col">
+                              <span className="font-medium">{item.peca}</span>
+                              <span className="text-[10px] text-muted-foreground font-mono">
+                                SAP {item.sap}
+                              </span>
                             </div>
                           </TableCell>
-                        )}
-                      </TableRow>
-                    ))}
-                  </TableBody>
+                          <TableCell>
+                            <Badge variant="secondary" className="rounded-lg">
+                              {item.quantidade}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {item.wo ? (
+                              <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-none rounded-lg">
+                                {item.wo}
+                              </Badge>
+                            ) : (
+                              <span className="text-muted/30 text-xs">-</span>
+                            )}
+                          </TableCell>
+                          {isAdmin && (
+                            <TableCell className="text-right">
+                              <div className="flex justify-end gap-1">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 rounded-lg text-primary hover:bg-primary/10"
+                                  onClick={() => openEdit(item)}
+                                  aria-label="Editar lançamento"
+                                >
+                                  <Pencil size={16} />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 rounded-lg text-destructive hover:bg-destructive/10"
+                                  onClick={() => handleDelete(item.id)}
+                                  aria-label="Excluir lançamento"
+                                >
+                                  <Trash2 size={16} />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          )}
+                        </TableRow>
+                      ))}
+                    </TableBody>
                   </Table>
                 </div>
               </Card>
@@ -1180,9 +1396,12 @@ function Dashboard() {
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div className="flex-1 w-full sm:max-w-md">
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
-                    <Input 
-                      placeholder="Buscar por SAP ou Nome da Peça..." 
+                    <Search
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                      size={18}
+                    />
+                    <Input
+                      placeholder="Buscar por SAP ou Nome da Peça..."
                       className="pl-10 h-11 rounded-xl bg-card border-border"
                       value={catalogSearch}
                       onChange={(e) => setCatalogSearch(e.target.value)}
@@ -1200,7 +1419,6 @@ function Dashboard() {
                     </Button>
                   </div>
                 )}
-
               </div>
 
               <Card className="border-none shadow-sm shadow-border bg-card text-card-foreground">
@@ -1214,17 +1432,19 @@ function Dashboard() {
                     </TableHeader>
                     <TableBody>
                       {data.catalogo
-                        .filter(p => 
-                          p.sap.toLowerCase().includes(catalogSearch.toLowerCase()) || 
-                          p.descricao.toLowerCase().includes(catalogSearch.toLowerCase())
+                        .filter(
+                          (p) =>
+                            p.sap.toLowerCase().includes(catalogSearch.toLowerCase()) ||
+                            p.descricao.toLowerCase().includes(catalogSearch.toLowerCase()),
                         )
                         .map((peca, i) => (
                           <TableRow key={peca.sap} className="group">
-                            <TableCell className="font-mono font-bold text-primary">{peca.sap}</TableCell>
+                            <TableCell className="font-mono font-bold text-primary">
+                              {peca.sap}
+                            </TableCell>
                             <TableCell className="font-medium">{peca.descricao}</TableCell>
                           </TableRow>
-                        ))
-                      }
+                        ))}
                       {data.catalogo.length === 0 && (
                         <TableRow>
                           <TableCell colSpan={2} className="h-32 text-center text-muted-foreground">
@@ -1251,21 +1471,25 @@ function Dashboard() {
                 </CardHeader>
                 <CardContent className="space-y-6 pt-6">
                   <div className="space-y-2">
-                    <Label>Código SAP <span className="text-destructive">*</span></Label>
+                    <Label>
+                      Código SAP <span className="text-destructive">*</span>
+                    </Label>
                     <Input
                       value={novoSap}
                       onChange={(e) => setNovoSap(e.target.value.trim())}
                       placeholder="Ex.: 1000284"
                       className="h-12 rounded-xl bg-background font-mono"
                     />
-                    {novoSap && data.catalogo.some(p => p.sap === novoSap) && (
+                    {novoSap && data.catalogo.some((p) => p.sap === novoSap) && (
                       <p className="text-xs text-amber-500 font-medium">
                         Este código já existe no catálogo e será atualizado.
                       </p>
                     )}
                   </div>
                   <div className="space-y-2">
-                    <Label>Descrição do Material <span className="text-destructive">*</span></Label>
+                    <Label>
+                      Descrição do Material <span className="text-destructive">*</span>
+                    </Label>
                     <Input
                       value={novaDescricao}
                       onChange={(e) => setNovaDescricao(e.target.value)}
@@ -1310,11 +1534,13 @@ function Dashboard() {
                     A IA está analisando as movimentações. Isso pode levar alguns instantes...
                   </p>
                 ) : insights ? (
-                  <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">{insights}</div>
+                  <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
+                    {insights}
+                  </div>
                 ) : (
                   <p className="text-sm text-muted-foreground">
-                    Clique em "Gerar Insights" para que a IA analise as retiradas e aponte peças críticas,
-                    tendências e recomendações de reposição.
+                    Clique em "Gerar Insights" para que a IA analise as retiradas e aponte peças
+                    críticas, tendências e recomendações de reposição.
                   </p>
                 )}
               </Card>
@@ -1327,7 +1553,12 @@ function Dashboard() {
               <Card className="w-full max-w-lg rounded-3xl overflow-hidden border-none shadow-2xl">
                 <CardHeader className="bg-primary text-primary-foreground p-6 flex-row items-center justify-between">
                   <CardTitle className="text-xl">Editar Lançamento</CardTitle>
-                  <Button variant="ghost" size="icon" onClick={() => setEditing(null)} className="text-primary-foreground hover:bg-white/10 rounded-full">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setEditing(null)}
+                    className="text-primary-foreground hover:bg-white/10 rounded-full"
+                  >
                     <X size={22} />
                   </Button>
                 </CardHeader>
@@ -1337,24 +1568,43 @@ function Dashboard() {
                     <Select
                       value={editing.parque_id}
                       onValueChange={(val) => {
-                        const p = data.parques.find(pp => pp.id === val);
-                        setEditing({ ...editing, parque_id: val, aero: p?.aeros[0]?.toString().padStart(2, '0') || editing.aero });
+                        const p = data.parques.find((pp) => pp.id === val);
+                        setEditing({
+                          ...editing,
+                          parque_id: val,
+                          aero: p?.aeros[0]?.toString().padStart(2, "0") || editing.aero,
+                        });
                       }}
                     >
-                      <SelectTrigger className="h-12 rounded-xl bg-slate-50 text-black"><SelectValue /></SelectTrigger>
+                      <SelectTrigger className="h-12 rounded-xl bg-slate-50 text-black">
+                        <SelectValue />
+                      </SelectTrigger>
                       <SelectContent>
-                        {data.parques.map(p => <SelectItem key={p.id} value={p.id}>{p.nome}</SelectItem>)}
+                        {data.parques.map((p) => (
+                          <SelectItem key={p.id} value={p.id}>
+                            {p.nome}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
                     <Label>Aerogerador</Label>
-                    <Select value={editing.aero} onValueChange={(val) => setEditing({ ...editing, aero: val })}>
-                      <SelectTrigger className="h-12 rounded-xl bg-slate-50 text-black"><SelectValue /></SelectTrigger>
+                    <Select
+                      value={editing.aero}
+                      onValueChange={(val) => setEditing({ ...editing, aero: val })}
+                    >
+                      <SelectTrigger className="h-12 rounded-xl bg-slate-50 text-black">
+                        <SelectValue />
+                      </SelectTrigger>
                       <SelectContent>
-                        {(data.parques.find(p => p.id === editing.parque_id)?.aeros ?? []).map((a: number) => (
-                          <SelectItem key={a} value={a.toString().padStart(2, '0')}>Aero {a.toString().padStart(2, '0')}</SelectItem>
-                        ))}
+                        {(data.parques.find((p) => p.id === editing.parque_id)?.aeros ?? []).map(
+                          (a: number) => (
+                            <SelectItem key={a} value={a.toString().padStart(2, "0")}>
+                              Aero {a.toString().padStart(2, "0")}
+                            </SelectItem>
+                          ),
+                        )}
                       </SelectContent>
                     </Select>
                   </div>
@@ -1366,7 +1616,8 @@ function Dashboard() {
                       className="h-12 rounded-xl bg-slate-50 text-black font-mono"
                     />
                     <p className="text-xs text-muted-foreground">
-                      {data.catalogo.find(p => p.sap === editing.sap)?.descricao || "Código não encontrado no catálogo."}
+                      {data.catalogo.find((p) => p.sap === editing.sap)?.descricao ||
+                        "Código não encontrado no catálogo."}
                     </p>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
@@ -1376,7 +1627,9 @@ function Dashboard() {
                         type="number"
                         min={1}
                         value={editing.quantidade}
-                        onChange={(e) => setEditing({ ...editing, quantidade: Number(e.target.value) })}
+                        onChange={(e) =>
+                          setEditing({ ...editing, quantidade: Number(e.target.value) })
+                        }
                         className="h-12 rounded-xl bg-background"
                       />
                     </div>
@@ -1399,8 +1652,18 @@ function Dashboard() {
                     />
                   </div>
                   <div className="flex gap-3 pt-2">
-                    <Button variant="outline" className="flex-1 rounded-xl h-12" onClick={() => setEditing(null)}>Cancelar</Button>
-                    <Button className="flex-[2] rounded-xl h-12 font-bold" onClick={handleSaveEdit} disabled={isSavingEdit}>
+                    <Button
+                      variant="outline"
+                      className="flex-1 rounded-xl h-12"
+                      onClick={() => setEditing(null)}
+                    >
+                      Cancelar
+                    </Button>
+                    <Button
+                      className="flex-[2] rounded-xl h-12 font-bold"
+                      onClick={handleSaveEdit}
+                      disabled={isSavingEdit}
+                    >
                       {isSavingEdit ? "Salvando..." : "Salvar Alterações"}
                     </Button>
                   </div>
@@ -1412,10 +1675,7 @@ function Dashboard() {
       </main>
 
       {isScannerOpen && (
-        <BarcodeScanner 
-          onScan={handleScan}
-          onClose={() => setIsScannerOpen(false)}
-        />
+        <BarcodeScanner onScan={handleScan} onClose={() => setIsScannerOpen(false)} />
       )}
     </div>
   );

@@ -60,7 +60,9 @@ export const exportToPDF = (data: Movimentacao[]) => {
   autoTable(doc, {
     startY: 48,
     margin: { top: 44, left: 14, right: 14, bottom: 18 },
-    head: [["Data", "Técnico", "Parque", "Aero", "SAP", "Descrição da Peça", "Qtd", "WO", "Estoque"]],
+    head: [
+      ["Data", "Técnico", "Parque", "Aero", "SAP", "Descrição da Peça", "Qtd", "WO", "Estoque"],
+    ],
     body: data.map((item) => [
       item.data,
       item.tecnico,
@@ -77,25 +79,25 @@ export const exportToPDF = (data: Movimentacao[]) => {
       font: "helvetica",
       fontSize: 8.5,
       cellPadding: 3,
-      textColor: DARK as any,
-      lineColor: [203, 213, 225] as any,
+      textColor: DARK,
+      lineColor: [203, 213, 225],
       lineWidth: 0.2,
       valign: "middle",
     },
     headStyles: {
-      fillColor: SKY_DEEP as any,
-      textColor: [255, 255, 255] as any,
+      fillColor: SKY_DEEP,
+      textColor: [255, 255, 255],
       fontSize: 9,
       fontStyle: "bold",
       halign: "center",
     },
-    alternateRowStyles: { fillColor: ROW_ALT as any },
+    alternateRowStyles: { fillColor: ROW_ALT },
     columnStyles: {
       0: { cellWidth: 32 },
       1: { cellWidth: 38 },
       2: { cellWidth: 30 },
       3: { cellWidth: 16, halign: "center" },
-      4: { cellWidth: 22, halign: "center", fontStyle: "bold", textColor: SKY_DEEP as any },
+      4: { cellWidth: 22, halign: "center", fontStyle: "bold", textColor: SKY_DEEP },
       5: { cellWidth: "auto" },
       6: { cellWidth: 14, halign: "center", fontStyle: "bold" },
       7: { cellWidth: 24, halign: "center" },
@@ -176,7 +178,7 @@ export const exportToXLSX = (data: Movimentacao[]) => {
 
   const totalPecas = data.reduce((acc, i) => acc + (Number(i.quantidade) || 0), 0);
 
-  const aoa: any[][] = [
+  const aoa: (string | number)[][] = [
     ["GESTÃO DE SOBRESSALENTES — RELATÓRIO DE MOVIMENTAÇÃO"],
     [`Gerado em ${format(new Date(), "dd/MM/yyyy 'às' HH:mm")}  •  ${data.length} registros`],
     headers,
@@ -199,8 +201,16 @@ export const exportToXLSX = (data: Movimentacao[]) => {
   const totalRowIdx = data.length + 3;
 
   for (let c = 0; c < totalCols; c++) {
-    ws[XLSX.utils.encode_cell({ r: 0, c })] = { ...titleCell, v: c === 0 ? aoa[0]![0] : "", t: "s" };
-    ws[XLSX.utils.encode_cell({ r: 1, c })] = { ...subtitleCell, v: c === 0 ? aoa[1]![0] : "", t: "s" };
+    ws[XLSX.utils.encode_cell({ r: 0, c })] = {
+      ...titleCell,
+      v: c === 0 ? aoa[0]![0] : "",
+      t: "s",
+    };
+    ws[XLSX.utils.encode_cell({ r: 1, c })] = {
+      ...subtitleCell,
+      v: c === 0 ? aoa[1]![0] : "",
+      t: "s",
+    };
     ws[XLSX.utils.encode_cell({ r: 2, c })] = { v: headers[c], t: "s", ...headerCell };
   }
 
@@ -245,8 +255,13 @@ export const exportToXLSX = (data: Movimentacao[]) => {
     { wch: 12 },
   ];
   ws["!rows"] = [{ hpt: 32 }, { hpt: 20 }, { hpt: 26 }];
-  ws["!autofilter"] = { ref: XLSX.utils.encode_range({ s: { r: 2, c: 0 }, e: { r: totalRowIdx - 1, c: totalCols - 1 } }) };
-  ws["!freeze"] = { xSplit: "0", ySplit: "3" } as any;
+  ws["!autofilter"] = {
+    ref: XLSX.utils.encode_range({
+      s: { r: 2, c: 0 },
+      e: { r: totalRowIdx - 1, c: totalCols - 1 },
+    }),
+  };
+  ws["!freeze"] = { xSplit: 0, ySplit: 3 };
 
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Movimentações");
