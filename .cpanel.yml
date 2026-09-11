@@ -1,0 +1,3 @@
+deployment:
+  tasks:
+    - /bin/echo "Deploy realizado com sucesso"
