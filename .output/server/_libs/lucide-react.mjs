@@ -1,4 +1,4 @@
-import { a as __toESM } from "../_runtime.mjs";
+import { s as __toESM } from "../__23tanstack-start-server-fn-resolver-DkEF2aAy.mjs";
 import { u as require_react } from "./@floating-ui/react-dom+[...].mjs";
 //#region node_modules/lucide-react/dist/esm/shared/src/utils/toKebabCase.mjs
 var import_react = /* @__PURE__ */ __toESM(require_react(), 1);
@@ -239,6 +239,70 @@ function createLucideIcon(iconDataOrName, iconNode = [], aliases = []) {
 	return Component;
 }
 //#endregion
+//#region node_modules/lucide-react/dist/esm/icons/boxes.mjs
+/**
+* @license lucide-react v1.43.0 - ISC
+*
+* This source code is licensed under the ISC license.
+* See the LICENSE file in the root directory of this source tree.
+*/
+var __iconData$25 = {
+	name: "boxes",
+	size: 24,
+	node: [
+		["path", {
+			d: "M2.97 12.92A2 2 0 0 0 2 14.63v3.24a2 2 0 0 0 .97 1.71l3 1.8a2 2 0 0 0 2.06 0L12 19v-5.5l-5-3-4.03 2.42Z",
+			key: "lc1i9w"
+		}],
+		["path", {
+			d: "m7 16.5-4.74-2.85",
+			key: "1o9zyk"
+		}],
+		["path", {
+			d: "m7 16.5 5-3",
+			key: "va8pkn"
+		}],
+		["path", {
+			d: "M7 16.5v5.17",
+			key: "jnp8gn"
+		}],
+		["path", {
+			d: "M12 13.5V19l3.97 2.38a2 2 0 0 0 2.06 0l3-1.8a2 2 0 0 0 .97-1.71v-3.24a2 2 0 0 0-.97-1.71L17 10.5l-5 3Z",
+			key: "8zsnat"
+		}],
+		["path", {
+			d: "m17 16.5-5-3",
+			key: "8arw3v"
+		}],
+		["path", {
+			d: "m17 16.5 4.74-2.85",
+			key: "8rfmw"
+		}],
+		["path", {
+			d: "M17 16.5v5.17",
+			key: "k6z78m"
+		}],
+		["path", {
+			d: "M7.97 4.42A2 2 0 0 0 7 6.13v4.37l5 3 5-3V6.13a2 2 0 0 0-.97-1.71l-3-1.8a2 2 0 0 0-2.06 0l-3 1.8Z",
+			key: "1xygjf"
+		}],
+		["path", {
+			d: "M12 8 7.26 5.15",
+			key: "1vbdud"
+		}],
+		["path", {
+			d: "m12 8 4.74-2.85",
+			key: "3rx089"
+		}],
+		["path", {
+			d: "M12 13.5V8",
+			key: "1io7kd"
+		}]
+	]
+};
+__iconData$25.node;
+var Boxes = createLucideIcon(__iconData$25);
+//#endregion
 //#region node_modules/lucide-react/dist/esm/icons/calendar.mjs
 /**
 * @license lucide-react v1.43.0 - ISC
@@ -246,7 +310,7 @@ function createLucideIcon(iconDataOrName, iconNode = [], aliases = []) {
 * This source code is licensed under the ISC license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var __iconData$20 = {
+var __iconData$24 = {
 	name: "calendar",
 	size: 24,
 	node: [
@@ -272,8 +336,8 @@ var __iconData$20 = {
 		}]
 	]
 };
-__iconData$20.node;
-var Calendar = createLucideIcon(__iconData$20);
+__iconData$24.node;
+var Calendar = createLucideIcon(__iconData$24);
 //#endregion
 //#region node_modules/lucide-react/dist/esm/icons/camera.mjs
 /**
@@ -282,7 +346,7 @@ var Calendar = createLucideIcon(__iconData$20);
 * This source code is licensed under the ISC license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var __iconData$19 = {
+var __iconData$23 = {
 	name: "camera",
 	size: 24,
 	node: [["path", {
@@ -295,8 +359,8 @@ var __iconData$19 = {
 		key: "1vg3eu"
 	}]]
 };
-__iconData$19.node;
-var Camera = createLucideIcon(__iconData$19);
+__iconData$23.node;
+var Camera = createLucideIcon(__iconData$23);
 //#endregion
 //#region node_modules/lucide-react/dist/esm/icons/chart-column.mjs
 /**
@@ -305,7 +369,7 @@ var Camera = createLucideIcon(__iconData$19);
 * This source code is licensed under the ISC license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var __iconData$18 = {
+var __iconData$22 = {
 	name: "chart-column",
 	size: 24,
 	node: [
@@ -328,8 +392,8 @@ var __iconData$18 = {
 	],
 	aliases: ["bar-chart-3"]
 };
-__iconData$18.node;
-var ChartColumn = createLucideIcon(__iconData$18);
+__iconData$22.node;
+var ChartColumn = createLucideIcon(__iconData$22);
 //#endregion
 //#region node_modules/lucide-react/dist/esm/icons/check.mjs
 /**
@@ -338,7 +402,7 @@ var ChartColumn = createLucideIcon(__iconData$18);
 * This source code is licensed under the ISC license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var __iconData$17 = {
+var __iconData$21 = {
 	name: "check",
 	size: 24,
 	node: [["path", {
@@ -346,8 +410,8 @@ var __iconData$17 = {
 		key: "1gmf2c"
 	}]]
 };
-__iconData$17.node;
-var Check = createLucideIcon(__iconData$17);
+__iconData$21.node;
+var Check = createLucideIcon(__iconData$21);
 //#endregion
 //#region node_modules/lucide-react/dist/esm/icons/chevron-down.mjs
 /**
@@ -356,7 +420,7 @@ var Check = createLucideIcon(__iconData$17);
 * This source code is licensed under the ISC license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var __iconData$16 = {
+var __iconData$20 = {
 	name: "chevron-down",
 	size: 24,
 	node: [["path", {
@@ -364,8 +428,8 @@ var __iconData$16 = {
 		key: "qrunsl"
 	}]]
 };
-__iconData$16.node;
-var ChevronDown = createLucideIcon(__iconData$16);
+__iconData$20.node;
+var ChevronDown = createLucideIcon(__iconData$20);
 //#endregion
 //#region node_modules/lucide-react/dist/esm/icons/chevron-up.mjs
 /**
@@ -374,7 +438,7 @@ var ChevronDown = createLucideIcon(__iconData$16);
 * This source code is licensed under the ISC license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var __iconData$15 = {
+var __iconData$19 = {
 	name: "chevron-up",
 	size: 24,
 	node: [["path", {
@@ -382,8 +446,8 @@ var __iconData$15 = {
 		key: "153udz"
 	}]]
 };
-__iconData$15.node;
-var ChevronUp = createLucideIcon(__iconData$15);
+__iconData$19.node;
+var ChevronUp = createLucideIcon(__iconData$19);
 //#endregion
 //#region node_modules/lucide-react/dist/esm/icons/circle-check.mjs
 /**
@@ -392,7 +456,7 @@ var ChevronUp = createLucideIcon(__iconData$15);
 * This source code is licensed under the ISC license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var __iconData$14 = {
+var __iconData$18 = {
 	name: "circle-check",
 	size: 24,
 	node: [["circle", {
@@ -406,8 +470,8 @@ var __iconData$14 = {
 	}]],
 	aliases: ["check-circle-2"]
 };
-__iconData$14.node;
-var CircleCheck = createLucideIcon(__iconData$14);
+__iconData$18.node;
+var CircleCheck = createLucideIcon(__iconData$18);
 //#endregion
 //#region node_modules/lucide-react/dist/esm/icons/circle-plus.mjs
 /**
@@ -416,7 +480,7 @@ var CircleCheck = createLucideIcon(__iconData$14);
 * This source code is licensed under the ISC license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var __iconData$13 = {
+var __iconData$17 = {
 	name: "circle-plus",
 	size: 24,
 	node: [
@@ -437,8 +501,8 @@ var __iconData$13 = {
 	],
 	aliases: ["plus-circle"]
 };
-__iconData$13.node;
-var CirclePlus = createLucideIcon(__iconData$13);
+__iconData$17.node;
+var CirclePlus = createLucideIcon(__iconData$17);
 //#endregion
 //#region node_modules/lucide-react/dist/esm/icons/file-down.mjs
 /**
@@ -447,7 +511,7 @@ var CirclePlus = createLucideIcon(__iconData$13);
 * This source code is licensed under the ISC license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var __iconData$12 = {
+var __iconData$16 = {
 	name: "file-down",
 	size: 24,
 	node: [
@@ -469,8 +533,8 @@ var __iconData$12 = {
 		}]
 	]
 };
-__iconData$12.node;
-var FileDown = createLucideIcon(__iconData$12);
+__iconData$16.node;
+var FileDown = createLucideIcon(__iconData$16);
 //#endregion
 //#region node_modules/lucide-react/dist/esm/icons/layout-dashboard.mjs
 /**
@@ -479,7 +543,7 @@ var FileDown = createLucideIcon(__iconData$12);
 * This source code is licensed under the ISC license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var __iconData$11 = {
+var __iconData$15 = {
 	name: "layout-dashboard",
 	size: 24,
 	node: [
@@ -517,8 +581,8 @@ var __iconData$11 = {
 		}]
 	]
 };
-__iconData$11.node;
-var LayoutDashboard = createLucideIcon(__iconData$11);
+__iconData$15.node;
+var LayoutDashboard = createLucideIcon(__iconData$15);
 //#endregion
 //#region node_modules/lucide-react/dist/esm/icons/lock.mjs
 /**
@@ -527,7 +591,7 @@ var LayoutDashboard = createLucideIcon(__iconData$11);
 * This source code is licensed under the ISC license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var __iconData$10 = {
+var __iconData$14 = {
 	name: "lock",
 	size: 24,
 	node: [["rect", {
@@ -543,8 +607,8 @@ var __iconData$10 = {
 		key: "fwvmzm"
 	}]]
 };
-__iconData$10.node;
-var Lock = createLucideIcon(__iconData$10);
+__iconData$14.node;
+var Lock = createLucideIcon(__iconData$14);
 //#endregion
 //#region node_modules/lucide-react/dist/esm/icons/log-out.mjs
 /**
@@ -553,7 +617,7 @@ var Lock = createLucideIcon(__iconData$10);
 * This source code is licensed under the ISC license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var __iconData$9 = {
+var __iconData$13 = {
 	name: "log-out",
 	size: 24,
 	node: [
@@ -571,8 +635,8 @@ var __iconData$9 = {
 		}]
 	]
 };
-__iconData$9.node;
-var LogOut = createLucideIcon(__iconData$9);
+__iconData$13.node;
+var LogOut = createLucideIcon(__iconData$13);
 //#endregion
 //#region node_modules/lucide-react/dist/esm/icons/menu.mjs
 /**
@@ -581,7 +645,7 @@ var LogOut = createLucideIcon(__iconData$9);
 * This source code is licensed under the ISC license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var __iconData$8 = {
+var __iconData$12 = {
 	name: "menu",
 	size: 24,
 	node: [
@@ -599,8 +663,8 @@ var __iconData$8 = {
 		}]
 	]
 };
-__iconData$8.node;
-var Menu = createLucideIcon(__iconData$8);
+__iconData$12.node;
+var Menu = createLucideIcon(__iconData$12);
 //#endregion
 //#region node_modules/lucide-react/dist/esm/icons/package.mjs
 /**
@@ -609,7 +673,7 @@ var Menu = createLucideIcon(__iconData$8);
 * This source code is licensed under the ISC license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var __iconData$7 = {
+var __iconData$11 = {
 	name: "package",
 	size: 24,
 	node: [
@@ -631,8 +695,61 @@ var __iconData$7 = {
 		}]
 	]
 };
-__iconData$7.node;
-var Package = createLucideIcon(__iconData$7);
+__iconData$11.node;
+var Package = createLucideIcon(__iconData$11);
+//#endregion
+//#region node_modules/lucide-react/dist/esm/icons/pencil.mjs
+/**
+* @license lucide-react v1.43.0 - ISC
+*
+* This source code is licensed under the ISC license.
+* See the LICENSE file in the root directory of this source tree.
+*/
+var __iconData$10 = {
+	name: "pencil",
+	size: 24,
+	node: [["path", {
+		d: "M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z",
+		key: "1a8usu"
+	}], ["path", {
+		d: "m15 5 4 4",
+		key: "1mk7zo"
+	}]]
+};
+__iconData$10.node;
+var Pencil = createLucideIcon(__iconData$10);
+//#endregion
+//#region node_modules/lucide-react/dist/esm/icons/refresh-cw.mjs
+/**
+* @license lucide-react v1.43.0 - ISC
+*
+* This source code is licensed under the ISC license.
+* See the LICENSE file in the root directory of this source tree.
+*/
+var __iconData$9 = {
+	name: "refresh-cw",
+	size: 24,
+	node: [
+		["path", {
+			d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8",
+			key: "v9h5vc"
+		}],
+		["path", {
+			d: "M21 3v5h-5",
+			key: "1q7to0"
+		}],
+		["path", {
+			d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16",
+			key: "3uifl3"
+		}],
+		["path", {
+			d: "M8 16H3v5",
+			key: "1cv678"
+		}]
+	]
+};
+__iconData$9.node;
+var RefreshCw = createLucideIcon(__iconData$9);
 //#endregion
 //#region node_modules/lucide-react/dist/esm/icons/rotate-ccw-clock.mjs
 /**
@@ -641,7 +758,7 @@ var Package = createLucideIcon(__iconData$7);
 * This source code is licensed under the ISC license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var __iconData$6 = {
+var __iconData$8 = {
 	name: "rotate-ccw-clock",
 	size: 24,
 	node: [
@@ -660,8 +777,8 @@ var __iconData$6 = {
 	],
 	aliases: ["history"]
 };
-__iconData$6.node;
-var RotateCcwClock = createLucideIcon(__iconData$6);
+__iconData$8.node;
+var RotateCcwClock = createLucideIcon(__iconData$8);
 //#endregion
 //#region node_modules/lucide-react/dist/esm/icons/search.mjs
 /**
@@ -670,7 +787,7 @@ var RotateCcwClock = createLucideIcon(__iconData$6);
 * This source code is licensed under the ISC license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var __iconData$5 = {
+var __iconData$7 = {
 	name: "search",
 	size: 24,
 	node: [["path", {
@@ -683,8 +800,80 @@ var __iconData$5 = {
 		key: "4ej97u"
 	}]]
 };
+__iconData$7.node;
+var Search = createLucideIcon(__iconData$7);
+//#endregion
+//#region node_modules/lucide-react/dist/esm/icons/sparkles.mjs
+/**
+* @license lucide-react v1.43.0 - ISC
+*
+* This source code is licensed under the ISC license.
+* See the LICENSE file in the root directory of this source tree.
+*/
+var __iconData$6 = {
+	name: "sparkles",
+	size: 24,
+	node: [
+		["path", {
+			d: "M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z",
+			key: "1s2grr"
+		}],
+		["path", {
+			d: "M20 2v4",
+			key: "1rf3ol"
+		}],
+		["path", {
+			d: "M22 4h-4",
+			key: "gwowj6"
+		}],
+		["circle", {
+			cx: "4",
+			cy: "20",
+			r: "2",
+			key: "6kqj1y"
+		}]
+	],
+	aliases: ["stars"]
+};
+__iconData$6.node;
+var Sparkles = createLucideIcon(__iconData$6);
+//#endregion
+//#region node_modules/lucide-react/dist/esm/icons/trash.mjs
+/**
+* @license lucide-react v1.43.0 - ISC
+*
+* This source code is licensed under the ISC license.
+* See the LICENSE file in the root directory of this source tree.
+*/
+var __iconData$5 = {
+	name: "trash",
+	size: 24,
+	node: [
+		["path", {
+			d: "M10 11v6",
+			key: "nco0om"
+		}],
+		["path", {
+			d: "M14 11v6",
+			key: "outv1u"
+		}],
+		["path", {
+			d: "M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6",
+			key: "miytrc"
+		}],
+		["path", {
+			d: "M3 6h18",
+			key: "d0wm0j"
+		}],
+		["path", {
+			d: "M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2",
+			key: "e791ji"
+		}]
+	],
+	aliases: ["trash-2"]
+};
 __iconData$5.node;
-var Search = createLucideIcon(__iconData$5);
+var Trash = createLucideIcon(__iconData$5);
 //#endregion
 //#region node_modules/lucide-react/dist/esm/icons/trending-up.mjs
 /**
@@ -808,4 +997,4 @@ var __iconData = {
 __iconData.node;
 var X = createLucideIcon(__iconData);
 //#endregion
-export { ChevronDown as _, TrendingUp as a, Camera as b, Package as c, Lock as d, LayoutDashboard as f, ChevronUp as g, CircleCheck as h, TriangleAlert as i, Menu as l, CirclePlus as m, Wind as n, Search as o, FileDown as p, User as r, RotateCcwClock as s, X as t, LogOut as u, Check as v, Calendar as x, ChartColumn as y };
+export { ChartColumn as C, Boxes as E, Check as S, Calendar as T, FileDown as _, TrendingUp as a, ChevronUp as b, Search as c, Pencil as d, Package as f, LayoutDashboard as g, Lock as h, TriangleAlert as i, RotateCcwClock as l, LogOut as m, Wind as n, Trash as o, Menu as p, User as r, Sparkles as s, X as t, RefreshCw as u, CirclePlus as v, Camera as w, ChevronDown as x, CircleCheck as y };

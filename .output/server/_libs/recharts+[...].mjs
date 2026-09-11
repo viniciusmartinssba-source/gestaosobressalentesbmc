@@ -1,5 +1,4 @@
-import { a as __toESM, r as __exportAll } from "../_runtime.mjs";
-import { n as init_performance, r as performance_default } from "./canvg+[...].mjs";
+import { i as __exportAll, s as __toESM } from "../__23tanstack-start-server-fn-resolver-DkEF2aAy.mjs";
 import { _ as require_with_selector } from "./@tanstack/react-router+[...].mjs";
 import { l as require_react_dom, u as require_react } from "./@floating-ui/react-dom+[...].mjs";
 import { n as clsx } from "./class-variance-authority+clsx.mjs";
@@ -615,7 +614,6 @@ var Surface = /*#__PURE__*/ (0, import_react.forwardRef)((props, ref) => {
 });
 //#endregion
 //#region node_modules/recharts/es6/container/Layer.js
-init_performance();
 var import_with_selector = require_with_selector();
 var _excluded$22 = ["children", "className"];
 function _extends$24() {
@@ -4556,7 +4554,7 @@ var JavascriptAnimation = class extends RechartsAnimation {
 var RequestAnimationFrameTimeoutController = class {
 	setTimeout(callback) {
 		var delay = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : 0;
-		var startTime = performance_default.now();
+		var startTime = performance.now();
 		var requestId = null;
 		var executeCallback = (now) => {
 			if (now - startTime >= delay) callback(now);

@@ -1,4 +1,3 @@
-
 //#region node_modules/reselect/dist/reselect.mjs
 function assertIsFunction(func, errorMessage = `expected a function, instead received ${typeof func}`) {
 	if (typeof func !== "function") throw new TypeError(errorMessage);

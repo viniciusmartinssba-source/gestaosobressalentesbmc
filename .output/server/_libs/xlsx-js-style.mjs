@@ -1,6 +1,4 @@
-import { i as __require, t as __commonJSMin } from "../_runtime.mjs";
-import processModule from "node:process";
-import { Buffer } from "node:buffer";
+import { a as __require, n as __commonJSMin } from "../__23tanstack-start-server-fn-resolver-DkEF2aAy.mjs";
 //#region node_modules/xlsx-js-style/dist/cpexcel.js
 var require_cpexcel = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/*! cpexcel.js (C) 2013-present SheetJS -- http://sheetjs.com */
@@ -3437,7 +3435,7 @@ var require_xlsx_min = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 			for (var c = 0; c < e.length;) t = p.indexOf(e.charAt(c++)) << 2 | (n = p.indexOf(e.charAt(c++))) >> 4, o += String.fromCharCode(t), r = (15 & n) << 4 | (s = p.indexOf(e.charAt(c++))) >> 2, 64 !== s && (o += String.fromCharCode(r)), a = (3 & s) << 6 | (i = p.indexOf(e.charAt(c++))), 64 !== i && (o += String.fromCharCode(a));
 			return o;
 		}
-		var se = "undefined" != typeof Buffer && "undefined" != typeof processModule && void 0 !== processModule.versions && !!processModule.versions.node, ce = function() {
+		var se = "undefined" != typeof Buffer && "undefined" != typeof process && void 0 !== process.versions && !!process.versions.node, ce = function() {
 			if ("undefined" == typeof Buffer) return function() {};
 			var t = !Buffer.from;
 			if (!t) try {
@@ -4559,7 +4557,7 @@ var require_xlsx_min = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 				return r;
 			}
 			function i() {
-				return s = s || __require("node:fs");
+				return s = s || __require("fs");
 			}
 			function o(e, t) {
 				if (80 == e[0] && 75 == e[1]) return q(e, t);
@@ -5409,7 +5407,7 @@ var require_xlsx_min = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 			}, e;
 		}();
 		if ("undefined" != typeof __require) try {
-			Se = __require("node:fs");
+			Se = __require("fs");
 		} catch (e) {}
 		function Ae(e) {
 			return "string" == typeof e ? o(e) : Array.isArray(e) ? function(e) {
@@ -21168,7 +21166,7 @@ var require_xlsx_min = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 			return n.type = "file", n.file = e, au(n), n.type = "buffer", a instanceof Function || (a = r), Se.writeFile(e, ru(t, n), a);
 		}, a.utils = Es, a.writeXLSX = tu, a.writeFileXLSX = function(e, t, r) {
 			return (r = r || {}).type = "file", r.file = t, au(r), tu(e, r);
-		}, a.SSF = e, void 0 !== is && (a.stream = is), void 0 !== xe && (a.CFB = xe), "undefined" == typeof __require || ((is = __require("node:stream")) || {}).Readable && bu(is.Readable);
+		}, a.SSF = e, void 0 !== is && (a.stream = is), void 0 !== xe && (a.CFB = xe), "undefined" == typeof __require || ((is = __require("stream")) || {}).Readable && bu(is.Readable);
 	}
 	if ("undefined" != typeof exports ? make_xlsx_lib(exports) : "undefined" != typeof module && module.exports ? make_xlsx_lib(module.exports) : "function" == typeof define && define.amd ? define("xlsx", function() {
 		return XLSX.version || make_xlsx_lib(XLSX), XLSX;

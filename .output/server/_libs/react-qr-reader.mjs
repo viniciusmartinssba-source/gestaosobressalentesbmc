@@ -1,8 +1,6 @@
-import { a as __toESM } from "../_runtime.mjs";
-import { n as globalthis_default, r as init_globalthis } from "./supabase__realtime-js+unenv.mjs";
+import { s as __toESM } from "../__23tanstack-start-server-fn-resolver-DkEF2aAy.mjs";
 import { u as require_react } from "./@floating-ui/react-dom+[...].mjs";
 //#region node_modules/react-qr-reader/dist/esm/index.js
-init_globalthis();
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var n;
 var o;
@@ -16299,7 +16297,7 @@ var Gn = function(t) {
 }(xn);
 function Xn() {
 	if ("undefined" != typeof window) return window.BigInt || null;
-	if ("undefined" != typeof globalthis_default) return globalthis_default.BigInt || null;
+	if ("undefined" != typeof global) return global.BigInt || null;
 	if ("undefined" != typeof self) return self.BigInt || null;
 	throw new Error("Can't search globals for BigInt!");
 }

@@ -1,4 +1,3 @@
-import { n as globalthis_default, r as init_globalthis } from "./supabase__realtime-js+unenv.mjs";
 //#region node_modules/es-toolkit/dist/_internal/isUnsafeProperty.mjs
 /**
 * Checks if a property key is unsafe to access or copy directly.
@@ -501,8 +500,7 @@ var float32ArrayTag = "[object Float32Array]";
 var float64ArrayTag = "[object Float64Array]";
 //#endregion
 //#region node_modules/es-toolkit/dist/_internal/globalThis.mjs
-init_globalthis();
-var globalThis_ = typeof globalThis === "object" && globalThis || typeof window === "object" && window || typeof self === "object" && self || typeof globalthis_default === "object" && globalthis_default || (function() {
+var globalThis_ = typeof globalThis === "object" && globalThis || typeof window === "object" && window || typeof self === "object" && self || typeof global === "object" && global || (function() {
 	return this;
 })();
 //#endregion
