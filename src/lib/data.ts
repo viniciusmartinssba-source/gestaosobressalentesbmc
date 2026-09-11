@@ -1,4 +1,18 @@
-import { createServerFn } from "@tanstack/react-start";
+import { supabase } from "@/integrations/supabase/client";
+
+export interface HistoricoItem {
+  id: string;
+  dataISO: string;
+  data: string;
+  tecnico: string;
+  parque: string;
+  aero: string;
+  sap: string;
+  peca: string;
+  quantidade: number;
+  wo: string;
+  estoque: string;
+}
 
 interface MovimentacaoRow {
   id: string;
@@ -13,22 +27,25 @@ interface MovimentacaoRow {
   pecas: { sap: string; descricao: string } | null;
 }
 
-export const getInitialData = createServerFn({ method: "GET" }).handler(async () => {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+export interface Parque {
+  id: string;
+  nome: string;
+  aeros: number[];
+}
 
-  const [parquesRes, profilesRes] = await Promise.all([
-    supabaseAdmin.from("parques").select("*").order("nome"),
-    supabaseAdmin.from("profiles").select("id, nome, matricula, email").order("nome"),
-  ]);
-
+/**
+ * Dados básicos do painel. Executa no navegador com a chave publicável;
+ * o acesso é controlado exclusivamente pelas policies de RLS do Supabase.
+ */
+export async function getInitialData() {
+  const parquesRes = await supabase.from("parques").select("*").order("nome");
   if (parquesRes.error) throw parquesRes.error;
-  if (profilesRes.error) throw profilesRes.error;
 
-  // pecas can exceed the 1000-row API limit: fetch in pages, minimal columns
+  // O catálogo pode passar do limite de 1000 linhas da API: busca paginada.
   const catalogo: { sap: string; descricao: string }[] = [];
   const PAGE = 1000;
   for (let from = 0; ; from += PAGE) {
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await supabase
       .from("pecas")
       .select("sap, descricao")
       .order("descricao")
@@ -39,17 +56,15 @@ export const getInitialData = createServerFn({ method: "GET" }).handler(async ()
   }
 
   return {
-    parques: parquesRes.data || [],
+    parques: (parquesRes.data || []) as Parque[],
     estoques: ["1670", "1673"],
     catalogo,
-    tecnicos: profilesRes.data || [],
   };
-});
+}
 
-export const getHistory = createServerFn({ method: "GET" }).handler(async () => {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-
-  const { data, error } = await supabaseAdmin
+/** Histórico de retiradas. RLS: técnico vê as próprias, admin vê todas. */
+export async function getHistory(): Promise<HistoricoItem[]> {
+  const { data, error } = await supabase
     .from("movimentacoes")
     .select(
       `
@@ -77,4 +92,4 @@ export const getHistory = createServerFn({ method: "GET" }).handler(async () => 
     wo: m.wo || "",
     estoque: m.estoque || "",
   }));
-});
+}

@@ -1,19 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { z } from "zod";
-
-interface MovimentacaoJoinRow {
-  id: string;
-  data: string;
-  aero: string;
-  sap: string;
-  quantidade: number;
-  wo: string | null;
-  estoque: string | null;
-  profiles: { nome: string } | null;
-  parques: { nome: string } | null;
-  pecas: { sap: string; descricao: string } | null;
-}
 
 interface RegistroInsight {
   data: string | null;
@@ -24,95 +10,6 @@ interface RegistroInsight {
   parques: { nome: string };
   pecas: { sap: string; descricao: string };
 }
-
-/** Cadastro de um novo material no catálogo (somente admin, garantido por RLS). */
-export const addMaterial = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((data) =>
-    z
-      .object({
-        sap: z.string().trim().min(1),
-        descricao: z.string().trim().min(1),
-      })
-      .parse(data),
-  )
-  .handler(async ({ data, context }) => {
-    const { error } = await context.supabase
-      .from("pecas")
-      .upsert({ sap: data.sap, descricao: data.descricao }, { onConflict: "sap" });
-    if (error) throw new Error(error.message);
-    return { sap: data.sap, descricao: data.descricao };
-  });
-
-/** Edição de um lançamento existente (somente admin, garantido por RLS). */
-export const updateMovimentacao = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((data) =>
-    z
-      .object({
-        id: z.string().uuid(),
-        parque_id: z.string().min(1),
-        aero: z.string().min(1),
-        sap: z.string().min(1),
-        quantidade: z.number().int().min(1),
-        wo: z.string().nullable(),
-        estoque: z.string().nullable(),
-        data: z.string().nullable(),
-      })
-      .parse(data),
-  )
-  .handler(async ({ data, context }) => {
-    const { id, ...fields } = data;
-    const { data: row, error } = await context.supabase
-      .from("movimentacoes")
-      .update({
-        parque_id: fields.parque_id,
-        aero: fields.aero,
-        sap: fields.sap,
-        quantidade: fields.quantidade,
-        wo: fields.wo,
-        estoque: fields.estoque,
-        ...(fields.data ? { data: fields.data } : {}),
-      })
-      .eq("id", id)
-      .select(`*, profiles (nome), parques (nome), pecas (sap, descricao)`)
-      .maybeSingle();
-
-    if (error) throw new Error(error.message);
-    if (!row) throw new Error("Lançamento não encontrado ou sem permissão para editar.");
-
-    const m = row as MovimentacaoJoinRow;
-    return {
-      id: m.id,
-      dataISO: m.data,
-      data: new Date(m.data).toLocaleString("pt-BR"),
-      tecnico: m.profiles?.nome || "Desconhecido",
-      parque: m.parques?.nome || "N/A",
-      aero: m.aero,
-      sap: m.sap,
-      peca: m.pecas?.descricao || "Desconhecida",
-      quantidade: m.quantidade,
-      wo: m.wo || "",
-      estoque: m.estoque || "",
-    };
-  });
-
-/** Exclusão de um lançamento (somente admin, garantido por RLS). */
-export const deleteMovimentacao = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((data) => z.object({ id: z.string().uuid() }).parse(data))
-  .handler(async ({ data, context }) => {
-    const { data: rows, error } = await context.supabase
-      .from("movimentacoes")
-      .delete()
-      .eq("id", data.id)
-      .select("id");
-    if (error) throw new Error(error.message);
-    if (!rows || rows.length === 0) {
-      throw new Error("Lançamento não encontrado ou sem permissão para excluir.");
-    }
-    return { id: data.id };
-  });
 
 /** Geração de insights por IA com base nas retiradas registradas. */
 export const generateInsights = createServerFn({ method: "POST" })

@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate, redirect } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import {
   Card,
@@ -12,16 +12,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/lib/auth";
-import { getInitialData } from "@/lib/data.functions";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Wind, User, Lock, ShieldCheck } from "lucide-react";
 
 export const Route = createFileRoute("/_auth/login")({
-  beforeLoad: ({ context }) => {
-    // If we had the auth status in context, we could redirect here.
-    // For now, handled in the component for simplicity in this prototype.
-  },
-  loader: async () => getInitialData(),
+  ssr: false,
   component: LoginPage,
 });
 
@@ -29,7 +25,6 @@ function LoginPage() {
   const [matricula, setMatricula] = useState("");
   const [senha, setSenha] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const data = Route.useLoaderData();
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -38,24 +33,24 @@ function LoginPage() {
     setIsLoading(true);
 
     try {
-      // Simulate network delay
-      await new Promise((resolve) => setTimeout(resolve, 800));
+      // Busca o e-mail de acesso a partir da matrícula (função pública restrita).
+      const { data: email, error: lookupError } = await supabase.rpc("email_por_matricula", {
+        _matricula: matricula.trim(),
+      });
 
-      const tecnico = data.tecnicos.find(
-        (t) => t.matricula.toLowerCase() === matricula.toLowerCase(),
-      );
-
-      if (tecnico) {
-        const { error } = await login(tecnico.email, senha);
+      if (lookupError) {
+        toast.error("Não foi possível validar a matrícula. Tente novamente.");
+      } else if (!email) {
+        toast.error("Matrícula não encontrada.");
+      } else {
+        const { error } = await login(email, senha);
 
         if (error) {
           toast.error("Credenciais inválidas. Verifique sua matrícula e senha.");
         } else {
-          toast.success(`Bem-vindo, ${tecnico.nome}!`);
+          toast.success("Bem-vindo!");
           navigate({ to: "/" });
         }
-      } else {
-        toast.error("Matrícula não encontrada.");
       }
     } catch (error) {
       toast.error("Erro ao realizar login.");
