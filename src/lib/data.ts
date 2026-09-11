@@ -30,7 +30,7 @@ interface MovimentacaoRow {
 export interface Parque {
   id: string;
   nome: string;
-  aeros: string[];
+  aeros: number[];
 }
 
 /**
