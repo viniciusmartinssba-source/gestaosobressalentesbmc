@@ -39,13 +39,9 @@ import {
   Cell,
   Legend,
 } from "recharts";
-import { getInitialData, getHistory } from "@/lib/data.functions";
-import {
-  addMaterial,
-  updateMovimentacao,
-  deleteMovimentacao,
-  generateInsights,
-} from "@/lib/admin.functions";
+import { getInitialData, getHistory } from "@/lib/data";
+import { addMaterial, updateMovimentacao, deleteMovimentacao } from "@/lib/admin";
+import { generateInsights } from "@/lib/admin.functions";
 import { BarcodeScanner } from "@/components/scanner/BarcodeScanner";
 import { exportToPDF, exportToXLSX } from "@/lib/reports";
 import confetti from "canvas-confetti";
@@ -74,6 +70,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 export const Route = createFileRoute("/")({
+  // Os dados são lidos no navegador com a sessão do usuário (RLS).
+  ssr: false,
   component: Dashboard,
   loader: async () => {
     const [data, history] = await Promise.all([getInitialData(), getHistory()]);
